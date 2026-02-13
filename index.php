@@ -3,7 +3,16 @@
 
     <?php 
         $pageTitle = 'Page d\'accueil';
+        $state = isset($_GET['state']) ? $_GET['state'] : null; 
         include("includes/head.php");
+
+        $notif = $_GET["notif"] ?? null;
+
+        if ($notif == "connexion_success") {
+
+            $successMessage = "Connexion réussie !";
+
+        }
     ?>
 
     <body>
@@ -17,37 +26,50 @@
                 <h3>Un accompagnement personnalisé pour une vie apaisée !</h3>
                 <div class="line mt-1 mb-1"></div>
 
-                <?php if((isset($_SESSION['connected']) && $_SESSION['connected'] == 1)) { ?>
+                <div class="col-12 pt-1">
+                    <?php if(isset($successMessage)): ?>
+                        <div class="alert alert-success">
+                            <?php echo htmlspecialchars($successMessage); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <?php if(isset($state) && ($state == 1 || $state == 2 || $state == 5 || $state == 6)) { ?>
 
                     <p>Silver Happy, à vos côtés pour vivre plus librement, plus sereinement et plus heureux après 60 ans.</p>
 
-                    <a href="services.php">
+                    <a href="services.php?state=<?php echo $state ?>">
                         <button type="button" class="btn-part1 mt-2">
                             Découvrez nos services
                         </button>
                     </a>
 
-                <?php }else if(isset($_SESSION['connected']) && $_SESSION['connected'] == 2) { ?>
+                <?php }else if(isset($state) && $state == 4) { ?>
 
                     <p>Silver Happy, à vos côtés pour permettre à nos seniors de vivre plus librement, plus sereinement et plus heureux après 60 ans.</p>
 
-                    <a href="dashboard.php">
+                    <a href="dashboard.php?state=<?php echo $state ?>">
                         <button type="button" class="btn-part1 mt-2">
                             Partagez vos services
                         </button>
                     </a>
 
-                <?php }else if(!isset($_SESSION['connected'])){ ?>
+                <?php }else if(!isset($state) || ($state != 1 && $state != 2 && $state != 4 && $state != 5 && $state != 6)){ ?>
 
                     <p>Silver Happy, à vos côtés pour vivre plus librement, plus sereinement et plus heureux après 60 ans.</p>
 
-                    <a href="connexion.php">
+                    <?php if($state == 3){ ?>
+                        <div class="alert alert-success">
+                            <p>Votre dossier est en cours de vérification, merci pour votre compréhension.</p>
+                        </div>
+                    <?php }else{?>
+                    <a href="connexion.php?state=<?php echo $state ?>">
                         <button type="button" class="btn-part1 mt-2">
                             Commencez par vous connectez
                         </button>
                     </a>
 
-                <?php } ?>
+                <?php }} ?>
             </div>
 
             <div class="part2">
