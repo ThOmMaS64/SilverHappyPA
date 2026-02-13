@@ -1,0 +1,14 @@
+silverhappyoff@gmail.com
+silverHappy123!
+
+
+statuts :
+
+-1 = adhérent en cours d'inscription
+-2 = prestataire en cours d'inscription
+1 = adhérent paiement mensuel
+2 = adhérent paiement annuel
+3 = prestataire non vérifié
+4 = prestataire vérifié
+5 = adhérent renouvellement mensuel
+6 = adhérente renouvellement annuel
