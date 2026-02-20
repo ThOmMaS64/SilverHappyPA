@@ -8,7 +8,58 @@
     use PHPMailer\PHPMailer\SMTP;
     use PHPMailer\PHPMailer\Exception;
 
+    require_once __DIR__ . '/../stripe-php/init.php';
+
+    session_start();
+
     include("../includes/db.php");
+    include("../includes/translation.php");
+
+    \Stripe\Stripe::setApiKey('sk_test_51Szo1M2WiLfhQi4sPPN6NYJI4gecl8Au5rA0oxHK7grJ6H4u41IReSoXwXn0NqrtzqWW8yXOItSD7MvuuW0q0Sgt009dm7h1pa');
+
+    $stripeSubId = null;
+
+    if(isset($_GET['session_id'])){
+        $checkoutSession = \Stripe\Checkout\Session::retrieve($_GET['session_id']);
+        $stripeSubId = $checkoutSession->subscription;
+
+        $plan = $_GET['plan'];
+
+        $firstPriceId = null;
+        $secondPriceId = null;
+
+        if($plan == "monthly_standard"){
+
+            $firstPriceId = "price_1Szo9b2WiLfhQi4ssJx66450";
+            $secondPriceId = "price_1SzoAu2WiLfhQi4sLAKor8a2";
+
+        }elseif($plan == "annual_standard"){
+
+            $firstPriceId = "price_1SzoA72WiLfhQi4s6J9PFUio";
+            $secondPriceId = "price_1SzoB92WiLfhQi4suEGpLvql";
+
+        }
+
+        $endPhaseBeforeRenewal = strtotime("+1 year");
+
+        $schedule = \Stripe\SubscriptionSchedule::create(['from_subscription' => $stripeSubId]);
+
+        $startPhaseBeforeRenewal = $schedule->phases[0]->start_date;
+
+        \Stripe\SubscriptionSchedule::update($schedule->id,[
+            'phases' =>[
+                [
+                    'items' => [['price' => $firstPriceId, 'quantity' => 1]],
+                    'start_date' => $startPhaseBeforeRenewal,
+                    'end_date' => $endPhaseBeforeRenewal,
+                ],
+                [
+                    'items' => [['price' => $secondPriceId, 'quantity' => 1]],
+                ],
+            ],
+        ]);
+
+    }
 
     switch($_GET['plan']) {
 
@@ -38,17 +89,12 @@
 
     }
 
-    $q = 'UPDATE USER_ SET status = :status WHERE ID_USER = :id';
+    $q = 'UPDATE USER_ SET status = :status, SUBSCRIPTION = :subscription, stripe_subscription_id = :stripe_subscription_id WHERE ID_USER = :id';
     $statement = $bdd->prepare($q);
     $result = $statement->execute([
         'status' => $status,
-        'id' => $_GET['id']
-    ]); 
-
-    $q = 'UPDATE USER_ SET SUBSCRIPTION = :subscription WHERE ID_USER = :id';
-    $statement = $bdd->prepare($q);
-    $result = $statement->execute([
-        'subscription' => $_SESSION['subscription'],
+        'subscription' =>  $_SESSION['subscription'],
+        'stripe_subscription_id' =>  $stripeSubId,
         'id' => $_GET['id']
     ]); 
 
@@ -75,10 +121,17 @@
             $mail->addAddress($email);
             
             $mail->isHTML(true);
-            $mail->Subject = 'Bienvenue chez Silver Happy !';
+            $mail->Subject = trad('Bienvenue chez Silver Happy !');
+
+            $text1 = trad("Bonjour");
+            $text2 = trad("Bienvenue chez Silver Happy, nous sommes fiers de vous compter parmi nos adhérants.");
+            $text3 = trad("Votre inscription a bien été prise en compte et vous pouvez dès à présent profiter de nos services, nos conseils, notre boutique et bien plus encore !");
+            $text4 = trad("Nous vous remercions pour votre confiance et nous réjouissons de vous accompagner dans ce qui sera les plus belles années de votre vie.");
+            $text5 = trad("L’équipe Silver Happy");
+
             $mail->Body = '
             <div style= "background-color: #2f6f9f; padding: 35px; text-align: center;">
-                <p style="color: white; text-decoration: none;">Bonjour '.$name.',<br><br>Bienvenue chez Silver Happy, nous sommes fiers de vous compter parmi nos adhérants.<br><br>Votre inscription a bien été prise en compte et vous pouvez dès à présent profiter de nos services, nos conseils, notre boutique et bien plus encore !<br><br>Nous vous remercions pour votre confiance et nous réjouissons de vous accompagner dans ce qui sera les plus belles années de votre vie.<br><br><br>L’équipe Silver Happy</p>;
+                <p style="color: white; text-decoration: none;"> ' . $text1 . ' ' . $name.',<br><br>' . $text2 . ' <br><br>' . $text3 . '<br><br>' . $text4 . '<br><br><br>' . $text5 . '</p>
             </div>
             ';
 

@@ -24,7 +24,7 @@ func ResetPassword(database *sql.DB) http.HandlerFunc {
 
 		var userID int
 
-		rowToken := database.QueryRow("SELECT ID_USER FROM TOKEN WHERE token = ? AND token_date >= SUBTIME(NOW(),'01:00:00') ", token)
+		rowToken := database.QueryRow("SELECT ID_USER FROM TOKEN WHERE token = ? AND token_date >= SUBTIME(NOW(),'01:00:00')", token)
 	
 		errToken := rowToken.Scan(&userID)
 

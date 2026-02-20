@@ -28,7 +28,9 @@ func main() {
 	http.HandleFunc("/registrationCustomer", handlers.RegistrationCustomer(database))
 	http.HandleFunc("/registrationProvider", handlers.RegistrationCustomer(database))
 	http.HandleFunc("/resetPassword", handlers.ResetPassword(database))
-	http.HandleFunc("/suppressionAccount", handlers.SuppressionAccount(database))
+	http.HandleFunc("/modifyParameters", handlers.ModifyParameters(database))
+	http.HandleFunc("/changeLanguage", handlers.ChangeLanguage(database))
+	http.HandleFunc("/contactForm", handlers.ContactForm(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 

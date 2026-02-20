@@ -39,7 +39,7 @@
 
         $checkout_session = \Stripe\Checkout\Session::create([
             "mode" => "subscription",
-            "success_url" => $domain . "/traitementsPHP/validRegistrationCustomer.php?plan=" . $plan . "&id=" .$_SESSION['id'],
+            "success_url" => $domain . "/traitementsPHP/validRegistrationCustomer.php?plan=" . $plan . "&id=" .$_SESSION['id'] . "&session_id={CHECKOUT_SESSION_ID}",
             "cancel_url" => $domain . "/subscribe.php?error=failed",
             "line_items" => [
                 [

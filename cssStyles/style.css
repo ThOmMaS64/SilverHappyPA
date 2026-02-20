@@ -77,6 +77,7 @@ body p {
 
 body {
   background-color: #f2f6fa;
+  font-family: "Montserrat", sans-serif;
 }
 
 .part1 {
@@ -243,46 +244,6 @@ footer p {
   color: white;
 }
 
-.modal {
-  visibility: hidden;
-  padding: 15px;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(54, 54, 54, 0.5);
-}
-
-.modal button {
-  background-color: #dc010f;
-}
-
-.modal button:hover {
-  background-color: #d42a32;
-}
-
-.modal a:hover {
-  color: #05901c;
-}
-
-.modal:target {
-  visibility: visible;
-}
-
-.modal-container {
-  border-radius: 15px;
-  position: relative;
-  width: 600px;
-  height: 365px;
-  background: white;
-  padding: 2rem;
-}
-
-.modal-container a {
-  text-decoration: none;
-  color: black;
-}
-
 .accordion-button {
   background-color: transparent !important;
   text-align: left !important;
@@ -293,4 +254,103 @@ footer p {
 .eyeNoShow,
 .eyeShow:hover {
   cursor: pointer;
+}
+
+.parameterButton {
+  display: flex;
+  justify-content: flex-start;
+  background: none !important;
+  border: none;
+  padding: 0;
+  align-items: center;
+  gap: 25px;
+  padding: 5px;
+}
+
+.buttonDark {
+  width: 80px !important;
+  height: 80px !important;
+  border-radius: 100% !important;
+  border-style: none;
+  background-color: #191970 !important;
+  display: flex;
+  justify-self: center;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s ease;
+}
+
+.buttonDark:hover,
+.buttonClear:hover {
+  transform: scale(1.045);
+}
+
+.buttonClear {
+  width: 80px !important;
+  height: 80px !important;
+  border-radius: 100% !important;
+  border-style: none;
+  background-color: #fffacd !important;
+  display: flex;
+  justify-self: center;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s ease;
+}
+
+.suppressionButton {
+  border: none;
+  background-color: rgb(206, 17, 17) !important;
+  padding: 8px;
+}
+
+.suppressionButton:hover {
+  background-color: red !important;
+}
+
+.loupe {
+  position: fixed;
+  background-image: linear-gradient(to bottom right, #2f6f9f 40%, #99a0a8 100%);
+  bottom: 0;
+  right: 0;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  width: 80px;
+  height: 80px;
+  z-index: 10;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 5px;
+  border: 1px solid black;
+}
+
+.loupe:hover {
+  background-image: linear-gradient(to bottom right, #2f6f9f 60%, #99a0a8 100%);
+  transform: scale(1.025);
+}
+
+.selectLanguage {
+  border-radius: 15px;
+  width: 100%;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.selectLanguage:hover {
+  background-color: #99a0a8;
+}
+
+.selectLanguageBox {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.contactsForm {
+  padding: 45px;
+  margin-top: 40px;
+  color: white;
 }

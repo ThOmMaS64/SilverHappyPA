@@ -142,6 +142,7 @@ func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
 
 			if status == -1 || status == -2 {
 
+				database.Exec("DELETE FROM TOKEN WHERE ID_USER = ?", id)
 				database.Exec("DELETE FROM CONSUMER WHERE ID_USER = ?", id)
 				database.Exec("DELETE FROM SERVICE_PROVIDER WHERE ID_USER = ?", id)
 				database.Exec("DELETE FROM USER_ WHERE ID_USER = ?", id)

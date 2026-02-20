@@ -1,12 +1,23 @@
 package handlers
 
 import (
+	"crypto/rand"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
 )
+
+func GenerateSecureToken(length int) string {
+    b := make([]byte, length)
+    if _, err := rand.Read(b); err != nil {
+        return ""
+    }
+    return hex.EncodeToString(b)
+}
+
 
 func Login(database *sql.DB) http.HandlerFunc {
 
@@ -109,20 +120,28 @@ func Login(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		var state int
+		token := GenerateSecureToken(32)
 
-		rowState := database.QueryRow("SELECT status FROM user_ WHERE ID_USER = ?", userID)
+		insertTokenStatement, insertTokenError := database.Prepare("INSERT INTO TOKEN(token, ID_USER, token_date) VALUES (?, ?, NOW())")
+
+		if insertTokenError != nil{
+
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=system5", 303)
+			return 		
+
+		}
+		defer insertTokenStatement.Close()
 	
-		errState := rowState.Scan(&state)
+		_, insertTokenExecError := insertTokenStatement.Exec(token, userID)
 
-		if errState != nil {
+		if insertTokenExecError != nil{
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=system6&choice=1", 303)
-			return			
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=system6", 303)
+			return 		
 
 		}
 
-		url := fmt.Sprintf("http://localhost/ProjetAnnuel/index.php?state=%d&notif=connexion_success", state)
+		url := fmt.Sprintf("http://localhost/ProjetAnnuel/traitementsPHP/putInSession.php?token=%s", token)
 
 		http.Redirect(w, r, url, 303)
 		 

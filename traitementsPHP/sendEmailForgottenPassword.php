@@ -11,6 +11,7 @@
 session_start();
 
 include('../includes/db.php');
+include('../includes/translation.php');
 
 date_default_timezone_set('Europe/Paris');
 
@@ -55,15 +56,23 @@ $mail = new PHPMailer(true);
         $mail->Password   = 'zfnv psee fxjy eyqu';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port       = 465;
+        $mail->CharSet    = 'UTF-8';
 
         $mail->setFrom('silverhappyoff@gmail.com', 'Silver Happy');
         $mail->addAddress($mailReceveur);
         
         $mail->isHTML(true);
-        $mail->Subject = 'Silver Happy - Mot de passe oublié'; 
+        $mail->Subject = 'Silver Happy - '. trad('Mot de passe oublié');
+
+        $text1 = trad("Cliquez ");
+        $text2 = trad("ICI"); 
+        $text3 = trad(" afin de réinitialiser votre mot de passe Silver Happy. Vous pourrez en configurer un nouveau et retrouver l\'accès à votre compte !");
+        $text4 = trad("L\'équipe Silver Happy"); 
+        $text5 = trad("Lien valide pour une durée de 1 heure à compter de l\'envoi."); 
+
         $mail->Body = '
         <div style= "background-color: #2f6f9f; padding: 35px; text-align: center;">
-            <a  href="http://localhost/ProjetAnnuel/resetPassword.php?token=' . $token . '" style="color: white; text-decoration: none;">Cliquez <strong>ICI</strong> afin de réinitialiser votre mot de passe Silver Happy. Vous pourrez en configurer un nouveau et retrouver l\'accès à votre compte !.<br><br><br>L\'équipe Silver Happy<br><br><small>Lien valide pour une durée de 1 heure à compté de l\'envoi.</small></a>
+            <a  href="http://localhost/ProjetAnnuel/resetPassword.php?token=' . $token . '" style="color: white; text-decoration: none;">' . $text1 . ' <strong>'. $text2 .'</strong>'. $text3 . '<br><br><br>' . $text4 . '<br><br><small>' . $text5 . '</small></a>
         </div>
         ';
 
