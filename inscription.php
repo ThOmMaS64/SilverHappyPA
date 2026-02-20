@@ -2,7 +2,11 @@
 <html lang="en">
 
     <?php 
-        $pageTitle = "Inscription";
+        session_start();
+
+        include("includes/translation.php");
+
+        $pageTitle = trad("Inscription");
 
         include("includes/head.php"); 
         include("includes/headerMinimalist.php");
@@ -49,15 +53,15 @@
             <div class="backgroundPlain">
                 <div class="row ms-5 choiceImageContainer">
                     <div class="col-12">
-                        <h2>Êtes-vous un :</h2>
+                        <h2><?php echo trad("Êtes-vous un :") ?></h2>
                         <div class="line"></div>
                     </div>
                     <div class="col-6 pe-5">
-                        <p>Adhérant</p>
+                        <p><?php echo trad("Adhérant") ?></p>
                         <img src="medias/images/adherant.jpg"  width="260px" class="choiceImage" onclick="window.location.href='?choice=1'"> 
                     </div>
                     <div class="col-6 ps-5">
-                        <p>Prestataire</p>
+                        <p><?php echo trad("Prestataire") ?></p>
                         <img src="medias/images/prestataire.png"  width="260px" class="choiceImage" onclick="window.location.href='?choice=2'">
                     </div>
                 </div>
@@ -70,9 +74,9 @@
                         <form class="row g-3 needs-validation" method="POST" action="http://localhost:8081/registrationCustomer" novalidate>
                             <div class="row">
                                 <div class="col-12">
-                                    <h3>Inscrivez-vous</h3>
+                                    <h3><?php echo trad("Inscrivez-vous") ?></h3>
                                     <div class="line mb-2"></div>
-                                    <p>Devenez adhérant chez Silver Happy</p>
+                                    <p><?php echo trad("Devenez adhérant chez Silver Happy") ?></p>
                                 </div>
 
                                 <div class="col-12">
@@ -84,22 +88,22 @@
                                 </div>
 
                                 <div class="col-4 mb-3">
-                                    <label class="form-label">Nom d'utilisateur</label>
+                                    <label class="form-label"><?php echo trad("Nom d'utilisateur") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="username" required>
                                 </div>
                                 <div class="col-4 mb-4">
-                                    <label class="form-label">Nom</label>
+                                    <label class="form-label"><?php echo trad("Nom") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="name" required>
                                 </div>
                                 <div class="col-4 mb-4">
-                                    <label class="form-label">Prénom</label>
+                                    <label class="form-label"><?php echo trad("Prénom") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="surname" required>
                                 </div>
                             </div> 
 
                             <div class="row">
                                 <div class="col-4 mb-4">
-                                    <label class="form-label">Mot de passe</label>
+                                    <label class="form-label"><?php echo trad("Mot de passe") ?></label>
                                     <div class="row text-align-center">
                                         <div class="col-10">
                                             <input type="password" id="passwordId" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="password" required>
@@ -115,7 +119,7 @@
                                 </div>
 
                                 <div class="col-4 mb-4">
-                                    <label class="form-label">Confirmation du mot de passe</label>
+                                    <label class="form-label"><?php echo trad("Confirmation du mot de passe") ?></label>
                                     <div class="row text-align-center">
                                         <div class="col-10">
                                             <input type="password" id="passwordId2" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="passwordConfirmation" required>
@@ -131,7 +135,7 @@
                                 </div>
 
                                 <div class="col-4">
-                                    <label class="form-label">Adresse mail</label>
+                                    <label class="form-label"><?php echo trad("Adresse mail") ?></label>
                                     <div class="input-group has-validation">
                                     <span class="input-group-text" id="inputGroupPrepend">@</span>
                                     <input type="email" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" id="validationCustomUsername" aria-describedby="inputGroupPrepend" name="email" required>
@@ -141,30 +145,30 @@
 
                             <div class="row mb-4">
                                 <div class="col-3">
-                                    <label class="form-label">Naissance</label>
+                                    <label class="form-label"><?php echo trad("Naissance") ?></label>
                                     <input type="date" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="dateNaissance" required>
                                 </div>
                                 <div class="col-2">
-                                    <label class="form-label">Ville</label>
+                                    <label class="form-label"><?php echo trad("Ville") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="ville" required>
                                 </div>
                                 <div class="col-3">
-                                    <label class="form-label">Rue</label>
+                                    <label class="form-label"><?php echo trad("Rue") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="rue" required> 
                                 </div>
                                 <div class="col-2">
-                                    <label class="form-label">Numéro de rue</label>
+                                    <label class="form-label"><?php echo trad("Numéro de rue") ?></label>
                                     <input type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="numero" required> 
                                 </div>
                                 <div class="col-2">
-                                    <label class="form-label">Code postal</label>
+                                    <label class="form-label"><?php echo trad("Code postal") ?></label>
                                     <input type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="postalCode" required> 
                                 </div>
                             </div>
 
                             <div class="row mb-4">
                                 <div class="col-12">
-                                    <label class="form-label">Vérification de sécurité : <strong><?php echo $captcha['question']; ?></strong></label>
+                                    <label class="form-label"><?php echo trad("Vérification de sécurité : ")?> <strong><?php echo trad($captcha['question']); ?></strong></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="captcha_response" placeholder="Saisissez votre réponse ici" required>
                                     <input type="hidden" name="captcha_id" value="<?php echo $captcha['ID_CAPTCHA']; ?>">
                                 </div>
@@ -172,8 +176,8 @@
 
                             <div class="row">
                                 <div class="col-12">
-                                    <button type="submit" class="btn">S'inscrire</button>
-                                    <a href="connexion.php"><p class="mt-3">Retourner à la page connexion</p></a>
+                                    <button type="submit" class="btn"><?php echo trad("S'inscrire") ?></button>
+                                    <a href="connexion.php"><p class="mt-3"><?php echo trad("Retourner à la page connexion") ?></p></a>
                                 </div>
                             </div>
                         </form>
@@ -187,9 +191,9 @@
                         <form class="row g-3 needs-validation" method="POST" action="http://localhost:8081/registrationProvider" enctype="multipart/form-data" novalidate>
                             <div class="row">
                                 <div class="col-12">
-                                    <h3>Inscrivez-vous</h3>
+                                    <h3><?php echo trad("Inscrivez-vous") ?></h3>
                                     <div class="line mb-2"></div>
-                                    <p>Devenez prestataire chez Silver Happy</p>
+                                    <p><?php echo trad("Devenez prestataire chez Silver Happy") ?></p>
                                 </div>
 
                                 <div class="col-12">
@@ -201,19 +205,19 @@
                                 </div>
 
                                 <div class="col-3 mb-3">
-                                    <label class="form-label">Nom d'utilisateur</label>
+                                    <label class="form-label"><?php echo trad("Nom d'utilisateur") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="username" required>
                                 </div>
                                 <div class="col-3 mb-4">
-                                    <label class="form-label">Nom</label>
+                                    <label class="form-label"><?php echo trad("Nom") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="name" required>
                                 </div>
                                 <div class="col-3 mb-4">
-                                    <label class="form-label">Prénom</label>
+                                    <label class="form-label"><?php echo trad("Prénom") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="surname" required>
                                 </div>
                                 <div class="col-3">
-                                    <label class="form-label">Adresse mail</label>
+                                    <label class="form-label"><?php echo trad("Adresse mail") ?></label>
                                     <div class="input-group has-validation">
                                     <span class="input-group-text" id="inputGroupPrepend">@</span>
                                     <input type="email" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" name="email" required>
@@ -223,12 +227,12 @@
 
                             <div class="row">
                                 <div class="col-3">
-                                    <label class="form-label">Profession/Prestation</label>
+                                    <label class="form-label"><?php echo trad("Profession/Prestation") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="profession" required> 
                                 </div>
                                 
                                 <div class="col-3 mb-4">
-                                    <label class="form-label">Mot de passe</label>
+                                    <label class="form-label"><?php echo trad("Mot de passe") ?></label>
                                     <div class="row text-align-center">
                                         <div class="col-10">
                                             <input type="password" id="passwordId" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="password" required>
@@ -244,7 +248,7 @@
                                 </div>
 
                                 <div class="col-3 mb-4">
-                                    <label class="form-label">Confirmation du mot de passe</label>
+                                    <label class="form-label"><?php echo trad("Confirmation du mot de passe") ?></label>
                                     <div class="row text-align-center">
                                         <div class="col-10">
                                             <input type="password" id="passwordId2" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="passwordConfirmation" required>
@@ -260,41 +264,41 @@
                                 </div>
 
                                 <div class="col-3">
-                                    <label class="form-label">Ville</label>
+                                    <label class="form-label"><?php echo trad("Ville") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="ville" required>
                                 </div>
                             </div> 
 
                             <div class="row mb-4">
                                 <div class="col-2">
-                                    <label class="form-label">Rue</label>
+                                    <label class="form-label"><?php echo trad("Rue") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="rue" required> 
                                 </div>
                                 <div class="col-2">
-                                    <label class="form-label">Numéro de rue</label>
+                                    <label class="form-label"><?php echo trad("Numéro de rue") ?></label>
                                     <input type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="numero" required> 
                                 </div>
                                 <div class="col-2">
-                                    <label class="form-label">Code postal</label>
+                                    <label class="form-label"><?php echo trad("Code postal") ?></label>
                                     <input type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="postalCode" required> 
                                 </div>
                                 <div class="col-2">
-                                    <label class="form-label">Diplôme</label>
+                                    <label class="form-label"><?php echo trad("Diplôme") ?></label>
                                     <input type="file" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="diploma" required> 
                                 </div>
                                 <div class="col-2">
-                                    <label class="form-label">Casier judiciaire</label>
+                                    <label class="form-label"><?php echo trad("Casier judiciaire") ?></label>
                                     <input type="file" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="criminalRecord" required> 
                                 </div>
                                 <div class="col-2">
-                                    <label class="form-label">Lettre de recommendation</label>
+                                    <label class="form-label"><?php echo trad("Lettre de recommendation") ?></label>
                                     <input type="file" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="recommendationLetter" required> 
                                 </div>
                             </div>
 
                             <div class="row mb-4">
                                 <div class="col-12">
-                                    <label class="form-label">Vérification de sécurité : <strong><?php echo $captcha['question']; ?></strong></label>
+                                    <label class="form-label"><?php echo trad("Vérification de sécurité : ")?> <strong><?php echo trad($captcha['question']); ?></strong></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="captcha_response" placeholder="Saisissez votre réponse ici" required>
                                     <input type="hidden" name="captcha_id" value="<?php echo $captcha['ID_CAPTCHA']; ?>">
                                 </div>
@@ -302,8 +306,8 @@
 
                             <div class="row">
                                 <div class="col-12">
-                                    <button type="submit" class="btn">S'inscrire</button>
-                                    <a href="connexion.php"><p class="mt-3">Retourner à la page connexion</p></a>
+                                    <button type="submit" class="btn"><?php echo trad("S'inscrire") ?></button>
+                                    <a href="connexion.php"><p class="mt-3"><?php echo trad("Retourner à la page connexion") ?></p></a>
                                 </div>
                             </div>
                         </form>

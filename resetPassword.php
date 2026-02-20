@@ -2,17 +2,21 @@
 <html lang="en">
 
     <?php 
-        $pageTitle = "Réinitialisation du mot de passe";
+        session_start();
+
+        include("includes/translation.php");
+
+        $pageTitle = trad("Réinitialisation du mot de passe");
 
         include("includes/head.php"); 
         include("includes/headerMinimalist.php");
 
         $errorMessages = [
 
-            "same_password" => "Le nouveau mot de passe ne doit pas être identique au précédent.",
-            "same_password" => "Le nouveau mot de passe ne peut pas être identique au précédent.",
-            "wrong_password_confirmation" => "Le mot de passe et sa confirmation doivent être identiques",
-            "bad_password" => "Le mot de passe doit faire au moins 8 caractères de long et comporter au moins une majuscule et un chiffre."
+            "same_password" => trad("Le nouveau mot de passe ne doit pas être identique au précédent."),
+            "same_password" => trad("Le nouveau mot de passe ne peut pas être identique au précédent."),
+            "wrong_password_confirmation" => trad("Le mot de passe et sa confirmation doivent être identiques"),
+            "bad_password" => trad("Le mot de passe doit faire au moins 8 caractères de long et comporter au moins une majuscule et un chiffre.")
 
         ];
 
@@ -29,9 +33,9 @@
                         <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token'] ?? ''); ?>">
                         <div class="row">
                             <div class="col-12">
-                                <h3>Réinitialiser votre mot de passe</h3>
+                                <h3><?php echo trad("Réinitialiser votre mot de passe") ?></h3>
                                 <div class="line mb-1"></div>
-                                <p>Saisissez et confirmez votre nouveau mot de passe</p>
+                                <p><?php echo trad("Saisissez et confirmez votre nouveau mot de passe") ?></p>
                             </div>
 
                             <div class="col-12">
@@ -43,7 +47,7 @@
                             </div>
 
                             <div class="col-12 mb-3">
-                                <label class="form-label">Nouveau mot de passe</label>
+                                <label class="form-label"><?php echo trad("Nouveau mot de passe") ?></label>
                                 <div class="row text-align-center">
                                     <div class="col-10">
                                         <input type="password" id="passwordId" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="password" required> 
@@ -59,7 +63,7 @@
                             </div>
 
                             <div class="col-12 mb-3">
-                                <label class="form-label">Confirmation du nouveau mot de passe</label>
+                                <label class="form-label"><?php echo trad("Confirmation du nouveau mot de passe") ?></label>
                                 <div class="row text-align-center">
                                     <div class="col-10">
                                         <input type="password" id="passwordId2" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="passwordConfirmation" required> 
@@ -76,8 +80,8 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <button type="submit" class="btn mb-3">Valider</button>
-                                <a href="connexion.php"><p>Annuler</p></a>
+                                <button type="submit" class="btn mb-3"><?php echo trad("Valider") ?></button>
+                                <a href="connexion.php"><p><?php echo trad("Annuler") ?></p></a>
                             </div>
                         </div>
                     </form>

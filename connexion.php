@@ -2,18 +2,22 @@
 <html lang="en">
 
     <?php 
-        $pageTitle = "Connexion";
+        session_start();
 
-        include("includes/head.php"); 
+        include("includes/translation.php");
+
+        $pageTitle = trad("Connexion");
+
+        include("includes/head.php");
         include("includes/headerMinimalist.php");
 
         $errorMessages = [
 
-            "not_registered" => "Nom d'utilisateur inexistant, veuillez-vous inscrire.",
-            "wrong_password" => "Identifiants incorrects, veuillez réessayer.",
-            "missing_field" => "Champ manquant, veillez à bien saisir votre nom d'utilisateur/email et mot de passe.",
-            "bad_registration" => "Vous n'avez pas abouti votre inscription, veuillez la reprendre du début avant de vous connecter.",
-            "retry_reset" => "Il se peut que le lien ait été défaillant ou a expiré, veuillez réessayer."
+            "not_registered" => trad("Nom d'utilisateur inexistant, veuillez-vous inscrire."),
+            "wrong_password" => trad("Identifiants incorrects, veuillez réessayer."),
+            "missing_field" => trad("Champ manquant, veillez à bien saisir votre nom d'utilisateur/email et mot de passe."),
+            "bad_registration" => trad("Vous n'avez pas abouti votre inscription, veuillez la reprendre du début avant de vous connecter."),
+            "retry_reset" => trad("Il se peut que le lien ait été défaillant ou a expiré, veuillez réessayer.")
 
         ];
 
@@ -25,9 +29,9 @@
 
         $notif = [
 
-            "registration_success" => "Inscription réussie, connectez-vous !",
-            "reset_success" => "Réinitialisation du mot de passe réussie, connectez-vous !",
-            "forgottentPasswordEmailSent" => "Un email de réinitialisation de mot de passe vous a été envoyé à l'adresse que vous avez saisi."
+            "registration_success" => trad("Inscription réussie, connectez-vous !"),
+            "reset_success" => trad("Réinitialisation du mot de passe réussie, connectez-vous !"),
+            "forgottentPasswordEmailSent" => trad("Un email de réinitialisation de mot de passe vous a été envoyé à l'adresse que vous avez saisi.")
 
         ];
 
@@ -44,7 +48,7 @@
                     <form class="row g-3 needs-validation" method="POST" action="http://localhost:8081/login" novalidate>
                         <div class="row">
                             <div class="col-12">
-                                <h3>Connectez-vous</h3>
+                                <h3><?php echo trad("Connectez-vous") ?></h3>
                                 <div class="line mb-4"></div>
                             </div>
 
@@ -61,12 +65,12 @@
                             </div>
 
                             <div class="col-12 mb-3">
-                                <label class="form-label">Nom d'utilisateur ou email</label>
+                                <label class="form-label"><?php echo trad("Nom d'utilisateur ou email") ?></label>
                                 <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="username" required> 
                             </div>
                         </div>
                         <div class="col-12 mb-3">
-                            <label class="form-label">Mot de passe</label>
+                            <label class="form-label"><?php echo trad("Mot de passe") ?></label>
                             <div class="row align-items-center">
                                 <div class="col-10">
                                     <input type="password" id="passwordId" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="password" required>
@@ -82,9 +86,9 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <button type="submit" class="btn">Se connecter</button>
-                                <a href="inscription.php" class="mt-3" ><p><strong> Pas de compte Silver Happy ? Créez en un !</strong></p></a>
-                                <a href="passwordForgotten.php"><p>Mot de passe oublié ? Cliquez ici !</p></a>
+                                <button type="submit" class="btn"><?php echo trad("Se connecter") ?></button>
+                                <a href="inscription.php" class="mt-3" ><p><strong><?php echo trad("Pas de compte Silver Happy ? Créez en un !") ?></strong></p></a>
+                                <a href="passwordForgotten.php"><p><?php echo trad("Mot de passe oublié ? Cliquez ici !") ?></p></a>
                             </div>
                         </div>
                     </form>

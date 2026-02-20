@@ -5,8 +5,9 @@
         session_start();
 
         include("traitementsPHP/sendCodeVerif.php");
+        include("includes/translation.php");
 
-        $pageTitle = "Confirmation email";
+        $pageTitle = trad("Confirmation email");
 
         include("includes/head.php"); 
         include("includes/headerMinimalist.php");
@@ -34,9 +35,9 @@
 
                 if($goodCode){
                     $_SESSION['goodCode'] = $goodCode;
-                    $successMessage = "Un code vous a bien été envoyé à " . $email .".";
+                    $successMessage = trad("Un code vous a bien été envoyé à " . $email .".");
                 }else{
-                    $errorMessage = "Erreur lors de l'envoie du mail, veuillez réessayer.";
+                    $errorMessage = trad("Erreur lors de l'envoie du mail, veuillez réessayer.");
                 }
 
             }
@@ -62,7 +63,7 @@
 
             }else{
 
-                $errorMessage = "Le code saisi ne correspond pas au code envoyé.";
+                $errorMessage = trad("Le code saisi ne correspond pas au code envoyé.");
 
             }
 
@@ -76,9 +77,9 @@
                     <form class="row g-3 needs-validation" method="POST" novalidate>
                         <div class="row">
                             <div class="col-12">
-                                <h3>Confirmez votre adresse mail</h3>
+                                <h3><?php echo trad("Confirmez votre adresse mail") ?></h3>
                                 <div class="line mb-1"></div>
-                                <p>Saisissez le code reçut par mail dans le champ ci dessous<p>
+                                <p><?php echo trad("Saisissez le code reçut par mail dans le champ ci dessous") ?><p>
                             </div>
 
                             <div class="col-12">
@@ -94,15 +95,15 @@
                             </div>
 
                             <div class="col-12 mb-3">
-                                <label class="form-label">Code</label>
+                                <label class="form-label"><?php echo trad("Code") ?></label>
                                 <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="code" required> 
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <button type="submit" class="btn mb-1">Confirmer</button>
+                                <button type="submit" class="btn mb-1"><?php echo trad("Confirmer") ?></button>
                                 <?php if (isset($_GET['email']) && isset($_GET['name']) && isset($_GET['id'])) { ?>
-                                <a href="codeVerif.php?email=<?php echo $email ?>&name=<?php echo $name ?>&id=<?php echo $id ?>&resend=1"><p>renvoyer le mail</p></a>
+                                <a href="codeVerif.php?email=<?php echo $email ?>&name=<?php echo $name ?>&id=<?php echo $id ?>&resend=1"><p><?php echo trad("renvoyer le mail") ?></p></a>
                                 <?php } ?>
                             </div>
                         </div>

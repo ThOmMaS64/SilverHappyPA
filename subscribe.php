@@ -4,7 +4,9 @@
     <?php 
         session_start();
 
-        $pageTitle = "Choix de l'abonnement";
+        include("includes/translation.php");
+
+        $pageTitle = trad("Choix de l'abonnement");
 
         include("includes/head.php"); 
         include("includes/headerMinimalist.php");
@@ -23,7 +25,7 @@
             $standardOrRenewal = "renewal";
         }
 
-        $errorMessage = "Échec lors du paiement, veuillez réessayer."
+        $errorMessage = trad("Échec lors du paiement, veuillez réessayer.")
 
     ?>
 
@@ -32,7 +34,7 @@
             <div class="backgroundPlain">
                 <div class="row ms-5 choiceImageContainer">
                     <div class="col-12">
-                        <h2>Choisissez votre abonnement :</h2>
+                        <h2><?php echo trad("Choisissez votre abonnement :") ?></h2>
                         <div class="line mb-2"></div>
                         <?php if (isset($_GET["error"])): ?>
                                 <div class="alert alert-danger">
@@ -41,13 +43,13 @@
                             <?php endif; ?>
                         </div>
                     <div class="col-6 pe-3 text-center">
-                        <p>Abonnemment <strong>mensuel</strong> (4€ le premier mois puis 3€/mois)</p>
+                        <p><?php echo trad("Abonnemment <strong>mensuel</strong> (4€ le premier mois puis 3€/mois)") ?></p>
                         <a href="traitementsPHP/createStripeSession.php?plan=monthly_<?php echo $standardOrRenewal ?>">
                             <img src="medias/images/mensualPayment.jpg"  width="220px" class="choiceImage"> 
                         </a>
                     </div>
                     <div class="col-6 ps-3 text-center">
-                        <p>Abonnemment <strong>annuel</strong> (40€ la première année puis 35€/mois)</p>
+                        <p><?php echo trad("Abonnemment <strong>annuel</strong> (40€ la première année puis 35€/mois)") ?></p>
                         <a href="traitementsPHP/createStripeSession.php?plan=annual_<?php echo $standardOrRenewal ?>">
                             <img src="medias/images/annualPayment.jpg"  width="220px" class="choiceImage">
                         </a>
