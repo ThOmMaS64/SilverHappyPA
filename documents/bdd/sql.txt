@@ -13,13 +13,19 @@ CREATE TABLE ADDRESS(
 
 CREATE TABLE USER_(
    ID_USER INT AUTO_INCREMENT,
-   username VARCHAR(50) ,
+   username VARCHAR(50) UNIQUE,
    password VARCHAR(255) ,
-   email VARCHAR(100) ,
+   email VARCHAR(100) UNIQUE,
    name VARCHAR(40) ,
    surname VARCHAR(40) ,
    status INT,
    subscription VARCHAR(5),
+   darkMode INT DEFAULT 0,
+   levelFont INT DEFAULT 0,
+   fontChange INT DEFAULT 0,
+   cursorType INT DEFAULT 0,
+   language VARCHAR(5) DEFAULT 'fr',
+   stripe_subscription_id VARCHAR(255) DEFAULT NULL,
    ID_ADDRESS INT,
    PRIMARY KEY(ID_USER),
    FOREIGN KEY(ID_ADDRESS) REFERENCES ADDRESS(ID_ADDRESS)
@@ -251,4 +257,18 @@ CREATE TABLE CAPTCHA(
    question VARCHAR(255) NOT NULL,
    answer VARCHAR(255) NOT NULL,
    PRIMARY KEY(ID_CAPTCHA)
+);
+
+CREATE TABLE TRANSLATIONS(
+   id INT AUTO_INCREMENT PRIMARY KEY,
+   original_text TEXT NOT NULL,
+   translated_text TEXT NOT NULL,
+   target_language VARCHAR(5) NOT NULL
+);
+
+CREATE TABLE CONTACTS(
+   id INT AUTO_INCREMENT PRIMARY KEY,
+   subject VARCHAR(100),
+   email VARCHAR(80),
+   message VARCHAR(200)
 );
