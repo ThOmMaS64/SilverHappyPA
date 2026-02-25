@@ -94,8 +94,8 @@
 
     <body>
         <main>
-            <div class="backgroundPlain" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#1A1412;color:white;<?php endif;endif; ?>; background-color:#f2f6fa; align-items:flex-start;">
-                <div class="col-3 ps-4 pe-4" style="color:white; background-color:rgb(62, 134, 189); min-height: 120vh; padding-top:150px; clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 0% 100%);">
+            <div class="backgroundPlain" style="background-color:#f2f6fa; align-items:flex-start;">
+                <div class="col-3 ps-4 pe-4" style="color:white; background-color:rgb(62, 134, 189); min-height: 120vh; padding-top:150px; clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 0% 100%);<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;<?php endif;endif; ?>;">
                     <h3><?php echo trad("Conseils") ?></h3>
                     <div class="line"></div>
                     <p><?php echo trad("Cette page vous donne accès aux conseils partagés par l'équipe Silver Happy et ses nombreux prestataires.") ?></p>
@@ -150,11 +150,11 @@
                         </div>
                     </form>
                 </div>
-                <div class="lateralAffichage col-9" style="background-color:#f2f6fa;padding-top:140px; padding-bottom:90px;">
+                <div class="lateralAffichage col-9" style="background-color:#f2f6fa;padding-top:140px; padding-bottom:90px;<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#1A1412;color:white;<?php endif;endif; ?>;">
                     <?php if(!empty($adviceList)){ ?>
                         <?php foreach($adviceList as $advice){ ?>
 
-                            <div class="showAdvice">
+                            <div class="showAdvice" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;<?php endif;endif; ?>;">
 
                                 <div class="row">
                                     <div class="col-10">
