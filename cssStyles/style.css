@@ -187,7 +187,7 @@ footer p {
 .backgroundPlain {
   background-color: rgb(62, 134, 189);
   width: 100%;
-  min-height: 110vh;
+  min-height: 120vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -353,4 +353,53 @@ footer p {
   padding: 45px;
   margin-top: 40px;
   color: white;
+}
+
+.searchButton {
+  border: none;
+  width: 20% !important;
+  align-items: center;
+}
+
+.selectFilter {
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+  padding: 8px;
+  transition: 0.3s ease;
+}
+
+.selectFilter:hover {
+  background-color: #99a0a8;
+}
+
+.lateralAffichage {
+  min-height: 120vh;
+}
+
+.showAdvice {
+  background-color: rgb(62, 134, 189);
+  border: 1px solid black;
+  border-radius: 15px;
+  padding: 15px;
+  margin-top: 50px;
+  width: 70%;
+  justify-self: center;
+  color: white;
+}
+
+.saveUnsaveButton {
+  flex: none;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  align-items: center;
+  justify-items: center;
+  border: 1px solid black;
+  transition: 0.3s ease;
+}
+
+.saveUnsaveButton:hover {
+  background-color: #99a0a8;
+  transform: scale(1.025);
 }

@@ -57,7 +57,7 @@
 
         }
 
-        header("location:connexion.php?state=3");
+        header("location:../connexion.php?state=3");
         exit();
 
 ?>

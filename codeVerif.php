@@ -51,7 +51,7 @@
 
                 if($status == -2){
 
-                    header("location:http://traitementsPHP/validRegistrationProvider.php?email=".$email."&name=".$name);
+                    header("location:traitementsPHP/validRegistrationProvider.php?email=".$email."&name=".$name);
                     exit();
 
                 }elseif($status == -1){

@@ -26,11 +26,14 @@ func main() {
 
 	http.HandleFunc("/login", handlers.Login(database))
 	http.HandleFunc("/registrationCustomer", handlers.RegistrationCustomer(database))
-	http.HandleFunc("/registrationProvider", handlers.RegistrationCustomer(database))
+	http.HandleFunc("/registrationProvider", handlers.RegistrationProvider(database))
 	http.HandleFunc("/resetPassword", handlers.ResetPassword(database))
 	http.HandleFunc("/modifyParameters", handlers.ModifyParameters(database))
 	http.HandleFunc("/changeLanguage", handlers.ChangeLanguage(database))
 	http.HandleFunc("/contactForm", handlers.ContactForm(database))
+	http.HandleFunc("/showDefaultAdvicesPage", handlers.ShowDefaultAdvicesPage(database))
+	http.HandleFunc("/showPersonalizedAdvicesPage", handlers.ShowPersonalizedAdvicesPage(database))
+	http.HandleFunc("/saveUnsaveAdvice", handlers.SaveUnsaveAdvice(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 

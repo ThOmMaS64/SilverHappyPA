@@ -11,4 +11,4 @@ statuts :
 3 = prestataire non vérifié
 4 = prestataire vérifié
 5 = adhérent renouvellement mensuel
-6 = adhérente renouvellement annuel
+6 = adhérent renouvellement annuel

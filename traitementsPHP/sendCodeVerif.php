@@ -8,9 +8,7 @@
     use PHPMailer\PHPMailer\SMTP;
     use PHPMailer\PHPMailer\Exception;
 
-    session_start();
 
-    include("../includes/translation.php");
 
     function sendCodeFunc($emailDestinataire, $nomDestinataire){
 

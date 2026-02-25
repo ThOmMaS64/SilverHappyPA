@@ -29,7 +29,7 @@
 
         $notif = $_GET["notif"] ?? null;
 
-        if ($notif == "connexion_success") {
+        if ($notif == "connexion_success" && (!isset($_SESSION['status']) || $_SESSION['status'] != 3)) {
 
             $successMessage = trad("Connexion réussie !");
 

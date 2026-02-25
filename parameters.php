@@ -5,7 +5,6 @@
     include("includes/translation.php");
 
     $pageTitle = trad("Paramètres");
-    $state = isset($_GET['state']) ? $_GET['state'] : null; 
     include('includes/db.php');
 
     if(isset($_GET['need']) && $_GET['need'] == "call_bdd_back"){

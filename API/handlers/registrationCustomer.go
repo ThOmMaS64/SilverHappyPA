@@ -211,7 +211,7 @@ func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
 
 		idAddress, _ := resAddress.LastInsertId()
 
-		insertStatementUser, insertErrorUser := database.Prepare("INSERT INTO USER_(username, password, email, name, surname, status, ID_ADDRESS) VALUES(?, ?, ?, ?, ?, ?, ?)")
+		insertStatementUser, insertErrorUser := database.Prepare("INSERT INTO USER_(username, password, email, name, surname, status, date_inscription, ID_ADDRESS) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")
 
 		if insertErrorUser != nil{
 
@@ -221,7 +221,8 @@ func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
 		}
 		defer insertStatementUser.Close()
 
-		resUser, insertExecErrorUser := insertStatementUser.Exec(username, string(hashedPassword), email, name, surname, -1, idAddress)
+		date_inscription := time.Now().Format("2006-01-02")
+		resUser, insertExecErrorUser := insertStatementUser.Exec(username, string(hashedPassword), email, name, surname, -1, date_inscription, idAddress)
 
 		if insertExecErrorUser != nil{
 
