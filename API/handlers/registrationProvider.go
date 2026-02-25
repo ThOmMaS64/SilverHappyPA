@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/mail"
 	"strings"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -17,7 +18,7 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		if r.Method != "POST" {
 		
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=system1", 303)
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=system1&choice=2", 303)
 			return
 		
 		}
@@ -26,7 +27,7 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		if errorParse != nil {
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=missing_field", 303)
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=missing_field&choice=2", 303)
 			return
 
 		}
@@ -66,7 +67,7 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 			recommendationLetterBlob, _ = io.ReadAll(file3)
 		}
 
-		if (username == "" || name == "" || surname == "" || password == "" || passwordConfirmation == "" || email == "" || diplomaBlob == nil || city == "" || street == "" || streetNumber == "" || postalCode == "" || criminalrecordBlob == nil || recommendationLetterBlob == nil || captchaResponse == "" || captchaID == ""){
+		if (username == "" || name == "" || surname == "" || profession == "" || password == "" || passwordConfirmation == "" || email == "" || diplomaBlob == nil || city == "" || street == "" || streetNumber == "" || postalCode == "" || criminalrecordBlob == nil || captchaResponse == "" || captchaID == ""){
 
 			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=missing_field&choice=2", 303)
 			return
@@ -115,14 +116,14 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 			} else {
 
-				http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=username_already_exists&choice=1", 303)
+				http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=username_already_exists&choice=2", 303)
 				return						
 
 			}	
 
 		}else if err != sql.ErrNoRows {
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=system2&choice=1", 303)
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=system2&choice=2", 303)
 			return			
 
 		}
@@ -142,12 +143,12 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 			}else{
 				
-				http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=email_already_exists&choice=1", 303)
+				http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=email_already_exists&choice=2", 303)
 				return
 			}			
 		}else if errEmail != sql.ErrNoRows {
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=system3&choice=1", 303)
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=system3&choice=2", 303)
 			return			
 
 		}
@@ -169,14 +170,14 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		if errCaptcha != nil {
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=system6&choice=1", 303)
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=system6&choice=2", 303)
 			return			
 
 		}
 
 		if !strings.EqualFold(goodResponseCaptcha, captchaResponse) {
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=wrong_captcha&choice=1", 303)
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=wrong_captcha&choice=2", 303)
 			return	
 
 		}
@@ -203,7 +204,7 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		idAddress, _ := resAddress.LastInsertId()
 
-		insertStatementUser, insertErrorUser := database.Prepare("INSERT INTO USER_(username, password, email, name, surname, status, ID_ADDRESS) VALUES(?, ?, ?, ?, ?, ?, ?)")
+		insertStatementUser, insertErrorUser := database.Prepare("INSERT INTO USER_(username, password, email, name, surname, status, date_inscription, ID_ADDRESS) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")
 
 		if insertErrorUser != nil{
 
@@ -213,7 +214,8 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 		}
 		defer insertStatementUser.Close()
 
-		resUser, insertExecErrorUser := insertStatementUser.Exec(username, hashedPassword, email, name, surname, -2, idAddress)
+		date_inscription := time.Now().Format("2006-01-02")
+		resUser, insertExecErrorUser := insertStatementUser.Exec(username, string(hashedPassword), email, name, surname, -2, date_inscription, idAddress)
 
 		if insertExecErrorUser != nil{
 

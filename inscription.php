@@ -291,8 +291,8 @@
                                     <input type="file" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="criminalRecord" required> 
                                 </div>
                                 <div class="col-2">
-                                    <label class="form-label"><?php echo trad("Lettre de recommendation") ?></label>
-                                    <input type="file" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="recommendationLetter" required> 
+                                    <label class="form-label"><?php echo trad("Lettre de recommendation (optionnel") ?></label>
+                                    <input type="file" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="recommendationLetter"> 
                                 </div>
                             </div>
 
