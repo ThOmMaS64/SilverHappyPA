@@ -28,7 +28,7 @@
     $_SESSION['id'] = $userInfo['ID_USER'];
     $_SESSION['status'] = $userInfo['status'];
 
-    $q = 'SELECT username, email, name, surname, darkMode, levelFont, fontChange, cursorType, language FROM USER_ WHERE ID_USER = :id';
+    $q = 'SELECT username, email, name, surname, description, keyWord1, keyWord2, keyWord3, date_inscription, darkMode, levelFont, fontChange, cursorType, language, profilePicture FROM USER_ WHERE ID_USER = :id';
     $req = $bdd->prepare($q);
     $req->execute(['id' => $_SESSION['id']]);
     $userInfo = $req->fetch(PDO::FETCH_ASSOC);
@@ -42,6 +42,12 @@
     $_SESSION['fontChange'] = $userInfo['fontChange'];
     $_SESSION['cursorType'] = $userInfo['cursorType'];
     $_SESSION['language'] = $userInfo['language'];
+    $_SESSION['profilePicture'] = $userInfo['profilePicture'];
+    $_SESSION['date_inscription'] = $userInfo['date_inscription'];
+    $_SESSION['description'] = $userInfo['description'];
+    $_SESSION['keyWord1'] = $userInfo['keyWord1'];
+    $_SESSION['keyWord2'] = $userInfo['keyWord2'];
+    $_SESSION['keyWord3'] = $userInfo['keyWord3'];
 
     if($_SESSION['status'] == 1 || $_SESSION['status'] == 2 || $_SESSION['status'] == 5 || $_SESSION['status'] == 6){
 
