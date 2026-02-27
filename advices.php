@@ -184,7 +184,7 @@
 
                                 <p><?php echo htmlspecialchars(trad($advice['description'])) ?></p>
 
-                                <p><small> <?php echo trad("Publié le") ?> <?php echo date("d/m/Y", strtotime($advice['date_publication'])) ?> <?php echo trad("par") ?> <?php echo htmlspecialchars($advice['name']) ?> <?php echo htmlspecialchars($advice['surname']) ?> <?php echo trad("alias") ?> <?php echo htmlspecialchars($advice['username']) ?> - <?php echo htmlspecialchars(trad($advice['profession'])) ?> </small></p>
+                                <p><small> <?php echo trad("Publié le") ?> <?php echo date("d/m/Y", strtotime($advice['date_publication'])) ?> <?php echo trad("par") ?> <a class="linkToVisitProfile" href="profileVisit.php?visitedId=<?php echo $advice['id_service_provider'] ?>"> <?php echo htmlspecialchars($advice['name']) ?> <?php echo htmlspecialchars($advice['surname']) ?> <?php echo trad("alias") ?> <?php echo htmlspecialchars($advice['username']) ?> </a> - <?php echo htmlspecialchars(trad($advice['profession'])) ?> </small></p>
 
                             </div>
 

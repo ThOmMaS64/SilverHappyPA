@@ -76,47 +76,22 @@ func Login(database *sql.DB) http.HandlerFunc {
 
 		} 
 
-		if status == 1 || status == 2 {
+		updateStatement, updateError := database.Prepare("UPDATE USER_ SET last_connection = NOW() WHERE ID_USER = ?")
 
-			updateStatement, updateError := database.Prepare("UPDATE CONSUMER SET last_connection = NOW() WHERE ID_USER = ?")
+		if updateError != nil{
 
-			if updateError != nil{
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=system4", 303)
+			return 			
 
-				http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=system4", 303)
-				return 			
+		}
+		defer updateStatement.Close()
 
-			}
-			defer updateStatement.Close()
+		_, updateExecError := updateStatement.Exec(userID)
 
-			_, updateExecError := updateStatement.Exec(userID)
+		if updateExecError != nil{
 
-			if updateExecError != nil{
-
-				http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=system5", 303)
-				return 					
-
-			}
-
-		} else if status == 3 {
-
-			updateStatement, updateError := database.Prepare("UPDATE SERVICE_PROVIDER SET last_connection = NOW() WHERE ID_USER = ?")
-
-			if updateError != nil{
-
-				http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=system4", 303)
-				return 			
-
-			}
-			defer updateStatement.Close()
-
-			_, updateExecError := updateStatement.Exec(userID)
-
-			if updateExecError != nil{
-
-				http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=system5", 303)
-				return 					
-
-			}
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/connexion.php?error=system5", 303)
+			return 					
 
 		}
 

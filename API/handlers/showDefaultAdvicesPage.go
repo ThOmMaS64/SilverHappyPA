@@ -13,6 +13,7 @@ type Advice struct {
 	Theme string `json:"theme"`
 	Description string `json:"description"`
 	DatePublication string `json:"date_publication"`
+	IdServiceProvider string `json:"id_service_provider"`
 	Profession string `json:"profession"`
 	Name string `json:"name"`
 	Surname string `json:"surname"`
@@ -69,7 +70,7 @@ func ShowDefaultAdvicesPage(database *sql.DB) http.HandlerFunc {
 		}
 		
 
-		rowSelectAdvices, errSelectAdvices := database.Query("SELECT ADVICE.ID_ADVICE, ADVICE.title, ADVICE.theme, ADVICE.description, ADVICE.date_publication, SERVICE_PROVIDER.profession, USER_.name, USER_.surname, USER_.username, (USER_INTERACTION_ADVICE.ID_USER IS NOT NULL) AS is_saved FROM ADVICE JOIN SERVICE_PROVIDER ON ADVICE.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER JOIN USER_ ON SERVICE_PROVIDER.ID_USER = USER_.ID_USER LEFT JOIN USER_INTERACTION_ADVICE ON ADVICE.ID_ADVICE = USER_INTERACTION_ADVICE.ID_ADVICE AND USER_INTERACTION_ADVICE.ID_USER = ?", userId)
+		rowSelectAdvices, errSelectAdvices := database.Query("SELECT ADVICE.ID_ADVICE, ADVICE.title, ADVICE.theme, ADVICE.description, ADVICE.date_publication, SERVICE_PROVIDER.ID_SERVICE_PROVIDER, SERVICE_PROVIDER.profession, USER_.name, USER_.surname, USER_.username, (USER_INTERACTION_ADVICE.ID_USER IS NOT NULL) AS is_saved FROM ADVICE JOIN SERVICE_PROVIDER ON ADVICE.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER JOIN USER_ ON SERVICE_PROVIDER.ID_USER = USER_.ID_USER LEFT JOIN USER_INTERACTION_ADVICE ON ADVICE.ID_ADVICE = USER_INTERACTION_ADVICE.ID_ADVICE AND USER_INTERACTION_ADVICE.ID_USER = ?", userId)
 	
 		if errSelectAdvices != nil{
 
@@ -86,7 +87,7 @@ func ShowDefaultAdvicesPage(database *sql.DB) http.HandlerFunc {
 
 			var advice Advice
 
-			err := rowSelectAdvices.Scan(&advice.IdAdvice, &advice.Title, &advice.Theme, &advice.Description, &advice.DatePublication, &advice.Profession, &advice.Name, &advice.Surname, &advice.Username, &advice.IsSaved)
+			err := rowSelectAdvices.Scan(&advice.IdAdvice, &advice.Title, &advice.Theme, &advice.Description, &advice.DatePublication, &advice.IdServiceProvider, &advice.Profession, &advice.Name, &advice.Surname, &advice.Username, &advice.IsSaved)
 
 			if err == nil{
 

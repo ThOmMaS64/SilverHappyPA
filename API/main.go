@@ -36,6 +36,8 @@ func main() {
 	http.HandleFunc("/saveUnsaveAdvice", handlers.SaveUnsaveAdvice(database))
 	http.HandleFunc("/updateProfilPicture", handlers.UpdateProfilPicture(database))
 	http.HandleFunc("/showSavedAdvices", handlers.ShowSavedAdvices(database))
+	http.HandleFunc("/getVisitedPageData", handlers.GetVisitedPageData(database))
+	http.HandleFunc("/personalizeKeyWordDescription", handlers.PersonalizeKeyWordDescription(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 
