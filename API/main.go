@@ -38,6 +38,7 @@ func main() {
 	http.HandleFunc("/showSavedAdvices", handlers.ShowSavedAdvices(database))
 	http.HandleFunc("/getVisitedPageData", handlers.GetVisitedPageData(database))
 	http.HandleFunc("/personalizeKeyWordDescription", handlers.PersonalizeKeyWordDescription(database))
+	http.HandleFunc("/showUpdatedData", handlers.ShowUpdatedData(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 

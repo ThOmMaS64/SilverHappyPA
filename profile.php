@@ -13,26 +13,38 @@
 
     if(isset($_GET['notif']) && $_GET['notif'] == "profile_picture_changement_success"){
 
-        $q = 'SELECT profilePicture FROM USER_ WHERE ID_USER = :id';
-        $req = $bdd->prepare($q);
-        $req->execute(['id' => $_SESSION['id']]);
-        $userInfo = $req->fetch(PDO::FETCH_ASSOC);
+        $dataJson = file_get_contents("http://localhost:8081/showUpdatedData?id=".$_SESSION['id']."&ask=1");
 
-        $_SESSION['profilePicture'] = $userInfo['profilePicture'];
+        if($dataJson){
+
+            $response = json_decode($dataJson, true);
+
+            if(isset($response['profilePicture'])){
+
+                $_SESSION['profilePicture'] = $response['profilePicture'];
+
+            }
+        }
 
     }
 
     if(isset($_GET['notif']) && $_GET['notif'] == "description_keyword_update_success"){
 
-        $q = 'SELECT description, keyWord1, keyWord2, keyWord3 FROM USER_ WHERE ID_USER = :id';
-        $req = $bdd->prepare($q);
-        $req->execute(['id' => $_SESSION['id']]);
-        $userInfo = $req->fetch(PDO::FETCH_ASSOC);
+        $dataJson = file_get_contents("http://localhost:8081/showUpdatedData?id=".$_SESSION['id']."&ask=2");
 
-        $_SESSION['description'] = $userInfo['description'];
-        $_SESSION['keyWord1'] = $userInfo['keyWord1'];
-        $_SESSION['keyWord2'] = $userInfo['keyWord2'];
-        $_SESSION['keyWord3'] = $userInfo['keyWord3'];
+        if($dataJson){
+
+            $response = json_decode($dataJson, true);
+
+            if(isset($response['description'])){
+
+                $_SESSION['description'] = $response['description'];
+                $_SESSION['keyWord1'] = $response['keyWord1'];
+                $_SESSION['keyWord2'] = $response['keyWord2'];
+                $_SESSION['keyWord3'] = $response['keyWord3'];
+
+            }
+        }
 
     }
 

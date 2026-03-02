@@ -2,12 +2,18 @@
 
     if(isset($_GET['notif']) && $_GET['notif'] == "profile_picture_changement_success"){
 
-        $q = 'SELECT profilePicture FROM USER_ WHERE ID_USER = :id';
-        $req = $bdd->prepare($q);
-        $req->execute(['id' => $_SESSION['id']]);
-        $userInfo = $req->fetch(PDO::FETCH_ASSOC);
+        $dataJson = file_get_contents("http://localhost:8081/showSavedAdvices?id=".$_SESSION['id']."&ask=1");
 
-        $_SESSION['profilePicture'] = $userInfo['profilePicture'];
+        if($dataJson){
+
+            $response = json_decode($dataJson, true);
+
+            if(isset($response['profile_picture'])){
+
+                $_SESSION['profilePicture'] = $response['profilePicture'];
+
+            }
+        }
 
     }
 
