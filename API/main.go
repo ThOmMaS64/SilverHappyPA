@@ -40,6 +40,12 @@ func main() {
 	http.HandleFunc("/personalizeKeyWordDescription", handlers.PersonalizeKeyWordDescription(database))
 	http.HandleFunc("/showUpdatedData", handlers.ShowUpdatedData(database))
 
+	http.HandleFunc("/backShowConn", handlers.BackShowConn(database))
+	http.HandleFunc("/backShowUsers", handlers.BackShowUsers(database))
+	http.HandleFunc("/backShowShop", handlers.BackShowShop(database))
+	http.HandleFunc("/backShowEvents", handlers.BackShowEvents(database))
+	http.HandleFunc("/backShowTips", handlers.BackShowTips(database))
+
 	listenError := http.ListenAndServe(":8081", nil)
 
 	if listenError != nil {

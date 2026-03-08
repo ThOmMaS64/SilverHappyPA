@@ -13,6 +13,97 @@
 </head>
 <?php
 session_start();
+$dataConn = file_get_contents("http://localhost:8081/backShowConn");
+$dataUser = file_get_contents("http://localhost:8081/backShowUsers");
+$dataShop = file_get_contents("http://localhost:8081/backShowShop");
+$dataEvent = file_get_contents("http://localhost:8081/backShowEvents");
+$dataTip = file_get_contents("http://localhost:8081/backShowTips");
+
+if($dataConn){
+
+    $usersC = json_decode($dataConn, true);
+    $_SESSION['listconn'] = array();
+
+    foreach($usersC as $user){
+        $userConn = array([
+            'ID_USER' => $user['ID_USER'],
+            'username' => $user['username'],
+            'email' => $user['email'],
+            'connected' => $user['connected']
+        ]);
+        $_SESSION['listconn'][] = $userConn;
+    }
+}
+
+if($dataUser){
+
+    $users = json_decode($dataUser, true);
+    $_SESSION['listusers'] = array();
+
+    foreach($users as $user){
+        $registeredUser = array([
+            'ID_USER' => $user['ID_USER'],
+            'username' => $user['username'],
+            'name' => $user['name'],
+            'surname' => $user['surname'],
+            'description' => $user['description'],
+            'email' => $user['email'],
+            'status' => $user['status']
+        ]);
+        $_SESSION['listusers'][] = $registeredUser;
+    }
+}
+
+if($dataShop){
+
+    $shop = json_decode($dataShop, true);
+    $_SESSION['listshop'] = array();
+
+    foreach($shop as $product){
+        $registeredProduct = array([
+            'ID_PRODUCT' => $product['ID_PRODUCT'],
+            'name' => $product['name'],
+            'type' => $product['type'],
+            'description' => $product['description'],
+            'price' => $product['price']
+        ]);
+        $_SESSION['listshop'][] = $registeredProduct;
+    }
+}
+
+if($dataEvent){
+
+    $events = json_decode($dataEvent, true);
+    $_SESSION['listevents'] = array();
+
+    foreach($events as $event){
+        $registeredEvents = array([
+            'ID_EVENT' => $event['ID_EVENT'],
+            'name' => $event['name'],
+            'type' => $event['type'],
+            'date_' => $event['date_'],
+            'description' => $event['description']
+        ]);
+        $_SESSION['listevents'][] = $registeredEvents;
+    }
+}
+
+if($dataTip){
+
+    $tips = json_decode($dataTip, true);
+    $_SESSION['listtips'] = array();
+
+    foreach($tips as $tip){
+        $registeredTips = array([
+            'ID_ADVICE' => $tip['ID_ADVICE'],
+            'title' => $tip['title'],
+            'theme' => $tip['theme'],
+            'description' => $tip['description'],
+            'date_publication' => $tip['date_publication']
+        ]);
+        $_SESSION['listtips'][] = $registeredTips;
+    }
+}
 ?>
 <body onload="loadWelcome()">
     <header>
@@ -162,7 +253,7 @@ session_start();
 
                                         echo '<td><input class="mediumtext" type="text" name="newusername[' . $_SESSION['listusers'][$i][0]['ID_USER'] . ']" value="' . $_SESSION['listusers'][$i][0]['username'] . '"></td>'; 
                                         
-                                        echo '<td><input class="mediumtext" type="text" name="newbirthdate[' . $_SESSION['listusers'][$i][0]['ID_USER'] . ']" value="' . $_SESSION['listusers'][$i][0]['birthdate'] . '"></td>';
+                                        echo '<td></td>';
                                         
                                         echo '<td><input class="mediumtext" type="text" name="newname[' . $_SESSION['listusers'][$i][0]['ID_USER'] . ']" value="' . $_SESSION['listusers'][$i][0]['name'] . '"></td>';
 
