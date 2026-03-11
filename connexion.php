@@ -31,7 +31,8 @@
 
             "registration_success" => trad("Inscription réussie, connectez-vous !"),
             "reset_success" => trad("Réinitialisation du mot de passe réussie, connectez-vous !"),
-            "forgottentPasswordEmailSent" => trad("Un email de réinitialisation de mot de passe vous a été envoyé à l'adresse que vous avez saisi.")
+            "forgottentPasswordEmailSent" => trad("Un email de réinitialisation de mot de passe vous a été envoyé à l'adresse que vous avez saisi."),
+            "need_connexion" => trad("Veuillez vous connecter en premier lieu."),
 
         ];
 
