@@ -23,6 +23,16 @@ type KeywordDescriptionResponse struct{
 
 }
 
+type ParametersChangesResponse struct{
+
+	DarkMode string `json:"darkMode"`
+	LevelFont string `json:"levelFont"`
+	FontChange string `json:"fontChange"`
+	CursorType string `json:"cursorType"`
+	Error string `json:"error"`
+
+}
+
 func ShowUpdatedData(database *sql.DB) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +51,7 @@ func ShowUpdatedData(database *sql.DB) http.HandlerFunc {
 
 			if errUser != nil {
 
-				response.Error = "Erreur lors du changement de la photo de profil, votre photo de profil se mettra à jour à votre prochaine connexion."
+				response.Error = "Erreur lors du chargement de la photo de profil, votre photo de profil se mettra à jour d'ici votre prochaine connexion."
 				json.NewEncoder(w).Encode(response)
 				return 
 
@@ -65,7 +75,7 @@ func ShowUpdatedData(database *sql.DB) http.HandlerFunc {
 
 			if errUser != nil {
 
-				response.Error = "Erreur lors du changement de vos informations, vos informations se mettrons à jour à votre prochaine connexion."
+				response.Error = "Erreur lors du chargement de vos informations, vos informations se mettrons à jour d'ici votre prochaine connexion."
 				json.NewEncoder(w).Encode(response)
 				return 
 
@@ -75,6 +85,34 @@ func ShowUpdatedData(database *sql.DB) http.HandlerFunc {
 			response.KeyWord1 = keyword1
 			response.KeyWord2 = keyword2
 			response.KeyWord3 = keyword3
+
+			json.NewEncoder(w).Encode(response)
+
+		}else if ask == "3"{
+
+			var darkMode string
+			var levelFont string
+			var fontChange string
+			var cursorType string
+
+			var response ParametersChangesResponse
+
+			rowUser := database.QueryRow("SELECT darkMode, levelFont, fontChange, cursorType FROM user_ WHERE ID_USER = ?", userId)
+		
+			errUser := rowUser.Scan(&darkMode, &levelFont, &fontChange, &cursorType)
+
+			if errUser != nil {
+
+				response.Error = "Erreur lors du chargement de vos informations, vos informations se mettrons à jour d'ici votre prochaine connexion."
+				json.NewEncoder(w).Encode(response)
+				return 
+
+			}	
+
+			response.DarkMode = darkMode
+			response.LevelFont = levelFont
+			response.FontChange = fontChange
+			response.CursorType = cursorType
 
 			json.NewEncoder(w).Encode(response)
 

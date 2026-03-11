@@ -2,7 +2,7 @@
 
     if(isset($_GET['notif']) && $_GET['notif'] == "profile_picture_changement_success"){
 
-        $dataJson = file_get_contents("http://localhost:8081/showSavedAdvices?id=".$_SESSION['id']."&ask=1");
+        $dataJson = file_get_contents("http://localhost:8081/showUpdatedData?id=".$_SESSION['id']."&ask=1");
 
         if($dataJson){
 

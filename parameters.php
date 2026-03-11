@@ -9,16 +9,20 @@
 
     if(isset($_GET['need']) && $_GET['need'] == "call_bdd_back"){
 
-        $q = 'SELECT darkMode, levelFont, fontChange, cursorType FROM USER_ WHERE ID_USER = :id';
-        $req = $bdd->prepare($q);
-        $req->execute(['id' => $_SESSION['id']]);
-        $userInfo = $req->fetch(PDO::FETCH_ASSOC);
+        $dataJson = file_get_contents("http://localhost:8081/showUpdatedData?id=".$_SESSION['id']."&ask=3");
 
-        if($userInfo){
-            $_SESSION['darkMode'] = $userInfo['darkMode'];
-            $_SESSION['levelFont'] = $userInfo['levelFont'];
-            $_SESSION['fontChange'] = $userInfo['fontChange'];
-            $_SESSION['cursorType'] = $userInfo['cursorType'];
+        if($dataJson){
+
+            $response = json_decode($dataJson, true);
+
+            if(isset($response['darkMode']) && isset($response['levelFont']) && isset($response['fontChange']) && isset($response['cursorType'])){
+
+                $_SESSION['darkMode'] = $response['darkMode'];
+                $_SESSION['levelFont'] = $response['levelFont'];
+                $_SESSION['fontChange'] = $response['fontChange'];
+                $_SESSION['cursorType'] = $response['cursorType'];
+
+            }
         }
 
     }

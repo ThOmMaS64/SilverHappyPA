@@ -46,6 +46,8 @@
             }
         }
 
+        $_SESSION['personalizeInputs'] = 0;
+
     }
 
     if(isset($_GET['notif']) && $_GET['notif'] == "cancel_success"){
