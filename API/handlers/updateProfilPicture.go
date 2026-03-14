@@ -26,7 +26,7 @@ func UpdateProfilPicture(database *sql.DB) http.HandlerFunc {
 
 		filename := "user_" + id + filepath.Ext(header.Filename)
 
-		pathName := "../imagesData/profils/" + filename
+		pathName := "../data/profils/" + filename
 
 		out, err := os.Create(pathName)
 

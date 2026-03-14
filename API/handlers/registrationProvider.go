@@ -6,11 +6,48 @@ import (
 	"io"
 	"net/http"
 	"net/mail"
+	"os"
 	"strings"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
+
+func saveDocument(file []byte, docType string, username string, database *sql.DB, idServiceProvider int){
+	if len(file) == 0{
+		return
+	}
+
+	filename := fmt.Sprintf("%s_%s.pdf", docType, username)
+	pathname := "../data/documents/" + filename
+
+	out, err := os.Create(pathname)
+
+	if err != nil {
+		return
+	}
+	defer out.Close()
+
+	_, err = out.Write(file)
+	if err != nil {
+		return
+	}
+
+	insertStatementDoc, insertErrorDoc := database.Prepare("INSERT INTO SERVICE_PROVIDER_DOCUMENT(type, docPath, uploadDate, ID_SERVICE_PROVIDER) VALUES(?, ?, ?, ?)")
+
+	if insertErrorDoc != nil{
+		return	
+	}
+	defer insertStatementDoc.Close()
+
+	uploadDate := time.Now().Format("2006-01-02")
+
+	_, insertExecErrorCustomer := insertStatementDoc.Exec(docType, filename, uploadDate, idServiceProvider)
+
+	if insertExecErrorCustomer != nil{
+		return	
+	}
+}
 
 func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
@@ -46,13 +83,6 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 		captchaResponse := r.FormValue("captcha_response")
 		captchaID := r.FormValue("captcha_id")		
 
-		file1, _, _ := r.FormFile("diploma")
-		var diplomaBlob []byte
-		if file1 != nil {
-			defer file1.Close()
-			diplomaBlob, _ = io.ReadAll(file1)
-		}
-
 		file2, _, _ := r.FormFile("criminalRecord")
 		var criminalrecordBlob []byte
 		if file2 != nil {
@@ -60,14 +90,7 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 			criminalrecordBlob, _ = io.ReadAll(file2)
 		}
 
-		file3, _, _ := r.FormFile("recommendationLetter")
-		var recommendationLetterBlob []byte
-		if file3 != nil {
-			defer file3.Close()
-			recommendationLetterBlob, _ = io.ReadAll(file3)
-		}
-
-		if (username == "" || name == "" || surname == "" || profession == "" || password == "" || passwordConfirmation == "" || email == "" || diplomaBlob == nil || city == "" || street == "" || streetNumber == "" || postalCode == "" || criminalrecordBlob == nil || captchaResponse == "" || captchaID == ""){
+		if (username == "" || name == "" || surname == "" || profession == "" || password == "" || passwordConfirmation == "" || email == "" || city == "" || street == "" || streetNumber == "" || postalCode == "" || criminalrecordBlob == nil || captchaResponse == "" || captchaID == ""){
 
 			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=missing_field&choice=2", 303)
 			return
@@ -99,11 +122,10 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		var id int
 		var status int
-		var addressId int
 
-		row := database.QueryRow("SELECT ID_USER, status, ID_ADDRESS FROM user_ WHERE username = ?", username)
+		row := database.QueryRow("SELECT ID_USER, status FROM user_ WHERE username = ?", username)
 	
-		err := row.Scan(&id, &status, &addressId)
+		err := row.Scan(&id, &status)
 
 		if err == nil {
 
@@ -112,7 +134,6 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 				database.Exec("DELETE FROM CONSUMER WHERE ID_USER = ?", id)
 				database.Exec("DELETE FROM SERVICE_PROVIDER WHERE ID_USER = ?", id)
 				database.Exec("DELETE FROM USER_ WHERE ID_USER = ?", id)
-				database.Exec("DELETE FROM ADDRESS WHERE ID_ADDRESS = ?", addressId)
 
 			} else {
 
@@ -128,9 +149,9 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		rowEmail := database.QueryRow("SELECT ID_USER, status, ID_ADDRESS FROM user_ WHERE email = ?", email)
+		rowEmail := database.QueryRow("SELECT ID_USER, status FROM user_ WHERE email = ?", email)
 	
-		errEmail := rowEmail.Scan(&id, &status, &addressId)
+		errEmail := rowEmail.Scan(&id, &status)
 
 		if errEmail == nil {
 
@@ -139,7 +160,6 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 				database.Exec("DELETE FROM CONSUMER WHERE ID_USER = ?", id)
 				database.Exec("DELETE FROM SERVICE_PROVIDER WHERE ID_USER = ?", id)
 				database.Exec("DELETE FROM USER_ WHERE ID_USER = ?", id)
-				database.Exec("DELETE FROM ADDRESS WHERE ID_ADDRESS = ?", addressId)
 
 			}else{
 				
@@ -182,29 +202,7 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		insertStatementAddress, insertErrorAddress := database.Prepare("INSERT INTO ADDRESS(city, street, nb_street, postal_code) VALUES(?, ?, ?, ?)")
-
-		if insertErrorAddress != nil{
-
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=system5&choice=2", 303)
-			return	
-
-		}
-
-		defer insertStatementAddress.Close()
-
-		resAddress, insertExecErrorAddress := insertStatementAddress.Exec(city, street, streetNumber, postalCode)
-
-		if insertExecErrorAddress != nil{
-
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=system6&choice=2", 303)
-			return	
-
-		}
-
-		idAddress, _ := resAddress.LastInsertId()
-
-		insertStatementUser, insertErrorUser := database.Prepare("INSERT INTO USER_(username, password, email, name, surname, status, date_inscription, ID_ADDRESS) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")
+		insertStatementUser, insertErrorUser := database.Prepare("INSERT INTO USER_(username, password, email, name, surname, city, street, nb_street, postal_code, status, date_inscription) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
 		if insertErrorUser != nil{
 
@@ -215,7 +213,7 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 		defer insertStatementUser.Close()
 
 		date_inscription := time.Now().Format("2006-01-02")
-		resUser, insertExecErrorUser := insertStatementUser.Exec(username, string(hashedPassword), email, name, surname, -2, date_inscription, idAddress)
+		resUser, insertExecErrorUser := insertStatementUser.Exec(username, string(hashedPassword), email, name, surname, city, street, streetNumber, postalCode, -2, date_inscription)
 
 		if insertExecErrorUser != nil{
 
@@ -226,7 +224,7 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		idUser, _ := resUser.LastInsertId()
 
-		insertStatementConsumer, insertErrorConsumer := database.Prepare("INSERT INTO SERVICE_PROVIDER(profession, police_record, recommandation_letter, degree, ID_USER) VALUES(?, ?, ?, ?, ?)")
+		insertStatementConsumer, insertErrorConsumer := database.Prepare("INSERT INTO SERVICE_PROVIDER(profession, ID_USER) VALUES(?, ?)")
 
 		if insertErrorConsumer != nil{
 
@@ -236,7 +234,7 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 		}
 		defer insertStatementConsumer.Close()
 
-		_, insertExecErrorCustomer := insertStatementConsumer.Exec(profession, criminalrecordBlob,recommendationLetterBlob, diplomaBlob , idUser)
+		resServiceProvider, insertExecErrorCustomer := insertStatementConsumer.Exec(profession, idUser)
 
 		if insertExecErrorCustomer != nil{
 
@@ -244,6 +242,10 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 			return	
 
 		}
+
+		idServiceProvider, _ := resServiceProvider.LastInsertId()
+
+		saveDocument(criminalrecordBlob, "criminal_record", username, database, int(idServiceProvider))
 
 		url := fmt.Sprintf("http://localhost/ProjetAnnuel/codeVerif.php?id=%d&email=%s&name=%s&status=-2", idUser, email, name)
 

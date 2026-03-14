@@ -114,7 +114,7 @@
 
                                             <?php if(!empty($_SESSION['profilePicture'])){ ?>
 
-                                                <img src="imagesData/profils/<?php echo htmlspecialchars($_SESSION['profilePicture']); ?>" alt="Photo de profil" class="profilePagePicture">
+                                                <img src="data/profils/<?php echo htmlspecialchars($_SESSION['profilePicture']); ?>" alt="Photo de profil" class="profilePagePicture">
 
                                             <?php }else{ ?>
 

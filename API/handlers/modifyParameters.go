@@ -102,7 +102,7 @@ func ModifyParameters(database *sql.DB) http.HandlerFunc {
 
 			var stripeSubId sql.NullString
 
-			rowStripe := database.QueryRow("SELECT stripe_subscription_id FROM USER_ WHERE ID_USER = ?", id)
+			rowStripe := database.QueryRow("SELECT stripe_subscription_id FROM CONSUMER WHERE ID_USER = ?", id)
 			errorStripe := rowStripe.Scan(&stripeSubId)
 
 			if errorStripe == nil && stripeSubId.Valid && stripeSubId.String != ""{
@@ -138,9 +138,10 @@ func ModifyParameters(database *sql.DB) http.HandlerFunc {
 					"DELETE FROM CONTRACT WHERE ID_CONSUMER = ?",
 					"DELETE FROM NOTIFICATION WHERE ID_CONSUMER = ?",
 					"DELETE FROM GRADE WHERE ID_CONSUMER = ?",
-					"DELETE FROM BUY WHERE ID_CONSUMER = ?",
 					"DELETE FROM PARTICIPATE WHERE ID_CONSUMER = ?",
 					"DELETE FROM CALL_ WHERE ID_CONSUMER = ?",
+					"DELETE FROM ORDER_LINE WHERE ID_SHOP_ORDER IN (SELECT ID_SHOP_ORDER FROM SHOP_ORDER WHERE ID_CONSUMER = ?)",
+					"DELETE FROM SHOP_ORDER WHERE ID_CONSUMER = ?",
 					"DELETE FROM CONSUMER WHERE ID_CONSUMER = ?",
 
 				}
@@ -169,6 +170,7 @@ func ModifyParameters(database *sql.DB) http.HandlerFunc {
 					"DELETE FROM OFFER WHERE ID_SERVICE_PROVIDER = ?",
 					"DELETE FROM DO WHERE ID_SERVICE_PROVIDER = ?",
 					"DELETE FROM CONDUCT WHERE ID_SERVICE_PROVIDER = ?",
+					"DELETE FROM SERVICE_PROVIDER_DOCUMENT WHERE ID_SERVICE_PROVIDER = ?",
 					"DELETE FROM SERVICE_PROVIDER WHERE ID_SERVICE_PROVIDER = ?",
 
 				}
@@ -190,22 +192,37 @@ func ModifyParameters(database *sql.DB) http.HandlerFunc {
 
 			queriesUser := []string{
 
-				"DELETE FROM MESSAGE WHERE ID_USER = ?",
+				"DELETE FROM MESSAGE WHERE sender_id = ? OR receiver_id = ?",
 				"DELETE FROM TOKEN WHERE ID_USER = ?",
 				"DELETE FROM PLANNING WHERE ID_USER = ?",
-				"DELETE FROM SUBSCRIBE WHERE ID_USER = ?",
+				"DELETE FROM USER_INTERACTION_ADVICE WHERE ID_USER = ?",
 				"DELETE FROM USER_ WHERE ID_USER = ?",
 
 			}
 				
 			for _, query := range queriesUser {
 
-				_, err := database.Exec(query, id)
+				if query == "DELETE FROM MESSAGE WHERE sender_id = ? OR receiver_id = ?" {
 
-				if err != nil {
+					_, err := database.Exec(query, id, id)
 
-					http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system6", 303)
+					if err != nil {
+
+						http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system6", 303)
 					return 
+
+					}
+
+				}else{
+
+					_, err := database.Exec(query, id)
+
+					if err != nil {
+
+						http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system7", 303)
+						return 
+
+					}
 
 				}
 

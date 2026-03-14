@@ -40,7 +40,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="services.php"><?php echo trad("Nos services") ?></a>
+                    <a class="nav-link active" aria-current="page" href="services.php"><?php echo trad("Prestations") ?></a>
                     </li>
                     <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="events.php"><?php echo trad("Événements") ?></a>
@@ -52,13 +52,13 @@
                     <a class="nav-link active" aria-current="page" href="advices.php"><?php echo trad("Conseils") ?></a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="messaging.php"><?php echo trad("Messagerie/téléconsultation") ?></a>
+                    <a class="nav-link active" aria-current="page" href="messaging.php"><?php echo trad("Communications") ?></a>
                     </li>
                     <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <?php if(!empty($_SESSION['profilePicture'])){ ?>
 
-                            <img src="imagesData/profils/<?php echo htmlspecialchars($_SESSION['profilePicture']); ?>" alt="Photo de profil" class="headerPicture">
+                            <img src="data/profils/<?php echo htmlspecialchars($_SESSION['profilePicture']); ?>" alt="Photo de profil" class="headerPicture">
 
                         <?php }else{ ?>
 
@@ -162,13 +162,13 @@
                     <a class="nav-link active" aria-current="page" href="planning.php"><?php echo trad("Mon planning") ?></a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="messaging.php"><?php echo trad("Messagerie/téléconsultation") ?></a>
+                    <a class="nav-link active" aria-current="page" href="messaging.php"><?php echo trad("Communications") ?></a>
                     </li>
                     <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <?php if(!empty($_SESSION['profilePicture'])){ ?>
 
-                            <img src="imagesData/profils/<?php echo htmlspecialchars($_SESSION['profilePicture']); ?>" alt="Photo de profil" class="headerPicture">
+                            <img src="data/profils/<?php echo htmlspecialchars($_SESSION['profilePicture']); ?>" alt="Photo de profil" class="headerPicture">
 
                         <?php }else{ ?>
 
@@ -265,7 +265,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="services.php"><?php echo trad("Nos services") ?></a>
+                    <a class="nav-link active" aria-current="page" href="services.php"><?php echo trad("Prestations") ?></a>
                     </li>
                     <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="events.php"><?php echo trad("Événements") ?></a>
@@ -277,7 +277,7 @@
                     <a class="nav-link active" aria-current="page" href="advices.php"><?php echo trad("Conseils") ?></a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="messaging.php"><?php echo trad("Messagerie/téléconsultation") ?></a>
+                    <a class="nav-link active" aria-current="page" href="messaging.php"><?php echo trad("Communications") ?></a>
                     </li>
                     <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">

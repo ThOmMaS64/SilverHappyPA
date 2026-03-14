@@ -67,7 +67,7 @@ $mail = new PHPMailer(true);
         $text1 = trad("Cliquez ");
         $text2 = trad("ICI"); 
         $text3 = trad(" afin de réinitialiser votre mot de passe Silver Happy. Vous pourrez en configurer un nouveau et retrouver l\'accès à votre compte !");
-        $text4 = trad("L\'équipe Silver Happy"); 
+        $text4 = trad("L'équipe Silver Happy"); 
         $text5 = trad("Lien valide pour une durée de 1 heure à compter de l\'envoi."); 
 
         $mail->Body = '

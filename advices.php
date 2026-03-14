@@ -7,7 +7,7 @@
 
         if(isset($_POST['saveUnsaveAdvice'])){
 
-             $responseSaveUnsave = file_get_contents("http://localhost:8081/saveUnsaveAdvice?id=".$_SESSION['id']."&id_advice=".$_POST['saveUnsaveAdvice']);
+            $responseSaveUnsave = file_get_contents("http://localhost:8081/saveUnsaveAdvice?id=".$_SESSION['id']."&id_advice=".$_POST['saveUnsaveAdvice']);
 
             if($responseSaveUnsave == "save_success"){
 
@@ -192,7 +192,7 @@
                                         <form method="POST" action="">
                                             <input type="hidden" name="saveUnsaveAdvice" value="<?php echo htmlspecialchars($advice['id_advice']); ?>"></input>
                                             <?php if(!$advice['is_saved']){ ?>
-                                                <button type="button" class="saveUnsaveButton" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'" <?php } ?>>
+                                                <button type="<?php echo isset($_SESSION['id']) ? 'submit' : 'button'; ?>" class="saveUnsaveButton" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'" <?php } ?>>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bookmark" viewBox="0 0 16 16">
                                                         <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
                                                     </svg>

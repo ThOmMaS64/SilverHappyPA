@@ -105,11 +105,10 @@ func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
 
 		var id int
 		var status int
-		var addressId int
 
-		row := database.QueryRow("SELECT ID_USER, status, ID_ADDRESS FROM user_ WHERE username = ?", username)
+		row := database.QueryRow("SELECT ID_USER, status FROM user_ WHERE username = ?", username)
 	
-		err := row.Scan(&id, &status, &addressId)
+		err := row.Scan(&id, &status)
 
 		if err == nil {
 
@@ -118,7 +117,6 @@ func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
 				database.Exec("DELETE FROM CONSUMER WHERE ID_USER = ?", id)
 				database.Exec("DELETE FROM SERVICE_PROVIDER WHERE ID_USER = ?", id)
 				database.Exec("DELETE FROM USER_ WHERE ID_USER = ?", id)
-				database.Exec("DELETE FROM ADDRESS WHERE ID_ADDRESS = ?", addressId)
 
 			} else {
 
@@ -134,9 +132,9 @@ func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		rowEmail := database.QueryRow("SELECT ID_USER, status, ID_ADDRESS FROM user_ WHERE email = ?", email)
+		rowEmail := database.QueryRow("SELECT ID_USER, status FROM user_ WHERE email = ?", email)
 	
-		errEmail := rowEmail.Scan(&id, &status, &addressId)
+		errEmail := rowEmail.Scan(&id, &status)
 
 		if errEmail == nil {
 
@@ -146,7 +144,6 @@ func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
 				database.Exec("DELETE FROM CONSUMER WHERE ID_USER = ?", id)
 				database.Exec("DELETE FROM SERVICE_PROVIDER WHERE ID_USER = ?", id)
 				database.Exec("DELETE FROM USER_ WHERE ID_USER = ?", id)
-				database.Exec("DELETE FROM ADDRESS WHERE ID_ADDRESS = ?", addressId)
 
 			}else{
 				
@@ -189,29 +186,7 @@ func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		insertStatementAddress, insertErrorAddress := database.Prepare("INSERT INTO ADDRESS(city, street, nb_street, postal_code) VALUES(?, ?, ?, ?)")
-
-		if insertErrorAddress != nil{
-
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=system7&choice=1", 303)
-			return	
-
-		}
-
-		defer insertStatementAddress.Close()
-
-		resAddress, insertExecErrorAddress := insertStatementAddress.Exec(city, street, streetNumber, postalCode)
-
-		if insertExecErrorAddress != nil{
-
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=syste85&choice=1", 303)
-			return	
-
-		}
-
-		idAddress, _ := resAddress.LastInsertId()
-
-		insertStatementUser, insertErrorUser := database.Prepare("INSERT INTO USER_(username, password, email, name, surname, status, date_inscription, ID_ADDRESS) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")
+		insertStatementUser, insertErrorUser := database.Prepare("INSERT INTO USER_(username, password, email, name, surname, city, street, nb_street, postal_code, status, date_inscription) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
 		if insertErrorUser != nil{
 
@@ -222,7 +197,7 @@ func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
 		defer insertStatementUser.Close()
 
 		date_inscription := time.Now().Format("2006-01-02")
-		resUser, insertExecErrorUser := insertStatementUser.Exec(username, string(hashedPassword), email, name, surname, -1, date_inscription, idAddress)
+		resUser, insertExecErrorUser := insertStatementUser.Exec(username, string(hashedPassword), email, name, surname, city, street, streetNumber, postalCode, -1, date_inscription)
 
 		if insertExecErrorUser != nil{
 
@@ -233,7 +208,7 @@ func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
 
 		idUser, _ := resUser.LastInsertId()
 
-		insertStatementConsumer, insertErrorConsumer := database.Prepare("INSERT INTO CONSUMER(birth_date, tuto_seen,ID_USER) VALUES(?, ?, ?)")
+		insertStatementConsumer, insertErrorConsumer := database.Prepare("INSERT INTO CONSUMER(birth_date, tuto_seen, ID_USER) VALUES(?, ?, ?)")
 
 		if insertErrorConsumer != nil{
 

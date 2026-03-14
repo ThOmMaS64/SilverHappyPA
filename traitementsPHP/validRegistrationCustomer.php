@@ -66,34 +66,41 @@
         case "monthly_standard":
 
             $status = 1;
-            $_SESSION['subscription'] = "nm";
+            $_SESSION['subscription'] = 1;
             break;
         
         case "annual_standard":
 
             $status = 2;
-            $_SESSION['subscription'] = "na";
+            $_SESSION['subscription'] = 2;
             break;
 
         case "monthly_renewal":
 
             $status = 5;
-            $_SESSION['subscription'] = "rm";
+            $_SESSION['subscription'] = 3;
             break;
 
         case "annual_renewal":
 
             $status = 6;
-            $_SESSION['subscription'] = "ra";
+            $_SESSION['subscription'] = 4;
             break;
 
     }
 
-    $q = 'UPDATE USER_ SET status = :status, SUBSCRIPTION = :subscription, stripe_subscription_id = :stripe_subscription_id WHERE ID_USER = :id';
+    $q = 'UPDATE USER_ SET status = :status WHERE ID_USER = :id';
     $statement = $bdd->prepare($q);
     $result = $statement->execute([
         'status' => $status,
-        'subscription' =>  $_SESSION['subscription'],
+
+        'id' => $_GET['id']
+    ]); 
+
+    $q = 'UPDATE CONSUMER SET ID_SUBSCRIPTION = :id_subscription, stripe_subscription_id = :stripe_subscription_id WHERE ID_USER = :id';
+    $statement = $bdd->prepare($q);
+    $result = $statement->execute([
+        'id_subscription' =>  $_SESSION['subscription'],
         'stripe_subscription_id' =>  $stripeSubId,
         'id' => $_GET['id']
     ]); 

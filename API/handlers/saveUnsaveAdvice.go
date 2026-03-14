@@ -12,7 +12,7 @@ func SaveUnsaveAdvice(database *sql.DB) http.HandlerFunc {
 		userId := r.FormValue("id")
 		adviceId := r.FormValue("id_advice")
 
-		var existingRow string
+		var existingRow int
 
 		row := database.QueryRow("SELECT ID_USER FROM USER_INTERACTION_ADVICE WHERE ID_USER = ? AND ID_ADVICE = ?", userId, adviceId)
 	
@@ -28,6 +28,7 @@ func SaveUnsaveAdvice(database *sql.DB) http.HandlerFunc {
 				return 
 
 			}
+			defer insertStatement.Close()
 
 			_, insertExecError := insertStatement.Exec(userId, adviceId)
 
@@ -51,6 +52,7 @@ func SaveUnsaveAdvice(database *sql.DB) http.HandlerFunc {
 				return 
 
 			}
+			defer deleteStatement.Close()
 
 			_, deleteErrorExecError := deleteStatement.Exec(userId, adviceId)
 

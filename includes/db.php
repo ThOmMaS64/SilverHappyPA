@@ -6,7 +6,7 @@
     try {
 
         $bdd = new PDO(
-            'mysql:host=localhost;dbname=silverhappy2;charset=utf8',
+            'mysql:host=localhost;dbname=silverhappy3;charset=utf8',
             $user,
             $password,
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]

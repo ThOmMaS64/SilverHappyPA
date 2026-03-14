@@ -14,6 +14,10 @@ type userDataResponse struct {
 	Email string `json:"email"`
 	Name string `json:"name"`
 	Surname string `json:"surname"`
+	City string `json:"city"`
+	Street string `json:"street"`
+	StreetNumber string `json:"streetNumber"`
+	PostalCode string `json:"postalCode"`
 	Description string `json:"description"`
 	KeyWord1 string `json:"keyWord1"`
 	KeyWord2 string `json:"keyWord2"`
@@ -56,6 +60,10 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		var cursorType string
 		var language string
 		var profilePicture string
+		var city string
+		var street string
+		var streetNumber string
+		var postalCode string
 
 		var response userDataResponse
 
@@ -94,9 +102,9 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		rowUser := database.QueryRow("SELECT name, surname, username, status, email, description, keyword1, keyword2, keyword3, date_inscription, darkMode, levelFont, fontChange, cursorType, language, profilePicture FROM user_ WHERE ID_USER = ?", id)
+		rowUser := database.QueryRow("SELECT name, surname, username, city, street, nb_street, postal_code, status, email, description, keyword1, keyword2, keyword3, date_inscription, darkMode, levelFont, fontChange, cursorType, language, profilePicture FROM user_ WHERE ID_USER = ?", id)
 		
-		errUser := rowUser.Scan(&name, &surname, &username, &status, &email, &description, &keyWord1, &keyWord2, &keyWord3, &dateInscription, &darkMode, &levelFont, &fontChange, &cursorType, &language, &profilePicture)
+		errUser := rowUser.Scan(&name, &surname, &username, &city, &street, &streetNumber, &postalCode, &status, &email, &description, &keyWord1, &keyWord2, &keyWord3, &dateInscription, &darkMode, &levelFont, &fontChange, &cursorType, &language, &profilePicture)
 
 		if errUser != nil {
 
@@ -111,6 +119,10 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		response.Name = name
 		response.Surname = surname
 		response.Username = username
+		response.City = city
+		response.Street = street
+		response.StreetNumber = streetNumber
+		response.PostalCode = postalCode
 		response.Email = email
 		response.Description = description
 		response.KeyWord1 = keyWord1

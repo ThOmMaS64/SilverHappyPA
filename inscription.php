@@ -270,7 +270,7 @@
                             </div> 
 
                             <div class="row mb-4">
-                                <div class="col-2">
+                                <div class="col-4">
                                     <label class="form-label"><?php echo trad("Rue") ?></label>
                                     <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="rue" required> 
                                 </div>
@@ -278,21 +278,13 @@
                                     <label class="form-label"><?php echo trad("Numéro de rue") ?></label>
                                     <input type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="numero" required> 
                                 </div>
-                                <div class="col-2">
+                                <div class="col-3">
                                     <label class="form-label"><?php echo trad("Code postal") ?></label>
                                     <input type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="postalCode" required> 
                                 </div>
-                                <div class="col-2">
-                                    <label class="form-label"><?php echo trad("Diplôme") ?></label>
-                                    <input type="file" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="diploma" required> 
-                                </div>
-                                <div class="col-2">
+                                <div class="col-3">
                                     <label class="form-label"><?php echo trad("Casier judiciaire") ?></label>
                                     <input type="file" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="criminalRecord" required> 
-                                </div>
-                                <div class="col-2">
-                                    <label class="form-label"><?php echo trad("Lettre de recommendation (optionnel") ?></label>
-                                    <input type="file" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="recommendationLetter"> 
                                 </div>
                             </div>
 
