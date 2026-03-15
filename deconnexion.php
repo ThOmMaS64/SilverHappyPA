@@ -2,6 +2,12 @@
 
 session_start();
 
+include("includes/db.php");
+
+$q = 'UPDATE USER_ SET connected = 0 WHERE ID_USER = :id';
+$statement = $bdd->prepare($q);
+$statement->execute(['id' => $_SESSION['id']]);
+
 session_unset(); 
 
 session_destroy();

@@ -1,4 +1,4 @@
-package handlers
+package handlersFront
 
 import (
 	"crypto/rand"
@@ -76,7 +76,7 @@ func Login(database *sql.DB) http.HandlerFunc {
 
 		} 
 
-		updateStatement, updateError := database.Prepare("UPDATE USER_ SET last_connection = NOW() WHERE ID_USER = ?")
+		updateStatement, updateError := database.Prepare("UPDATE USER_ SET last_connection = NOW(), connected = 1 WHERE ID_USER = ?")
 
 		if updateError != nil{
 
