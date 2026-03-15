@@ -1,7 +1,8 @@
 package main
 
 import (
-	"API/handlers"
+	"API/handlersBack"
+	"API/handlersFront"
 	"database/sql"
 	"log"
 	"net/http"
@@ -24,22 +25,28 @@ func main() {
 		log.Fatal("Erreur lors de la connexion à la bdd : ", connectError)
 	}
 
-	http.HandleFunc("/login", handlers.Login(database))
-	http.HandleFunc("/registrationCustomer", handlers.RegistrationCustomer(database))
-	http.HandleFunc("/registrationProvider", handlers.RegistrationProvider(database))
-	http.HandleFunc("/resetPassword", handlers.ResetPassword(database))
-	http.HandleFunc("/modifyParameters", handlers.ModifyParameters(database))
-	http.HandleFunc("/changeLanguage", handlers.ChangeLanguage(database))
-	http.HandleFunc("/contactForm", handlers.ContactForm(database))
-	http.HandleFunc("/showDefaultAdvicesPage", handlers.ShowDefaultAdvicesPage(database))
-	http.HandleFunc("/showPersonalizedAdvicesPage", handlers.ShowPersonalizedAdvicesPage(database))
-	http.HandleFunc("/saveUnsaveAdvice", handlers.SaveUnsaveAdvice(database))
-	http.HandleFunc("/updateProfilPicture", handlers.UpdateProfilPicture(database))
-	http.HandleFunc("/showSavedAdvices", handlers.ShowSavedAdvices(database))
-	http.HandleFunc("/getVisitedPageData", handlers.GetVisitedPageData(database))
-	http.HandleFunc("/personalizeKeyWordDescription", handlers.PersonalizeKeyWordDescription(database))
-	http.HandleFunc("/showUpdatedData", handlers.ShowUpdatedData(database))
-	http.HandleFunc("/getDataPutInSession", handlers.GetDataPutInSession(database))
+	http.HandleFunc("/login", handlersFront.Login(database))
+	http.HandleFunc("/registrationCustomer", handlersFront.RegistrationCustomer(database))
+	http.HandleFunc("/registrationProvider", handlersFront.RegistrationProvider(database))
+	http.HandleFunc("/resetPassword", handlersFront.ResetPassword(database))
+	http.HandleFunc("/modifyParameters", handlersFront.ModifyParameters(database))
+	http.HandleFunc("/changeLanguage", handlersFront.ChangeLanguage(database))
+	http.HandleFunc("/contactForm", handlersFront.ContactForm(database))
+	http.HandleFunc("/showDefaultAdvicesPage", handlersFront.ShowDefaultAdvicesPage(database))
+	http.HandleFunc("/showPersonalizedAdvicesPage", handlersFront.ShowPersonalizedAdvicesPage(database))
+	http.HandleFunc("/saveUnsaveAdvice", handlersFront.SaveUnsaveAdvice(database))
+	http.HandleFunc("/updateProfilPicture", handlersFront.UpdateProfilPicture(database))
+	http.HandleFunc("/showSavedAdvices", handlersFront.ShowSavedAdvices(database))
+	http.HandleFunc("/getVisitedPageData", handlersFront.GetVisitedPageData(database))
+	http.HandleFunc("/personalizeKeyWordDescription", handlersFront.PersonalizeKeyWordDescription(database))
+	http.HandleFunc("/showUpdatedData", handlersFront.ShowUpdatedData(database))
+	http.HandleFunc("/getDataPutInSession", handlersFront.GetDataPutInSession(database))
+
+	http.HandleFunc("/backShowShop", handlersBack.BackShowShop(database))
+	http.HandleFunc("/backShowEvents", handlersBack.BackShowEvents(database))
+	http.HandleFunc("/backShowTips", handlersBack.BackShowTips(database))
+	http.HandleFunc("/showUsersDefaultData", handlersBack.ShowUsersDefaultData(database))
+	http.HandleFunc("/showUsersPersonalizedData", handlersBack.ShowUsersPersonalizedData(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 

@@ -21,12 +21,12 @@
         $statement->execute();
         $results = $statement->fetchAll();
         foreach($results as $user){
-            $userConn = array([
+            $userConn = [
                 'ID_USER' => $user['ID_USER'],
                 'username' => $user['username'],
                 'email' => $user['email'],
                 'connected' => $user['connected']
-            ]);
+            ];
             $_SESSION['listconn'][] = $userConn;
         }
 
@@ -52,7 +52,7 @@
         $statement->execute();
         $results = $statement->fetchAll();
         foreach($results as $user){
-            $registeredUser = array([
+            $registeredUser = [
                 'ID_USER' => $user['ID_USER'],
                 'username' => $user['username'],
                 'birthdate' => $user['birthdate'],
@@ -61,7 +61,7 @@
                 'description' => $user['description'],
                 'email' => $user['email'],
                 'status' => $user['status']
-            ]);
+            ];
             $_SESSION['listusers'][] = $registeredUser;
         }
 
@@ -87,13 +87,13 @@
         $statement->execute();
         $results = $statement->fetchAll();
         foreach($results as $product){
-            $registeredProduct = array([
+            $registeredProduct = [
                 'ID_PRODUCT' => $product['ID_PRODUCT'],
                 'name' => $product['name'],
                 'type' => $product['type'],
                 'description' => $product['description'],
                 'price' => $product['price']
-            ]);
+            ];
             $_SESSION['listshop'][] = $registeredProduct;
         }
 
@@ -119,13 +119,13 @@
         $statement->execute();
         $results = $statement->fetchAll();
         foreach($results as $event){
-            $userEvents = array([
+            $userEvents = [
                 'ID_EVENT' => $event['ID_EVENT'],
                 'name' => $event['name'],
                 'type' => $event['type'],
                 'date_' => $event['date_'],
                 'description' => $event['description']
-            ]);
+            ];
             $_SESSION['listevents'][] = $userEvents;
         }
 
@@ -151,13 +151,13 @@
         $statement->execute();
         $results = $statement->fetchAll();
         foreach($results as $tip){
-            $tipValues = array([
+            $tipValues = [
                 'ID_ADVICE' => $tip['ID_ADVICE'],
                 'title' => $tip['title'],
                 'theme' => $tip['theme'],
                 'description' => $tip['description'],
                 'date_publication' => $tip['date_publication']
-            ]);
+            ];
             $_SESSION['listtips'][] = $tipValues;
         }
 
@@ -183,12 +183,12 @@
         $statement->execute();
         $results = $statement->fetchAll();
         foreach($results as $notif){
-            $notifValues = array([
+            $notifValues = [
                 'ID_NOTIFICATION' => $notif['ID_NOTIFICATION'],
                 'title' => $notif['title'],
                 'description' => $notif['description'],
                 'type' => $notif['type']
-            ]);
+            ];
             $_SESSION['listnotifs'][] = $notifValues;
         }
 

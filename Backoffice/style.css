@@ -12,21 +12,27 @@ body {
   background-color: #f2f6fa;
 }
 
+header img {
+  padding-left: 40px;
+}
+
 ul {
   list-style-type: none;
   margin-top: 50px;
   padding: 0;
   width: 17%;
-  background-color: #2f6f9f;
+  background-color: rgb(62, 134, 189);
   position: fixed;
   height: 100%;
   overflow: auto;
+  z-index: 1000;
 }
 
 li a {
   display: block;
-  color: #000;
+  color: white;
   padding: 8px 16px;
+  margin-top: 10px;
   text-decoration: none;
 }
 

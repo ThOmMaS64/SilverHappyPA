@@ -5,11 +5,6 @@
 
     switch($_POST['action']){
 
-        case 'conn':
-            header('Location: http://localhost/ProjetAnnuel/Backoffice/#pageconnexion');
-            exit();
-            break;
-
         case 'users':
             header('Location: http://localhost/ProjetAnnuel/Backoffice/#pageusers');
             exit();
