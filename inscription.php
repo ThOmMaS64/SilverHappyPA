@@ -89,15 +89,15 @@
 
                                 <div class="col-4 mb-3">
                                     <label class="form-label"><?php echo trad("Nom d'utilisateur") ?></label>
-                                    <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="username" required>
+                                    <input value="<?php echo isset($_GET['username']) ? htmlspecialchars($_GET['username']) : ''; ?>" type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="username" required>
                                 </div>
                                 <div class="col-4 mb-4">
                                     <label class="form-label"><?php echo trad("Nom") ?></label>
-                                    <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="name" required>
+                                    <input value="<?php echo isset($_GET['name']) ? htmlspecialchars($_GET['name']) : ''; ?>" type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="name" required>
                                 </div>
                                 <div class="col-4 mb-4">
                                     <label class="form-label"><?php echo trad("Prénom") ?></label>
-                                    <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="surname" required>
+                                    <input value="<?php echo isset($_GET['surname']) ? htmlspecialchars($_GET['surname']) : ''; ?>" type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="surname" required>
                                 </div>
                             </div> 
 
@@ -138,7 +138,7 @@
                                     <label class="form-label"><?php echo trad("Adresse mail") ?></label>
                                     <div class="input-group has-validation">
                                     <span class="input-group-text" id="inputGroupPrepend">@</span>
-                                    <input type="email" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" id="validationCustomUsername" aria-describedby="inputGroupPrepend" name="email" required>
+                                    <input value="<?php echo isset($_GET['email']) ? htmlspecialchars($_GET['email']) : ''; ?>" type="email" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" id="validationCustomUsername" aria-describedby="inputGroupPrepend" name="email" required>
                                     </div>
                                 </div>
                             </div> 
@@ -146,23 +146,23 @@
                             <div class="row mb-4">
                                 <div class="col-3">
                                     <label class="form-label"><?php echo trad("Naissance") ?></label>
-                                    <input type="date" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="dateNaissance" required>
+                                    <input value="<?php echo isset($_GET['dateNaissance']) ? htmlspecialchars($_GET['dateNaissance']) : ''; ?>" type="date" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="dateNaissance" required>
                                 </div>
                                 <div class="col-2">
                                     <label class="form-label"><?php echo trad("Ville") ?></label>
-                                    <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="ville" required>
+                                    <input value="<?php echo isset($_GET['ville']) ? htmlspecialchars($_GET['ville']) : ''; ?>" type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="ville" required>
                                 </div>
                                 <div class="col-3">
                                     <label class="form-label"><?php echo trad("Rue") ?></label>
-                                    <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="rue" required> 
+                                    <input value="<?php echo isset($_GET['rue']) ? htmlspecialchars($_GET['rue']) : ''; ?>" type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="rue" required> 
                                 </div>
                                 <div class="col-2">
                                     <label class="form-label"><?php echo trad("Numéro de rue") ?></label>
-                                    <input type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="numero" required> 
+                                    <input value="<?php echo isset($_GET['numero']) ? htmlspecialchars($_GET['numero']) : ''; ?>" type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="numero" required> 
                                 </div>
                                 <div class="col-2">
                                     <label class="form-label"><?php echo trad("Code postal") ?></label>
-                                    <input type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="postalCode" required> 
+                                    <input value="<?php echo isset($_GET['postalCode']) ? htmlspecialchars($_GET['postalCode']) : ''; ?>" type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="postalCode" required> 
                                 </div>
                             </div>
 
@@ -206,21 +206,21 @@
 
                                 <div class="col-3 mb-3">
                                     <label class="form-label"><?php echo trad("Nom d'utilisateur") ?></label>
-                                    <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="username" required>
+                                    <input value="<?php echo isset($_GET['username']) ? htmlspecialchars($_GET['username']) : ''; ?>" type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="username" required>
                                 </div>
                                 <div class="col-3 mb-4">
                                     <label class="form-label"><?php echo trad("Nom") ?></label>
-                                    <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="name" required>
+                                    <input value="<?php echo isset($_GET['name']) ? htmlspecialchars($_GET['name']) : ''; ?>" type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="name" required>
                                 </div>
                                 <div class="col-3 mb-4">
                                     <label class="form-label"><?php echo trad("Prénom") ?></label>
-                                    <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="surname" required>
+                                    <input value="<?php echo isset($_GET['surname']) ? htmlspecialchars($_GET['surname']) : ''; ?>" type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>"  name="surname" required>
                                 </div>
                                 <div class="col-3">
                                     <label class="form-label"><?php echo trad("Adresse mail") ?></label>
                                     <div class="input-group has-validation">
                                     <span class="input-group-text" id="inputGroupPrepend">@</span>
-                                    <input type="email" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" name="email" required>
+                                    <input value="<?php echo isset($_GET['email']) ? htmlspecialchars($_GET['email']) : ''; ?>" type="email" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" name="email" required>
                                     </div>
                                 </div>
                             </div> 
@@ -228,7 +228,7 @@
                             <div class="row">
                                 <div class="col-3">
                                     <label class="form-label"><?php echo trad("Profession/Prestation") ?></label>
-                                    <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="profession" required> 
+                                    <input value="<?php echo isset($_GET['profession']) ? htmlspecialchars($_GET['profession']) : ''; ?>" type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="profession" required> 
                                 </div>
                                 
                                 <div class="col-3 mb-4">
@@ -265,22 +265,22 @@
 
                                 <div class="col-3">
                                     <label class="form-label"><?php echo trad("Ville") ?></label>
-                                    <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="ville" required>
+                                    <input value="<?php echo isset($_GET['ville']) ? htmlspecialchars($_GET['ville']) : ''; ?>" type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="ville" required>
                                 </div>
                             </div> 
 
                             <div class="row mb-4">
                                 <div class="col-4">
                                     <label class="form-label"><?php echo trad("Rue") ?></label>
-                                    <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="rue" required> 
+                                    <input value="<?php echo isset($_GET['rue']) ? htmlspecialchars($_GET['rue']) : ''; ?>" type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="rue" required> 
                                 </div>
                                 <div class="col-2">
                                     <label class="form-label"><?php echo trad("Numéro de rue") ?></label>
-                                    <input type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="numero" required> 
+                                    <input value="<?php echo isset($_GET['numero']) ? htmlspecialchars($_GET['numero']) : ''; ?>" type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="numero" required> 
                                 </div>
                                 <div class="col-3">
                                     <label class="form-label"><?php echo trad("Code postal") ?></label>
-                                    <input type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="postalCode" required> 
+                                    <input value="<?php echo isset($_GET['postalCode']) ? htmlspecialchars($_GET['postalCode']) : ''; ?>" type="number" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="postalCode" required> 
                                 </div>
                                 <div class="col-3">
                                     <label class="form-label"><?php echo trad("Casier judiciaire") ?></label>

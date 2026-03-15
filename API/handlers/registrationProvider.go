@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/mail"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -92,21 +93,54 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		if (username == "" || name == "" || surname == "" || profession == "" || password == "" || passwordConfirmation == "" || email == "" || city == "" || street == "" || streetNumber == "" || postalCode == "" || criminalrecordBlob == nil || captchaResponse == "" || captchaID == ""){
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=missing_field&choice=2", 303)
+			url := fmt.Sprintf("http://localhost/ProjetAnnuel/inscription.php?error=missing_field&choice=2&username=%s&name=%s&surname=%s&email=%s&profession=%s&ville=%s&rue=%s&numero=%s&postalCode=%s", 
+				url.QueryEscape(username),
+				url.QueryEscape(name),
+				url.QueryEscape(surname),
+				url.QueryEscape(email),
+				url.QueryEscape(profession),
+				url.QueryEscape(city),
+				url.QueryEscape(street),
+				url.QueryEscape(streetNumber),
+				url.QueryEscape(postalCode))
+		
+			http.Redirect(w, r, url, 303)
 			return
 
 		}
 
 		if (len(password) < 8 || verifPassword(password, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == false ||  verifPassword(password, "0123456789") == false) {
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=bad_password&choice=2", 303)
+			url := fmt.Sprintf("http://localhost/ProjetAnnuel/inscription.php?error=bad_password&choice=2&username=%s&name=%s&surname=%s&email=%s&profession=%s&ville=%s&rue=%s&numero=%s&postalCode=%s", 
+				url.QueryEscape(username),
+				url.QueryEscape(name),
+				url.QueryEscape(surname),
+				url.QueryEscape(email),
+				url.QueryEscape(profession),
+				url.QueryEscape(city),
+				url.QueryEscape(street),
+				url.QueryEscape(streetNumber),
+				url.QueryEscape(postalCode))
+		
+			http.Redirect(w, r, url, 303)
 			return
 
 		}
 
 		if (password != passwordConfirmation) {
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=wrong_password_confirmation&choice=2", 303)
+			url := fmt.Sprintf("http://localhost/ProjetAnnuel/inscription.php?error=wrong_password_confirmation&choice=2&username=%s&name=%s&surname=%s&email=%s&profession=%s&ville=%s&rue=%s&numero=%s&postalCode=%s", 
+				url.QueryEscape(username),
+				url.QueryEscape(name),
+				url.QueryEscape(surname),
+				url.QueryEscape(email),
+				url.QueryEscape(profession),
+				url.QueryEscape(city),
+				url.QueryEscape(street),
+				url.QueryEscape(streetNumber),
+				url.QueryEscape(postalCode))
+		
+			http.Redirect(w, r, url, 303)
 			return
 
 		}
@@ -115,7 +149,17 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		if (errorFormatEmail != nil) {
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=invalid_email&choice=2", 303)
+			url := fmt.Sprintf("http://localhost/ProjetAnnuel/inscription.php?error=invalid_email&choice=2&username=%s&name=%s&surname=%s&profession=%s&ville=%s&rue=%s&numero=%s&postalCode=%s", 
+				url.QueryEscape(username),
+				url.QueryEscape(name),
+				url.QueryEscape(surname),
+				url.QueryEscape(profession),
+				url.QueryEscape(city),
+				url.QueryEscape(street),
+				url.QueryEscape(streetNumber),
+				url.QueryEscape(postalCode))
+		
+			http.Redirect(w, r, url, 303)
 			return
 
 		}
@@ -137,7 +181,17 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 			} else {
 
-				http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=username_already_exists&choice=2", 303)
+				url := fmt.Sprintf("http://localhost/ProjetAnnuel/inscription.php?error=username_already_exists&choice=2&name=%s&surname=%s&email=%s&profession=%s&ville=%s&rue=%s&numero=%s&postalCode=%s", 
+					url.QueryEscape(name),
+					url.QueryEscape(surname),
+					url.QueryEscape(email),
+					url.QueryEscape(profession),
+					url.QueryEscape(city),
+					url.QueryEscape(street),
+					url.QueryEscape(streetNumber),
+					url.QueryEscape(postalCode))
+			
+				http.Redirect(w, r, url, 303)
 				return						
 
 			}	
@@ -163,7 +217,17 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 			}else{
 				
-				http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=email_already_exists&choice=2", 303)
+				url := fmt.Sprintf("http://localhost/ProjetAnnuel/inscription.php?error=email_already_exists&choice=2&username=%s&name=%s&surname=%s&profession=%s&ville=%s&rue=%s&numero=%s&postalCode=%s", 
+					url.QueryEscape(username),
+					url.QueryEscape(name),
+					url.QueryEscape(surname),
+					url.QueryEscape(profession),
+					url.QueryEscape(city),
+					url.QueryEscape(street),
+					url.QueryEscape(streetNumber),
+					url.QueryEscape(postalCode))
+			
+				http.Redirect(w, r, url, 303)
 				return
 			}			
 		}else if errEmail != sql.ErrNoRows {
@@ -197,7 +261,18 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		if !strings.EqualFold(goodResponseCaptcha, captchaResponse) {
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/inscription.php?error=wrong_captcha&choice=2", 303)
+			url := fmt.Sprintf("http://localhost/ProjetAnnuel/inscription.php?error=wrong_captcha&choice=2&username=%s&name=%s&surname=%s&email=%s&profession=%s&ville=%s&rue=%s&numero=%s&postalCode=%s", 
+				url.QueryEscape(username),
+				url.QueryEscape(name),
+				url.QueryEscape(surname),
+				url.QueryEscape(email),
+				url.QueryEscape(profession),
+				url.QueryEscape(city),
+				url.QueryEscape(street),
+				url.QueryEscape(streetNumber),
+				url.QueryEscape(postalCode))
+		
+			http.Redirect(w, r, url, 303)
 			return	
 
 		}
