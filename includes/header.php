@@ -88,43 +88,9 @@
                                         <select name="language" id="language-select" class="selectLanguage" onchange="this.form.submit()">
                                             <option value="" disabled selected>Choisissez</option>
                                             <option value="ar">Arabe</option>
-                                            <option value="az">Azerbaïdjanais</option>
-                                            <option value="ca">Catalan</option>
-                                            <option value="zh">Chinois</option>
-                                            <option value="cs">Tchèque</option>
-                                            <option value="da">Danois</option>
-                                            <option value="nl">Néerlandais</option>
                                             <option value="en">Anglais</option>
-                                            <option value="eo">Espéranto</option>
-                                            <option value="fi">Finnois</option>
                                             <option value="fr">Français</option>
-                                            <option value="de">Allemand</option>
-                                            <option value="el">Grec</option>
-                                            <option value="he">Hébreu</option>
-                                            <option value="hi">Hindi</option>
-                                            <option value="hu">Hongrois</option>
-                                            <option value="id">Indonésien</option>
-                                            <option value="ga">Irlandais</option>
-                                            <option value="it">Italien</option>
-                                            <option value="ja">Japonais</option>
-                                            <option value="ko">Coréen</option>
-                                            <option value="lv">Letton</option>
-                                            <option value="lt">Lituanien</option>
-                                            <option value="ms">Malais</option>
-                                            <option value="nb">Norvégien</option>
-                                            <option value="fa">Persan</option>
-                                            <option value="pl">Polonais</option>
-                                            <option value="pt">Portugais</option>
-                                            <option value="ro">Roumain</option>
-                                            <option value="ru">Russe</option>
-                                            <option value="sk">Slovaque</option>
-                                            <option value="sl">Slovène</option>
                                             <option value="es">Espagnol</option>
-                                            <option value="sv">Suédois</option>
-                                            <option value="th">Thaï</option>
-                                            <option value="tr">Turc</option>
-                                            <option value="uk">Ukrainien</option>
-                                            <option value="vi">Vietnamien</option>
                                         </select>
                                     </form>
                                 </div>
@@ -197,43 +163,9 @@
                                         <select name="language" id="language-select" class="selectLanguage" onchange="this.form.submit()">
                                             <option value="" disabled selected>Choisissez</option>
                                             <option value="ar">Arabe</option>
-                                            <option value="az">Azerbaïdjanais</option>
-                                            <option value="ca">Catalan</option>
-                                            <option value="zh">Chinois</option>
-                                            <option value="cs">Tchèque</option>
-                                            <option value="da">Danois</option>
-                                            <option value="nl">Néerlandais</option>
                                             <option value="en">Anglais</option>
-                                            <option value="eo">Espéranto</option>
-                                            <option value="fi">Finnois</option>
                                             <option value="fr">Français</option>
-                                            <option value="de">Allemand</option>
-                                            <option value="el">Grec</option>
-                                            <option value="he">Hébreu</option>
-                                            <option value="hi">Hindi</option>
-                                            <option value="hu">Hongrois</option>
-                                            <option value="id">Indonésien</option>
-                                            <option value="ga">Irlandais</option>
-                                            <option value="it">Italien</option>
-                                            <option value="ja">Japonais</option>
-                                            <option value="ko">Coréen</option>
-                                            <option value="lv">Letton</option>
-                                            <option value="lt">Lituanien</option>
-                                            <option value="ms">Malais</option>
-                                            <option value="nb">Norvégien</option>
-                                            <option value="fa">Persan</option>
-                                            <option value="pl">Polonais</option>
-                                            <option value="pt">Portugais</option>
-                                            <option value="ro">Roumain</option>
-                                            <option value="ru">Russe</option>
-                                            <option value="sk">Slovaque</option>
-                                            <option value="sl">Slovène</option>
                                             <option value="es">Espagnol</option>
-                                            <option value="sv">Suédois</option>
-                                            <option value="th">Thaï</option>
-                                            <option value="tr">Turc</option>
-                                            <option value="uk">Ukrainien</option>
-                                            <option value="vi">Vietnamien</option>
                                         </select>
                                     </form>
                                 </div>
@@ -301,43 +233,9 @@
                                         <select name="language" id="language-select" class="selectLanguage" onchange="this.form.submit()">
                                             <option value="" disabled selected>Choisissez</option>
                                             <option value="ar">Arabe</option>
-                                            <option value="az">Azerbaïdjanais</option>
-                                            <option value="ca">Catalan</option>
-                                            <option value="zh">Chinois</option>
-                                            <option value="cs">Tchèque</option>
-                                            <option value="da">Danois</option>
-                                            <option value="nl">Néerlandais</option>
                                             <option value="en">Anglais</option>
-                                            <option value="eo">Espéranto</option>
-                                            <option value="fi">Finnois</option>
                                             <option value="fr">Français</option>
-                                            <option value="de">Allemand</option>
-                                            <option value="el">Grec</option>
-                                            <option value="he">Hébreu</option>
-                                            <option value="hi">Hindi</option>
-                                            <option value="hu">Hongrois</option>
-                                            <option value="id">Indonésien</option>
-                                            <option value="ga">Irlandais</option>
-                                            <option value="it">Italien</option>
-                                            <option value="ja">Japonais</option>
-                                            <option value="ko">Coréen</option>
-                                            <option value="lv">Letton</option>
-                                            <option value="lt">Lituanien</option>
-                                            <option value="ms">Malais</option>
-                                            <option value="nb">Norvégien</option>
-                                            <option value="fa">Persan</option>
-                                            <option value="pl">Polonais</option>
-                                            <option value="pt">Portugais</option>
-                                            <option value="ro">Roumain</option>
-                                            <option value="ru">Russe</option>
-                                            <option value="sk">Slovaque</option>
-                                            <option value="sl">Slovène</option>
                                             <option value="es">Espagnol</option>
-                                            <option value="sv">Suédois</option>
-                                            <option value="th">Thaï</option>
-                                            <option value="tr">Turc</option>
-                                            <option value="uk">Ukrainien</option>
-                                            <option value="vi">Vietnamien</option>
                                         </select>
                                     </form>
                                 </div>

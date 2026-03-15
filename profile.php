@@ -136,7 +136,10 @@
                                     <?php if(isset($_SESSION['profession'])){ ?>
                                         <p><?php echo trad("Profession/spécialisation : ") ?> <?php echo $_SESSION['profession']; ?></p>
                                     <?php } ?>
-                                    <p><?php echo trad("Inscrit depuis le") ?> <?php echo date("d/m/Y", strtotime($_SESSION['date_inscription'])); ?></p>
+                                    <?php if(isset($_SESSION['birth_date'])){ ?>
+                                        <p><?php echo trad("Date de naissance :") ?> <?php echo date("d/m/Y", strtotime($_SESSION['birth_date'])) ?></p>
+                                    <?php } ?>
+                                    <p><?php echo trad("Inscrit depuis le :") ?> <?php echo date("d/m/Y", strtotime($_SESSION['date_inscription'])); ?></p>
                                     <p><?php echo trad("Adresse email") ?> : <?php echo $_SESSION['email']; ?></p>
                                 </div>
 
@@ -254,5 +257,5 @@
             </div>
         </div>
     </main>
-    <?php include("includes/footer.php") ?>
+    <?php include("includes/footer.php"); ?>
 </body>

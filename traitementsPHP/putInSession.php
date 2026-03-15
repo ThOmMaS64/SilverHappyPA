@@ -37,11 +37,12 @@
             $_SESSION['keyWord2'] = $response['keyWord2'];
             $_SESSION['keyWord3'] = $response['keyWord3'];
 
-            if(isset($response['tuto_seen'])){
+            if(isset($response['tutoSeen']) && $response['tutoSeen'] != ""){
 
                 $_SESSION['tuto_seen'] = $response['tutoSeen'];
+                $_SESSION['birth_date'] = $response['birth_date'];
 
-            }else if(isset($response['profession'])){
+            }else if(isset($response['profession']) && $response['profession'] != ""){
 
                 $_SESSION['profession'] = $response['profession'];
 

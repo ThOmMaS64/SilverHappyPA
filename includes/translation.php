@@ -12,6 +12,26 @@
             return $text;
         }
 
+        static $dictionary = null;
+
+        if($dictionary == null){
+
+            $dictionaryFile = __DIR__ . "/../dictionaries/" . $chosenLanguage . ".php";
+
+            if(file_exists($dictionaryFile)){
+
+                $dictionary = include($dictionaryFile);
+
+            }else{
+                $dictionary == [];
+            }
+
+        }
+
+        if(isset($dictionary[$text])){
+            return $dictionary[$text];
+        }
+
         $q = "SELECT translated_text FROM TRANSLATIONS WHERE original_text = :original_text AND target_language = :target_language";
         $req = $bdd->prepare($q);
         $req->execute([

@@ -31,6 +31,7 @@ type userDataResponse struct {
 	ProfilePicture string `json:"profilePicture"`
 	TutoSeen string `json:"tutoSeen"`
 	Profession string `json:"profession"`
+	BirthDate string `json:"birth_date"`
 	Error string `json:"error"`
 
 
@@ -64,6 +65,7 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		var street string
 		var streetNumber string
 		var postalCode string
+		var birth_date string
 
 		var response userDataResponse
 
@@ -140,9 +142,9 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 
 			var tuto_seen string
 
-			rowUser := database.QueryRow("SELECT tuto_seen FROM CONSUMER WHERE ID_USER = ?", id)
+			rowUser := database.QueryRow("SELECT birth_date, tuto_seen FROM CONSUMER WHERE ID_USER = ?", id)
 		
-			errUser := rowUser.Scan(&tuto_seen)
+			errUser := rowUser.Scan(&birth_date, &tuto_seen)
 
 			if errUser != nil {
 
@@ -152,6 +154,7 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 
 			}
 
+			response.BirthDate = birth_date
 			response.TutoSeen = tuto_seen
 
 		}else if(status == "3" || status == "4"){
