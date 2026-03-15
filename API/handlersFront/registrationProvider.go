@@ -1,4 +1,4 @@
-package handlers
+package handlersFront
 
 import (
 	"database/sql"
