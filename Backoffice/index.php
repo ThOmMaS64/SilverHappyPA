@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=4">
     <script src="script.js"></script>
 </head>
 <?php
@@ -65,7 +65,8 @@ if($dataUsers){
                 'connected' => $user['connected'],
                 'date_inscription' => $user['date_inscription'],
                 'last_connection' => $user['lastConnection'],
-                'birth_date' => $user['birthDate']
+                'birth_date' => $user['birthDate'],
+                'banned' => $user['banned']
             ];
             $_SESSION['listUsers'][] = $registeredUser;
         }
@@ -266,53 +267,93 @@ if($dataTip){
 
                 <br>
 
-                <form method="POST" action="traitement_edit.php">
                     <?php if($_SESSION['tableChoice'] == 0){ ?>
-                        <table class="table table-striped">
-                            <thead class="thead-dark">
-                                <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Nom d'utilisateur</th>
-                                <th scope="col">Prénom</th>
-                                <th scope="col">Nom</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Date de naissance</th>
-                                <th scope="col">Ville</th>
-                                <th scope="col">Rue</th>
-                                <th scope="col">Numéro de rue</th>
-                                <th scope="col">Code Postal</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Date d'inscription</th>
-                                <th scope="col">Connexion</th>
-                                <th scope="col"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach($_SESSION['listUsers'] as $user){ ?>
+                            <table class="table table-striped">
+                                <thead class="thead-dark">
                                     <tr>
-                                        <th scope="row"> <?= htmlspecialchars($user['ID_USER']) ?></th>
-
-                                        <td><input class="mediumtext" type="text" value="<?= htmlspecialchars($user['username'] ?? '') ?>"></td>
-                                            
-                                        <td><input class="mediumtext" type="text" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></td>
-                                        <td><input class="mediumtext" type="text" value="<?= htmlspecialchars($user['surname'] ?? '') ?>"></td>
-                                        <td><input class="mediumtext" type="text" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></td>
-                                        <td><?php if($user['birth_date'] == '1900-01-01'){echo "non renseigné";}else{echo  htmlspecialchars(date("d/m/Y", strtotime($user['birth_date'])));} ?></td>
-                                            
-                                        <td><?= htmlspecialchars($user['city'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($user['street'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($user['nb_street'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($user['postal_code'] ?? '') ?></td>
-
-                                        <td><?= htmlspecialchars($user['status'] ?? '0') ?></td>
-                                        <td><?= htmlspecialchars(date("d/m/Y", strtotime($user['date_inscription'])) ?? '0') ?></td>
-                                        <td><?php if($user['connected'] == 1){echo "en cours";}else{echo date("d/m/Y", strtotime($user['last_connection']));} ?></td>
-
-                                        <td><button type="submit" name="updateuser" value="<?= $user['ID_USER'] ?>">Update</button></td>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Nom d'utilisateur</th>
+                                    <th scope="col">Prénom</th>
+                                    <th scope="col">Nom</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Date de naissance</th>
+                                    <th scope="col">Ville</th>
+                                    <th scope="col">Rue</th>
+                                    <th scope="col">Numéro de rue</th>
+                                    <th scope="col">Code Postal</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date d'inscription</th>
+                                    <th scope="col">Connexion</th>
+                                    <th scope="col">Bannissement</th>
+                                    <th scope="col">Sélectionner</th>
+                                    <th scope="col">Modifier</th>
+                                    <th scope="col">Bannir</th>
+                                    <th scope="col">Supprimer</th>
+                                    <th scope="col"></th>
                                     </tr>
-                                <?php } ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                        foreach($_SESSION['listUsers'] as $user){ 
+
+                                            $idForm = "form_" . $user['ID_USER'];
+                                    ?>
+                                        <tr>
+                                            <th scope="row"> <?= htmlspecialchars($user['ID_USER']) ?></th>
+
+                                            <td><input form="<?= $idForm ?>" name="username" class="mediumtext" type="text" value="<?= htmlspecialchars($user['username'] ?? '') ?>"></td>
+                                                
+                                            <td><input form="<?= $idForm ?>" name="name" class="mediumtext" type="text" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></td>
+                                            <td><input form="<?= $idForm ?>" name="surname" class="mediumtext" type="text" value="<?= htmlspecialchars($user['surname'] ?? '') ?>"></td>
+                                            <td><input form="<?= $idForm ?>" name="email" class="mediumtext" type="text" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></td>
+                                            <td><input form="<?= $idForm ?>" name="birth_date" class="mediumtext" type="date" value="<?php if($user['birth_date'] == '1900-01-01'){echo "non renseigné";}else{echo  htmlspecialchars($user['birth_date']);} ?>"></td>
+                                                
+                                            <td><input form="<?= $idForm ?>" name="city" class="mediumtext" type="text" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></td>
+                                            <td><input form="<?= $idForm ?>" name="street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['street'] ?? '') ?>"></td>
+                                            <td><input form="<?= $idForm ?>" name="nb_street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['nb_street'] ?? '') ?>"></td>
+                                            <td><input form="<?= $idForm ?>" name="postal_code" class="mediumtext" type="text" value="<?= htmlspecialchars($user['postal_code'] ?? '') ?>"></td>
+
+                                            <td><input form="<?= $idForm ?>" name="status" class="mediumtext" type="text" value="<?= htmlspecialchars($user['status'] ?? '') ?>"></td>
+                                            <td><input form="<?= $idForm ?>" name="date_inscription" class="mediumtext" type="date" value="<?= htmlspecialchars($user['date_inscription'] ?? '0') ?>"></td>
+                                            <td><?php if($user['connected'] == 1){echo "en cours";}else{echo date("d/m/Y", strtotime($user['last_connection']));} ?></td>
+                                            <td><?= htmlspecialchars($user['banned'] ?? '') ?></td>
+
+                                            <td>
+                                                <div class="form-check">
+                                                    <input form="selectedEmail" name="selectedEmail[]" class="form-check-input" type="checkbox" value="<?php echo htmlspecialchars($user['email']); ?>">
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <form id="<?= $idForm ?>" method="POST" action="http://localhost:8081/updateUsersData">
+                                                    <button type="submit" value="<?= $user['ID_USER'] ?>">Modifier</button>
+                                                    <input type="hidden" name="id" value="<?= $user['ID_USER'] ?>">
+                                                    <input type="hidden" name="description" value="<?= htmlspecialchars($user['description']) ?>">
+                                                    <input type="hidden" name="keyWord1" value="<?= htmlspecialchars($user['keyWord1']) ?>">
+                                                    <input type="hidden" name="keyWord2" value="<?= htmlspecialchars($user['keyWord2']) ?>">
+                                                    <input type="hidden" name="keyWord3" value="<?= htmlspecialchars($user['keyWord3']) ?>">
+                                                </form>
+                                            </td>
+
+                                            <td>
+                                                <form method="POST" action="http://localhost:8081/banUser">
+                                                    <button type="submit" value="<?= $user['ID_USER'] ?>"><?php if($user['banned'] == 0){ echo "Bannir"; }else{ echo "Pardonner"; } ?></button>
+                                                    <input type="hidden" name="id" value="<?= $user['ID_USER'] ?>">
+                                                    <input type="hidden" name="banned" value="<?= $user['banned'] ?>">
+                                                </form>
+                                            </td>
+
+                                            <td>
+                                                <form method="POST" action="http://localhost:8081/deleteUser">
+                                                    <button type="submit" value="<?= $user['ID_USER'] ?>">Supprimer</button>
+                                                    <input type="hidden" name="id" value="<?= $user['ID_USER'] ?>">
+                                                    <input type="hidden" name="status" value="<?= $user['status'] ?>">
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
                     <?php }elseif($_SESSION['tableChoice'] == 1){ ?>
                         <table class="table table-striped">
                             <thead class="thead-dark">
@@ -334,43 +375,69 @@ if($dataTip){
                                 <th scope="col">Status</th>
                                 <th scope="col">Date d'inscription</th>
                                 <th scope="col">Connexion</th>
+                                <th scope="col">Bannissement</th>
                                 <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach($_SESSION['listUsers'] as $user){ ?>
+                                <?php 
+
+                                    foreach($_SESSION['listUsers'] as $user){ 
+
+                                        $idForm = "form_" . $user['ID_USER'];
+                                    
+                                    ?>
                                     <tr>
                                         <th scope="row"> <?= htmlspecialchars($user['ID_USER']) ?></th>
 
-                                        <td><input class="mediumtext" type="text" value="<?= htmlspecialchars($user['username'] ?? '') ?>"></td>
+                                        <td><input form="<?= $idForm ?>" name="username" class="mediumtext" type="text" value="<?= htmlspecialchars($user['username'] ?? '') ?>"></td>
                                             
-                                        <td><input class="mediumtext" type="text" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></td>
-                                        <td><input class="mediumtext" type="text" value="<?= htmlspecialchars($user['surname'] ?? '') ?>"></td>
-                                        <td><input class="mediumtext" type="text" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></td>
-                                        <td><?php if($user['birth_date'] == '1900-01-01'){echo "non renseigné";}else{echo  htmlspecialchars(date("d/m/Y", strtotime($user['birth_date'])));} ?></td>
-                                            
-                                        <td><?= htmlspecialchars($user['city'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($user['street'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($user['nb_street'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($user['postal_code'] ?? '') ?></td>
+                                        <td><input form="<?= $idForm ?>" name="name" class="mediumtext" type="text" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></td>
+                                        <td><input form="<?= $idForm ?>" name="surname" class="mediumtext" type="text" value="<?= htmlspecialchars($user['surname'] ?? '') ?>"></td>
+                                        <td><input form="<?= $idForm ?>" name="email" class="mediumtext" type="text" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></td>
+                                        <td><input form="<?= $idForm ?>" name="birth_date" class="mediumtext" type="date" value="<?php if($user['birth_date'] == '1900-01-01'){echo "non renseigné";}else{echo  htmlspecialchars($user['birth_date']);} ?>"></td>                                                                                            
+                                        <td><input form="<?= $idForm ?>" name="city" class="mediumtext" type="text" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></td>
+                                        <td><input form="<?= $idForm ?>" name="street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['street'] ?? '') ?>"></td>
+                                        <td><input form="<?= $idForm ?>" name="nb_street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['nb_street'] ?? '') ?>"></td>
+                                        <td><input form="<?= $idForm ?>" name="postal_code" class="mediumtext" type="text" value="<?= htmlspecialchars($user['postal_code'] ?? '') ?>"></td>
 
-                                        <td><input class="bigtext" type="text" value="<?= htmlspecialchars($user['description'] ?? '') ?>"></td>
+                                        <td><input form="<?= $idForm ?>" name="description" class="bigtext" type="text" value="<?= htmlspecialchars($user['description'] ?? '') ?>"></td>
                                             
-                                        <td><?= htmlspecialchars($user['keyWord1'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($user['keyWord2'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($user['keyWord3'] ?? '') ?></td>
+                                        <td><input form="<?= $idForm ?>" name="keyWord1" class="bigtext" type="text" value="<?= htmlspecialchars($user['keyWord1'] ?? '') ?>"></td>
+                                        <td><input form="<?= $idForm ?>" name="keyWord2" class="bigtext" type="text" value="<?= htmlspecialchars($user['keyWord2'] ?? '') ?>"></td>
+                                        <td><input form="<?= $idForm ?>" name="keyWord3" class="bigtext" type="text" value="<?= htmlspecialchars($user['keyWord3'] ?? '') ?>"></td>
 
-                                        <td><?= htmlspecialchars($user['status'] ?? '0') ?></td>
-                                        <td><?= htmlspecialchars(date("d/m/Y", strtotime($user['date_inscription'])) ?? '0') ?></td>
+                                        <td><input form="<?= $idForm ?>" name="status" class="bigtext" type="text" value="<?= htmlspecialchars($user['status'] ?? '0') ?>"></td>
+                                        <td><input form="<?= $idForm ?>" name="date_inscription" class="mediumtext" type="date" value="<?= htmlspecialchars($user['date_inscription'] ?? '0') ?>"></td>
                                         <td><?php if($user['connected'] == 1){echo "en cours";}else{echo date("d/m/Y", strtotime($user['last_connection']));} ?></td>
 
-                                        <td><button type="submit" value="<?= $user['ID_USER'] ?>">Update</button></td>
+                                        <td>
+                                            <form id="<?= $idForm ?>" method="POST" action="http://localhost:8081/updateUsersData">
+                                                <button type="submit" value="<?= $user['ID_USER'] ?>">Modifier</button>
+                                                <input type="hidden" name="id" value="<?= $user['ID_USER'] ?>">
+                                            </form>
+                                        </td>
+
+                                        <td>
+                                            <form method="POST" action="http://localhost:8081/banUser">
+                                                <button type="submit" value="<?= $user['ID_USER'] ?>"><?php if($user['banned'] == 0){ echo "Bannir"; }else{ echo "Pardonner"; } ?></button>
+                                                <input type="hidden" name="id" value="<?= $user['ID_USER'] ?>">
+                                                <input type="hidden" name="banned" value="<?= $user['banned'] ?>">
+                                            </form>
+                                        </td>
+
+                                        <td>
+                                            <form method="POST" action="http://localhost:8081/deleteUser">
+                                                <button type="submit" value="<?= $user['ID_USER'] ?>">Supprimer</button>
+                                                <input type="hidden" name="id" value="<?= $user['ID_USER'] ?>">
+                                                <input type="hidden" name="status" value="<?= $user['status'] ?>">
+                                            </form>
+                                        </td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
                         </table>
                     <?php } ?>
-                </form>
 
                 <form method="POST" action="traitement_offset.php">
                     <button type="submit" name="pageUsers" value="moins">Précedent</button>
@@ -378,6 +445,22 @@ if($dataTip){
                     <button type="submit" name="pageUsers">Rafraîchir</button>
                 </form>
                 <?php endif; ?>
+
+
+
+                <h5 class="pt-5">Contacter les emails sélectionnés</h5>
+
+                <form id="selectedEmail" method="POST" action="sendEmailSelectedUsers.php">
+
+                    <label>Objet</label>
+                    <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
+
+                    <label>Corps de l'email</label>
+                    <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
+
+                    <button type="submit">Envoyer</button>
+
+                </form>
             </section>
 
             <section id="pageshop" class="mt-5">

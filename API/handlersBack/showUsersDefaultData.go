@@ -25,6 +25,7 @@ type User struct{
 	LastConnection string `json:"lastConnection"`
 	BirthDate string `json:"birthDate"`
 	DateInscription string `json:"date_inscription"`
+	Banned string `json:"banned"`
 }
 
 func ShowUsersDefaultData(database *sql.DB) http.HandlerFunc {
@@ -33,7 +34,7 @@ func ShowUsersDefaultData(database *sql.DB) http.HandlerFunc {
 
 		users := []User{}
 
-		rowsUsers, err := database.Query("SELECT USER_.ID_USER, COALESCE(USER_.username, ''), COALESCE(USER_.name, ''), COALESCE(USER_.surname, ''), COALESCE(USER_.description, ''), COALESCE(USER_.keyWord1, ''), COALESCE(USER_.keyWord2, ''), COALESCE(USER_.keyWord3, ''), COALESCE(USER_.email, ''), COALESCE(USER_.city, ''), COALESCE(USER_.street, ''), COALESCE(USER_.nb_street, ''), COALESCE(USER_.postal_code, ''), COALESCE(USER_.status, 0), COALESCE(USER_.connected, 0), COALESCE(USER_.last_connection, '1900-01-01 00:00:00'), COALESCE(USER_.date_inscription, '1900-01-01'), COALESCE(CONSUMER.birth_date, '1900-01-01') FROM USER_ LEFT JOIN CONSUMER ON USER_.ID_USER = CONSUMER.ID_USER LIMIT 10")
+		rowsUsers, err := database.Query("SELECT USER_.ID_USER, COALESCE(USER_.username, ''), COALESCE(USER_.name, ''), COALESCE(USER_.surname, ''), COALESCE(USER_.description, ''), COALESCE(USER_.keyWord1, ''), COALESCE(USER_.keyWord2, ''), COALESCE(USER_.keyWord3, ''), COALESCE(USER_.email, ''), COALESCE(USER_.city, ''), COALESCE(USER_.street, ''), COALESCE(USER_.nb_street, ''), COALESCE(USER_.postal_code, ''), COALESCE(USER_.status, 0), COALESCE(USER_.connected, 0), COALESCE(USER_.last_connection, '1900-01-01 00:00:00'), COALESCE(USER_.date_inscription, '1900-01-01'), COALESCE(USER_.banned, 0), COALESCE(CONSUMER.birth_date, '1900-01-01') FROM USER_ LEFT JOIN CONSUMER ON USER_.ID_USER = CONSUMER.ID_USER LIMIT 10")
 		
 		if err != nil {
 		
@@ -47,7 +48,7 @@ func ShowUsersDefaultData(database *sql.DB) http.HandlerFunc {
 
 			var user User
 
-			err := rowsUsers.Scan(&user.ID_USER, &user.Username, &user.Name, &user.Surname, &user.Description, &user.KeyWord1, &user.KeyWord2, &user.KeyWord3, &user.Email, &user.City, &user.Street, &user.Nb_street, &user.Postal_code, &user.Status, &user.Connected, &user.LastConnection, &user.DateInscription, &user.BirthDate)	
+			err := rowsUsers.Scan(&user.ID_USER, &user.Username, &user.Name, &user.Surname, &user.Description, &user.KeyWord1, &user.KeyWord2, &user.KeyWord3, &user.Email, &user.City, &user.Street, &user.Nb_street, &user.Postal_code, &user.Status, &user.Connected, &user.LastConnection, &user.DateInscription, &user.Banned, &user.BirthDate)	
 			if err != nil {
 				continue
 			}
