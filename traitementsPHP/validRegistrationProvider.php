@@ -38,7 +38,7 @@
             $mail->Subject = trad('Bienvenue chez Silver Happy !');
 
             $texte1 = trad("Bonjour");
-            $texte2 = trad("Bienvenue chez Silver Happy, nous sommes fiers de vous compter parmi nos prestataire.");
+            $texte2 = trad("Bienvenue chez Silver Happy, nous sommes fiers de vous compter parmi nos prestataires.");
             $texte3 = trad("Votre inscription a bien été prise en compte et votre dossier est actuellement en cours de vérification par notre équipe. Cette étape nous permet de garantir la qualité et la fiabilité des services proposés à nos adhérents.");
             $texte4 = trad("Nous vous remercions pour votre confiance et nous réjouissons de collaborer avec vous.");
             $texte5 = trad("L’équipe Silver Happy");

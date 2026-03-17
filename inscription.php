@@ -57,7 +57,7 @@
                         <div class="line"></div>
                     </div>
                     <div class="col-6 pe-5">
-                        <p><?php echo trad("Adhérant") ?></p>
+                        <p><?php echo trad("Adhérent") ?></p>
                         <img src="medias/images/adherant.jpg"  width="260px" class="choiceImage" onclick="window.location.href='?choice=1'"> 
                     </div>
                     <div class="col-6 ps-5">
@@ -76,7 +76,7 @@
                                 <div class="col-12">
                                     <h3><?php echo trad("Inscrivez-vous") ?></h3>
                                     <div class="line mb-2"></div>
-                                    <p><?php echo trad("Devenez adhérant chez Silver Happy") ?></p>
+                                    <p><?php echo trad("Devenez adhérent chez Silver Happy") ?></p>
                                 </div>
 
                                 <div class="col-12">

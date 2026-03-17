@@ -4,8 +4,6 @@
 
     function trad($text){
 
-        global $bdd;
-
         $chosenLanguage = $_SESSION['language'] ?? 'fr';
 
         if($chosenLanguage == "fr" || $chosenLanguage == ""){
@@ -23,13 +21,29 @@
                 $dictionary = include($dictionaryFile);
 
             }else{
-                $dictionary == [];
+                $dictionary = [];
             }
 
         }
 
         if(isset($dictionary[$text])){
             return $dictionary[$text];
+        }else{
+            return tradByAPI($text);
+        }
+    
+    }
+
+
+
+    function tradByAPI($text){
+
+        global $bdd;
+
+        $chosenLanguage = $_SESSION['language'] ?? 'fr';
+
+        if($chosenLanguage == "fr" || $chosenLanguage == ""){
+            return $text;
         }
 
         $q = "SELECT translated_text FROM TRANSLATIONS WHERE original_text = :original_text AND target_language = :target_language";

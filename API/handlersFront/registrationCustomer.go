@@ -8,6 +8,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"unicode"
+	"unicode/utf8"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -22,6 +24,13 @@ func verifPassword(password string, searched string) bool {
 
 	return false
 
+}
+
+func capitalizeFirst(s string) string {
+
+	r, size := utf8.DecodeRuneInString(s)
+
+	return string(unicode.ToUpper(r)) + strings.ToLower(s[size:])
 }
 
 func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
@@ -44,15 +53,15 @@ func RegistrationCustomer(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		username := r.FormValue("username")
-		name := r.FormValue("name")
-		surname := r.FormValue("surname")
+		username := strings.ToLower(strings.TrimSpace(r.FormValue("username")))
+		name := capitalizeFirst(strings.TrimSpace(r.FormValue("name")))
+		surname := capitalizeFirst(strings.TrimSpace(r.FormValue("surname")))
 		password := r.FormValue("password")
 		passwordConfirmation := r.FormValue("passwordConfirmation")
-		email := r.FormValue("email")
+		email := strings.ToLower(strings.TrimSpace(r.FormValue("email")))
 		birthdate := r.FormValue("dateNaissance")
-		city := r.FormValue("ville")
-		street := r.FormValue("rue")
+		city := capitalizeFirst(strings.TrimSpace(r.FormValue("ville")))
+		street := capitalizeFirst(strings.TrimSpace(r.FormValue("rue")))
 		streetNumber := r.FormValue("numero")
 		postalCode := r.FormValue("postalCode")
 		captchaResponse := r.FormValue("captcha_response")

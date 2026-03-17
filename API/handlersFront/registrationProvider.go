@@ -70,15 +70,15 @@ func RegistrationProvider(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		username := r.FormValue("username")
-		name := r.FormValue("name")
-		surname := r.FormValue("surname")
+		username := strings.ToLower(strings.TrimSpace(r.FormValue("username")))
+		name := capitalizeFirst(strings.TrimSpace(r.FormValue("name")))
+		surname := capitalizeFirst(strings.TrimSpace(r.FormValue("surname")))
 		password := r.FormValue("password")
 		passwordConfirmation := r.FormValue("passwordConfirmation")
-		email := r.FormValue("email")
-		profession := r.FormValue("profession")
-		city := r.FormValue("ville")
-		street := r.FormValue("rue")
+		email := strings.ToLower(strings.TrimSpace(r.FormValue("email")))
+		profession := strings.ToLower(strings.TrimSpace(r.FormValue("profession")))
+		city := capitalizeFirst(strings.TrimSpace(r.FormValue("ville")))
+		street := capitalizeFirst(strings.TrimSpace(r.FormValue("rue")))
 		streetNumber := r.FormValue("numero")
 		postalCode := r.FormValue("postalCode")
 		captchaResponse := r.FormValue("captcha_response")

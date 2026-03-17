@@ -165,13 +165,13 @@
                                         <label><?php echo trad("Personalisez vos mots clés (des mots représentant ce qui vous importe et ce que vous êtes venus chercher sur Silver Happy, exemple : sport, alimentation, sommeil...)") ?> :</label>
                                         <div class="row">
                                             <div class="col-4">
-                                                <input class="form-control" type="text" name="keyWord1" value="<?php echo trad($_SESSION['keyWord1']) ?>">
+                                                <input class="form-control" type="text" name="keyWord1" value="<?php echo tradByAPI($_SESSION['keyWord1']) ?>">
                                             </div>
                                             <div class="col-4">
-                                                <input class="form-control" type="text" name="keyWord2" value="<?php echo trad($_SESSION['keyWord2']) ?>">
+                                                <input class="form-control" type="text" name="keyWord2" value="<?php echo tradByAPI($_SESSION['keyWord2']) ?>">
                                             </div>
                                             <div class="col-4">
-                                                <input class="form-control" type="text" name="keyWord3" value="<?php echo trad($_SESSION['keyWord3']) ?>">
+                                                <input class="form-control" type="text" name="keyWord3" value="<?php echo tradByAPI($_SESSION['keyWord3']) ?>">
                                             </div>
                                         </div>
                                     <?php }elseif($_SESSION['personalizeInputs'] == 0){ ?>
@@ -182,8 +182,8 @@
                                 <div class="row mb-4">
                                     <?php if($_SESSION['personalizeInputs'] == 1){ ?>
                                         <label><?php echo trad("Personalisez votre description") ?> :</label>
-                                        <textarea class="form-control" rows="2" name="description"><?php echo trad($_SESSION['description']) ?></textarea>
-                                    <?php }elseif($_SESSION['description'] != ""){ ?> <p> <?php echo trad($_SESSION['description']); } ?></p>
+                                        <textarea class="form-control" rows="2" name="description"><?php echo tradByAPI($_SESSION['description']) ?></textarea>
+                                    <?php }elseif($_SESSION['description'] != ""){ ?> <p> <?php echo tradByAPI($_SESSION['description']); } ?></p>
                                 </div>
 
                                 <?php if($_SESSION['personalizeInputs'] == 1){ ?>
@@ -228,11 +228,11 @@
                                                     </form>
                                                 </div>
                                                 <div class="col-10">
-                                                    <p><?php echo htmlspecialchars(trad($advice['description'])) ?></p>
+                                                    <p><?php echo htmlspecialchars(tradByAPI($advice['description'])) ?></p>
                                                 </div>
                                             </div>
 
-                                            <p><small> <?php echo trad("Publié par ");?> <?php echo htmlspecialchars($advice['username']) ?> - <?php echo htmlspecialchars(trad($advice['profession'])) ?> </small></p>
+                                            <p><small> <?php echo trad("Publié par ");?> <?php echo htmlspecialchars($advice['username']) ?> - <?php echo htmlspecialchars(tradByAPI($advice['profession'])) ?> </small></p>
 
                                             <?php $isFirstAdvice = false; ?>
 

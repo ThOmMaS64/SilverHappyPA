@@ -184,7 +184,7 @@
 
                                 <div class="row">
                                     <div class="col-10">
-                                        <h5><?php echo htmlspecialchars(trad($advice['title'])) ?></h5>
+                                        <h5><?php echo htmlspecialchars(tradByAPI($advice['title'])) ?></h5>
                                         <div class="line"></div>
                                         <p><?php echo htmlspecialchars(trad($advice['theme'])) ?></p>
                                     </div>
@@ -208,9 +208,9 @@
                                     </div>
                                 </div>
 
-                                <p><?php echo htmlspecialchars(trad($advice['description'])) ?></p>
+                                <p><?php echo htmlspecialchars(tradByAPI($advice['description'])) ?></p>
 
-                                <p><small> <?php echo trad("Publié le") ?> <?php echo date("d/m/Y", strtotime($advice['date_publication'])) ?> <?php echo trad("par") ?> <a class="linkToVisitProfile" href="profileVisit.php?visitedId=<?php echo $advice['id_service_provider'] ?>"> <?php echo htmlspecialchars($advice['name']) ?> <?php echo htmlspecialchars($advice['surname']) ?> <?php echo trad("alias") ?> <?php echo htmlspecialchars($advice['username']) ?> </a> - <?php echo htmlspecialchars(trad($advice['profession'])) ?> </small></p>
+                                <p><small> <?php echo trad("Publié le") ?> <?php echo date("d/m/Y", strtotime($advice['date_publication'])) ?> <?php echo trad("par") ?> <a class="linkToVisitProfile" href="profileVisit.php?visitedId=<?php echo $advice['id_service_provider'] ?>"> <?php echo htmlspecialchars($advice['name']) ?> <?php echo htmlspecialchars($advice['surname']) ?> <?php echo trad("alias") ?> <?php echo htmlspecialchars($advice['username']) ?> </a> - <?php echo htmlspecialchars(tradByAPI($advice['profession'])) ?> </small></p>
 
                             </div>
 

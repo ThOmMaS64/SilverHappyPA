@@ -4,7 +4,7 @@
 
     include("includes/translation.php");
 
-    $pageTitle = trad("Mon profil");
+    $pageTitle = trad("Profil");
     include('includes/db.php');
 
     include("includes/head.php");
@@ -47,17 +47,17 @@
                                     <h3><?php echo $visitedPageData['name'] ." " . $visitedPageData['surname']?> <small>, <?php echo trad("alias"); ?> <?php echo $visitedPageData['username']; ?><small></h3>
                                     <div class="line mb-1"></div>
                                     <p><?php echo trad("Profession/spécialisation : ") ?> <?php echo $visitedPageData['profession']; ?></p>
-                                    <p><?php echo trad("Dernière connexion : ") ?> <?php echo $visitedPageData['last_connection'] == "2000-01-01 00:00:00" ? "Cet utilisateur ne s'est jamais connecté depuis son inscription" : date("d/m/Y", strtotime($visitedPageData['last_connection'])); ?>
+                                    <p><?php echo trad("Dernière connexion : ") ?> <?php echo $visitedPageData['last_connection'] == "2000-01-01 00:00:00" ? trad("Cet utilisateur ne s'est jamais connecté depuis son inscription") : date("d/m/Y", strtotime($visitedPageData['last_connection'])); ?>
                                     <p><?php echo trad("Inscrit depuis le : ") ?> <?php echo date("d/m/Y", strtotime($visitedPageData['date_inscription'])); ?>
                                     <p><?php echo trad("Adresse email") ?> : <?php echo $visitedPageData['email']; ?></p>
                                 </div>
                             </div>
                             <div class="row">
-                                <?php if($visitedPageData["keyWord1"] != ""){ echo trad($visitedPageData["keyWord1"]); }elseif($visitedPageData["keyWord2"] != ""){ echo trad($visitedPageData["keyWord2"]); }elseif($visitedPageData["keyWord3"] != ""){ echo trad($visitedPageData["keyWord3"]); } ?>
+                                <?php if($visitedPageData["keyWord1"] != ""){ echo tradByAPI($visitedPageData["keyWord1"]); }elseif($visitedPageData["keyWord2"] != ""){ echo tradByAPI($visitedPageData["keyWord2"]); }elseif($visitedPageData["keyWord3"] != ""){ echo tradByAPI($visitedPageData["keyWord3"]); } ?>
                             </div>
 
                             <div class="row">
-                                <?php if($visitedPageData['description'] != ""){ echo trad($visitedPageData['description']); } ?>
+                                <?php if($visitedPageData['description'] != ""){ echo tradByAPI($visitedPageData['description']); } ?>
                             </div>
 
                         </div>

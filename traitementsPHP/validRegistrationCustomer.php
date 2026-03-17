@@ -131,7 +131,7 @@
             $mail->Subject = trad('Bienvenue chez Silver Happy !');
 
             $text1 = trad("Bonjour");
-            $text2 = trad("Bienvenue chez Silver Happy, nous sommes fiers de vous compter parmi nos adhérants.");
+            $text2 = trad("Bienvenue chez Silver Happy, nous sommes fiers de vous compter parmi nos adhérents.");
             $text3 = trad("Votre inscription a bien été prise en compte et vous pouvez dès à présent profiter de nos services, nos conseils, notre boutique et bien plus encore !");
             $text4 = trad("Nous vous remercions pour votre confiance et nous réjouissons de vous accompagner dans ce qui sera les plus belles années de votre vie.");
             $text5 = trad("L’équipe Silver Happy");
