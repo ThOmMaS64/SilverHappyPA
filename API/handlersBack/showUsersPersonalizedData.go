@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 func ShowUsersPersonalizedData(database *sql.DB) http.HandlerFunc {
@@ -15,6 +16,15 @@ func ShowUsersPersonalizedData(database *sql.DB) http.HandlerFunc {
 		research := r.FormValue("research")
 		filter := r.FormValue("filter")
 		sort := r.FormValue("sort")
+		
+		offsetString := r.FormValue("offset")
+		offset := 0
+
+		if offsetString != ""{
+
+			offset, _ = strconv.Atoi(offsetString)
+
+		}
 
 		users := []User{}
 
@@ -65,7 +75,8 @@ func ShowUsersPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		basicQuery += " LIMIT 10"
+		basicQuery += " LIMIT 10 OFFSET ?"
+		args = append(args, offset)
 
 		rowSelectUser, errSelectUser := database.Query(basicQuery, args...)
 	

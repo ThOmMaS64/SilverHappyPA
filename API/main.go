@@ -47,6 +47,9 @@ func main() {
 	http.HandleFunc("/backShowTips", handlersBack.BackShowTips(database))
 	http.HandleFunc("/showUsersDefaultData", handlersBack.ShowUsersDefaultData(database))
 	http.HandleFunc("/showUsersPersonalizedData", handlersBack.ShowUsersPersonalizedData(database))
+	http.HandleFunc("/updateUsersData", handlersBack.UpdateUsersData(database))
+	http.HandleFunc("/banUser", handlersBack.BanUser(database))
+	http.HandleFunc("/deleteUser", handlersBack.DeleteUser(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 

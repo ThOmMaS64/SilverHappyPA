@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=5">
     <script src="script.js"></script>
 </head>
 <?php
@@ -22,17 +22,25 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tableChoice'])){
 
 }
 
+if(!isset($_SESSION['offsetUsers'])){
+
+    $_SESSION['offsetUsers'] = 0;
+
+}
+
 $research = isset($_GET['research']) ? urlencode($_GET['research']) : "";
 $filter = isset($_GET['filter']) ? urlencode($_GET['filter']) : "";
 $sort = isset($_GET['sort']) ? urlencode($_GET['sort']) : "";
 
+$offset = $_SESSION['offsetUsers'];
+
 if(isset($_GET['research']) || isset($_GET['filter']) || isset($_GET['sort'])){
 
-    $dataUsers = @file_get_contents("http://localhost:8081/showUsersPersonalizedData?research=$research&filter=$filter&sort=$sort");
+    $dataUsers = @file_get_contents("http://localhost:8081/showUsersPersonalizedData?research=$research&filter=$filter&sort=$sort&offset=$offset");
 
 }else{
 
-    $dataUsers = @file_get_contents("http://localhost:8081/showUsersDefaultData");
+    $dataUsers = @file_get_contents("http://localhost:8081/showUsersDefaultData?offset=$offset");
 
 }
 
@@ -301,20 +309,20 @@ if($dataTip){
                                         <tr>
                                             <th scope="row"> <?= htmlspecialchars($user['ID_USER']) ?></th>
 
-                                            <td><input form="<?= $idForm ?>" name="username" class="mediumtext" type="text" value="<?= htmlspecialchars($user['username'] ?? '') ?>"></td>
+                                            <td><input class="form-control" form="<?= $idForm ?>" name="username" class="mediumtext" type="text" value="<?= htmlspecialchars($user['username'] ?? '') ?>"></td>
                                                 
-                                            <td><input form="<?= $idForm ?>" name="name" class="mediumtext" type="text" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></td>
-                                            <td><input form="<?= $idForm ?>" name="surname" class="mediumtext" type="text" value="<?= htmlspecialchars($user['surname'] ?? '') ?>"></td>
-                                            <td><input form="<?= $idForm ?>" name="email" class="mediumtext" type="text" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></td>
-                                            <td><input form="<?= $idForm ?>" name="birth_date" class="mediumtext" type="date" value="<?php if($user['birth_date'] == '1900-01-01'){echo "non renseigné";}else{echo  htmlspecialchars($user['birth_date']);} ?>"></td>
+                                            <td><input class="form-control" form="<?= $idForm ?>" name="name" class="mediumtext" type="text" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></td>
+                                            <td><input class="form-control" form="<?= $idForm ?>" name="surname" class="mediumtext" type="text" value="<?= htmlspecialchars($user['surname'] ?? '') ?>"></td>
+                                            <td><input class="form-control" form="<?= $idForm ?>" name="email" class="mediumtext" type="text" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></td>
+                                            <td><input class="form-control" form="<?= $idForm ?>" name="birth_date" class="mediumtext" type="date" value="<?php if($user['birth_date'] == '1900-01-01'){echo "non renseigné";}else{echo  htmlspecialchars($user['birth_date']);} ?>"></td>
                                                 
-                                            <td><input form="<?= $idForm ?>" name="city" class="mediumtext" type="text" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></td>
-                                            <td><input form="<?= $idForm ?>" name="street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['street'] ?? '') ?>"></td>
-                                            <td><input form="<?= $idForm ?>" name="nb_street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['nb_street'] ?? '') ?>"></td>
-                                            <td><input form="<?= $idForm ?>" name="postal_code" class="mediumtext" type="text" value="<?= htmlspecialchars($user['postal_code'] ?? '') ?>"></td>
+                                            <td><input class="form-control" form="<?= $idForm ?>" name="city" class="mediumtext" type="text" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></td>
+                                            <td><input class="form-control" form="<?= $idForm ?>" name="street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['street'] ?? '') ?>"></td>
+                                            <td><input class="form-control" form="<?= $idForm ?>" name="nb_street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['nb_street'] ?? '') ?>"></td>
+                                            <td><input class="form-control" form="<?= $idForm ?>" name="postal_code" class="mediumtext" type="text" value="<?= htmlspecialchars($user['postal_code'] ?? '') ?>"></td>
 
-                                            <td><input form="<?= $idForm ?>" name="status" class="mediumtext" type="text" value="<?= htmlspecialchars($user['status'] ?? '') ?>"></td>
-                                            <td><input form="<?= $idForm ?>" name="date_inscription" class="mediumtext" type="date" value="<?= htmlspecialchars($user['date_inscription'] ?? '0') ?>"></td>
+                                            <td><input class="form-control" form="<?= $idForm ?>" name="status" class="mediumtext" type="text" value="<?= htmlspecialchars($user['status'] ?? '') ?>"></td>
+                                            <td><input class="form-control" form="<?= $idForm ?>" name="date_inscription" class="mediumtext" type="date" value="<?= htmlspecialchars($user['date_inscription'] ?? '0') ?>"></td>
                                             <td><?php if($user['connected'] == 1){echo "en cours";}else{echo date("d/m/Y", strtotime($user['last_connection']));} ?></td>
                                             <td><?= htmlspecialchars($user['banned'] ?? '') ?></td>
 
@@ -376,6 +384,10 @@ if($dataTip){
                                 <th scope="col">Date d'inscription</th>
                                 <th scope="col">Connexion</th>
                                 <th scope="col">Bannissement</th>
+                                <th scope="col">Sélectionner</th>
+                                <th scope="col">Modifier</th>
+                                <th scope="col">Bannir</th>
+                                <th scope="col">Supprimer</th>
                                 <th scope="col"></th>
                                 </tr>
                             </thead>
@@ -390,26 +402,33 @@ if($dataTip){
                                     <tr>
                                         <th scope="row"> <?= htmlspecialchars($user['ID_USER']) ?></th>
 
-                                        <td><input form="<?= $idForm ?>" name="username" class="mediumtext" type="text" value="<?= htmlspecialchars($user['username'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="username" class="mediumtext" type="text" value="<?= htmlspecialchars($user['username'] ?? '') ?>"></td>
                                             
-                                        <td><input form="<?= $idForm ?>" name="name" class="mediumtext" type="text" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></td>
-                                        <td><input form="<?= $idForm ?>" name="surname" class="mediumtext" type="text" value="<?= htmlspecialchars($user['surname'] ?? '') ?>"></td>
-                                        <td><input form="<?= $idForm ?>" name="email" class="mediumtext" type="text" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></td>
-                                        <td><input form="<?= $idForm ?>" name="birth_date" class="mediumtext" type="date" value="<?php if($user['birth_date'] == '1900-01-01'){echo "non renseigné";}else{echo  htmlspecialchars($user['birth_date']);} ?>"></td>                                                                                            
-                                        <td><input form="<?= $idForm ?>" name="city" class="mediumtext" type="text" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></td>
-                                        <td><input form="<?= $idForm ?>" name="street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['street'] ?? '') ?>"></td>
-                                        <td><input form="<?= $idForm ?>" name="nb_street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['nb_street'] ?? '') ?>"></td>
-                                        <td><input form="<?= $idForm ?>" name="postal_code" class="mediumtext" type="text" value="<?= htmlspecialchars($user['postal_code'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="name" class="mediumtext" type="text" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="surname" class="mediumtext" type="text" value="<?= htmlspecialchars($user['surname'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="email" class="mediumtext" type="text" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="birth_date" class="mediumtext" type="date" value="<?php if($user['birth_date'] == '1900-01-01'){echo "non renseigné";}else{echo  htmlspecialchars($user['birth_date']);} ?>"></td>                                                                                            
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="city" class="mediumtext" type="text" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['street'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="nb_street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['nb_street'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="postal_code" class="mediumtext" type="text" value="<?= htmlspecialchars($user['postal_code'] ?? '') ?>"></td>
 
-                                        <td><input form="<?= $idForm ?>" name="description" class="bigtext" type="text" value="<?= htmlspecialchars($user['description'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="description" class="bigtext" type="text" value="<?= htmlspecialchars($user['description'] ?? '') ?>"></td>
                                             
-                                        <td><input form="<?= $idForm ?>" name="keyWord1" class="bigtext" type="text" value="<?= htmlspecialchars($user['keyWord1'] ?? '') ?>"></td>
-                                        <td><input form="<?= $idForm ?>" name="keyWord2" class="bigtext" type="text" value="<?= htmlspecialchars($user['keyWord2'] ?? '') ?>"></td>
-                                        <td><input form="<?= $idForm ?>" name="keyWord3" class="bigtext" type="text" value="<?= htmlspecialchars($user['keyWord3'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="keyWord1" class="bigtext" type="text" value="<?= htmlspecialchars($user['keyWord1'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="keyWord2" class="bigtext" type="text" value="<?= htmlspecialchars($user['keyWord2'] ?? '') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="keyWord3" class="bigtext" type="text" value="<?= htmlspecialchars($user['keyWord3'] ?? '') ?>"></td>
 
-                                        <td><input form="<?= $idForm ?>" name="status" class="bigtext" type="text" value="<?= htmlspecialchars($user['status'] ?? '0') ?>"></td>
-                                        <td><input form="<?= $idForm ?>" name="date_inscription" class="mediumtext" type="date" value="<?= htmlspecialchars($user['date_inscription'] ?? '0') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="status" class="bigtext" type="text" value="<?= htmlspecialchars($user['status'] ?? '0') ?>"></td>
+                                        <td><input class="form-control" form="<?= $idForm ?>" name="date_inscription" class="mediumtext" type="date" value="<?= htmlspecialchars($user['date_inscription'] ?? '0') ?>"></td>
                                         <td><?php if($user['connected'] == 1){echo "en cours";}else{echo date("d/m/Y", strtotime($user['last_connection']));} ?></td>
+                                        <td><?= htmlspecialchars($user['banned'] ?? '') ?></td>
+
+                                        <td>
+                                            <div class="form-check">
+                                                <input form="selectedEmail" name="selectedEmail[]" class="form-check-input" type="checkbox" value="<?php echo htmlspecialchars($user['email']); ?>">
+                                            </div>
+                                        </td>
 
                                         <td>
                                             <form id="<?= $idForm ?>" method="POST" action="http://localhost:8081/updateUsersData">
@@ -443,6 +462,10 @@ if($dataTip){
                     <button type="submit" name="pageUsers" value="moins">Précedent</button>
                     <button type="submit" name="pageUsers" value="plus">Suivant</button>
                     <button type="submit" name="pageUsers">Rafraîchir</button>
+
+                    <input type="hidden" name="research" value="<?php if(isset($_GET['research'])){ echo $_GET['research']; } ?>">
+                    <input type="hidden" name="filter" value="<?php if(isset($_GET['filter'])){ echo $_GET['filter']; } ?>">
+                    <input type="hidden" name="sort" value="<?php if(isset($_GET['sort'])){ echo $_GET['sort']; } ?>">
                 </form>
                 <?php endif; ?>
 
@@ -458,7 +481,7 @@ if($dataTip){
                     <label>Corps de l'email</label>
                     <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
 
-                    <button type="submit">Envoyer</button>
+                    <button type="submit"class="mb-5">Envoyer</button>
 
                 </form>
             </section>

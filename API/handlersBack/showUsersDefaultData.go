@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 type User struct{
@@ -32,9 +33,18 @@ func ShowUsersDefaultData(database *sql.DB) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
+		offsetString := r.FormValue("offset")
+		offset := 0
+
+		if offsetString != ""{
+
+			offset, _ = strconv.Atoi(offsetString)
+
+		}
+
 		users := []User{}
 
-		rowsUsers, err := database.Query("SELECT USER_.ID_USER, COALESCE(USER_.username, ''), COALESCE(USER_.name, ''), COALESCE(USER_.surname, ''), COALESCE(USER_.description, ''), COALESCE(USER_.keyWord1, ''), COALESCE(USER_.keyWord2, ''), COALESCE(USER_.keyWord3, ''), COALESCE(USER_.email, ''), COALESCE(USER_.city, ''), COALESCE(USER_.street, ''), COALESCE(USER_.nb_street, ''), COALESCE(USER_.postal_code, ''), COALESCE(USER_.status, 0), COALESCE(USER_.connected, 0), COALESCE(USER_.last_connection, '1900-01-01 00:00:00'), COALESCE(USER_.date_inscription, '1900-01-01'), COALESCE(USER_.banned, 0), COALESCE(CONSUMER.birth_date, '1900-01-01') FROM USER_ LEFT JOIN CONSUMER ON USER_.ID_USER = CONSUMER.ID_USER LIMIT 10")
+		rowsUsers, err := database.Query("SELECT USER_.ID_USER, COALESCE(USER_.username, ''), COALESCE(USER_.name, ''), COALESCE(USER_.surname, ''), COALESCE(USER_.description, ''), COALESCE(USER_.keyWord1, ''), COALESCE(USER_.keyWord2, ''), COALESCE(USER_.keyWord3, ''), COALESCE(USER_.email, ''), COALESCE(USER_.city, ''), COALESCE(USER_.street, ''), COALESCE(USER_.nb_street, ''), COALESCE(USER_.postal_code, ''), COALESCE(USER_.status, 0), COALESCE(USER_.connected, 0), COALESCE(USER_.last_connection, '1900-01-01 00:00:00'), COALESCE(USER_.date_inscription, '1900-01-01'), COALESCE(USER_.banned, 0), COALESCE(CONSUMER.birth_date, '1900-01-01') FROM USER_ LEFT JOIN CONSUMER ON USER_.ID_USER = CONSUMER.ID_USER LIMIT 10 OFFSET ?" ,offset)
 		
 		if err != nil {
 		

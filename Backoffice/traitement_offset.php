@@ -35,37 +35,52 @@
     }
 
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageUsers'])){
-        if($_POST['pageUsers'] == 'plus'){
-            $_SESSION['offsetUsers'] += 10;
-        }
-        if($_POST['pageUsers'] == 'moins'){
-            $_SESSION['offsetUsers'] -= 10;
-        }
-        if($_SESSION['offsetUsers']<0){
+        
+        if(!isset($_SESSION['offsetUsers'])){
+
             $_SESSION['offsetUsers'] = 0;
+
         }
 
-        $_SESSION['listusers'] = array();
-        $q = 'SELECT ID_USER, username, birthdate, name, surname, description, email, status FROM user_ LIMIT 10 OFFSET :offset';
-        $statement = $bdd->prepare($q);
-        $statement->bindValue(':offset', $_SESSION['offsetUsers'], PDO::PARAM_INT);
-        $statement->execute();
-        $results = $statement->fetchAll();
-        foreach($results as $user){
-            $registeredUser = [
-                'ID_USER' => $user['ID_USER'],
-                'username' => $user['username'],
-                'birthdate' => $user['birthdate'],
-                'name' => $user['name'],
-                'surname' => $user['surname'],
-                'description' => $user['description'],
-                'email' => $user['email'],
-                'status' => $user['status']
-            ];
-            $_SESSION['listusers'][] = $registeredUser;
+        if($_POST['pageUsers'] == "plus"){
+
+            $_SESSION['offsetUsers'] += 10;
+
+        }elseif($_POST['pageUsers'] == "moins"){
+
+            $_SESSION['offsetUsers'] -= 10;
+
         }
 
-        header('Location: http://localhost/ProjetAnnuel/Backoffice/#pageusers');
+        if($_SESSION['offsetUsers'] < 0){
+
+            $_SESSION['offsetUsers'] = 0;
+
+        }
+
+        $url = "http://localhost/ProjetAnnuel/Backoffice/index.php?";
+
+        if(isset($_POST['research']) && !empty($_POST['research'])){
+
+            $url = $url . "research=" . urlencode($_POST['research']);
+
+        }
+        
+        if(isset($_POST['filter']) && !empty($_POST['filter'])){
+
+            $url = $url . "&filter=" . urlencode($_POST['filter']);
+
+        }
+
+        if(isset($_POST['sort']) && !empty($_POST['sort'])){
+
+            $url = $url . "&sort=" . urlencode($_POST['sort']);
+
+        }
+
+        $url = $url . "#pageusers";
+
+        header('Location:' . $url);
         exit();
     }
 
