@@ -36,6 +36,7 @@
             $_SESSION['keyWord1'] = $response['keyWord1'];
             $_SESSION['keyWord2'] = $response['keyWord2'];
             $_SESSION['keyWord3'] = $response['keyWord3'];
+            $_SESSION['banned'] = $response['banned'];
 
             if(isset($response['tutoSeen']) && $response['tutoSeen'] != ""){
 
@@ -46,6 +47,11 @@
 
                 $_SESSION['profession'] = $response['profession'];
 
+            }
+
+            if($_SESSION['banned'] == 1){
+                header("location:../indexBanned.php");
+                exit();
             }
 
             header("location:../index.php?notif=connexion_success");

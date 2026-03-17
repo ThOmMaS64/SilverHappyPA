@@ -32,6 +32,7 @@ type userDataResponse struct {
 	TutoSeen string `json:"tutoSeen"`
 	Profession string `json:"profession"`
 	BirthDate string `json:"birth_date"`
+	Banned string `json:"banned"`
 	Error string `json:"error"`
 
 
@@ -66,6 +67,7 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		var streetNumber string
 		var postalCode string
 		var birth_date string
+		var banned string
 
 		var response userDataResponse
 
@@ -104,9 +106,9 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		rowUser := database.QueryRow("SELECT name, surname, username, city, street, nb_street, postal_code, status, email, description, keyword1, keyword2, keyword3, date_inscription, darkMode, levelFont, fontChange, cursorType, language, profilePicture FROM user_ WHERE ID_USER = ?", id)
+		rowUser := database.QueryRow("SELECT name, surname, username, city, street, nb_street, postal_code, status, email, description, keyword1, keyword2, keyword3, date_inscription, darkMode, levelFont, fontChange, cursorType, language, profilePicture, banned FROM user_ WHERE ID_USER = ?", id)
 		
-		errUser := rowUser.Scan(&name, &surname, &username, &city, &street, &streetNumber, &postalCode, &status, &email, &description, &keyWord1, &keyWord2, &keyWord3, &dateInscription, &darkMode, &levelFont, &fontChange, &cursorType, &language, &profilePicture)
+		errUser := rowUser.Scan(&name, &surname, &username, &city, &street, &streetNumber, &postalCode, &status, &email, &description, &keyWord1, &keyWord2, &keyWord3, &dateInscription, &darkMode, &levelFont, &fontChange, &cursorType, &language, &profilePicture, &banned)
 
 		if errUser != nil {
 
@@ -137,6 +139,7 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		response.CursorType = cursorType
 		response.Language = language
 		response.ProfilePicture = profilePicture
+		response.Banned = banned
 
 		if(status == "1" || status == "2" || status == "5" || status == "6"){
 
