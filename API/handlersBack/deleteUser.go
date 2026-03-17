@@ -64,7 +64,7 @@ func DeleteUser(database *sql.DB) http.HandlerFunc {
 
 				if err != nil {
 
-					http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=system5#pageusers", 303)
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=delete_error#pageusers", 303)
 					return 
 
 				}
@@ -100,7 +100,7 @@ func DeleteUser(database *sql.DB) http.HandlerFunc {
 
 				if err != nil {
 
-					http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=system6#pageusers", 303)
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=delete_error#pageusers", 303)
 					return 
 
 				}
@@ -127,7 +127,7 @@ func DeleteUser(database *sql.DB) http.HandlerFunc {
 
 				if err != nil {
 
-					http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=system6#pageusers", 303)
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=delete_error#pageusers", 303)
 					return 
 
 				}
@@ -138,7 +138,7 @@ func DeleteUser(database *sql.DB) http.HandlerFunc {
 
 				if err != nil {
 
-					http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=system7#pageusers", 303)
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=delete_error#pageusers", 303)
 					return 
 
 				}
@@ -147,7 +147,7 @@ func DeleteUser(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php#pageusers", 303)
+		http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?notif=delete_success#pageusers", 303)
 
 	}
 

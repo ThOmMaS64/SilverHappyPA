@@ -54,12 +54,13 @@
             
             $mail->send();
 
-            header('location:index.php#pageusers');
+            header('location:index.php?notif=email_sent#pageusers');
             exit();
             
         } catch (Exception $e) {
 
-            return false;
+            header('location:index.php?error=email_error#pageusers');
+            exit();
 
         }
 

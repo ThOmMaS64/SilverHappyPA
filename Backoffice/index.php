@@ -137,6 +137,33 @@ if($dataTip){
         }
     }
 }
+
+$notifUsers = [
+
+    "update_success" => "Mise à jour des informations réussie.",
+    "ban_success" => "Bannissement mis à jour.",
+    "delete_success" => "Suppression du compte réussi.",
+    "email_sent" => "Envoi du mail réussi.",
+
+];
+
+$notifUsersKey = $_GET["notif"] ?? null;
+
+$successUsersMessage = $notifUsers[$notifUsersKey] ?? null;
+
+$errorUsers = [
+
+    "update_error" => "Mise à jour des informations échouée.",
+    "ban_error" => "Échec de la mise à jour du bannissement.",
+    "delete_error" => "Suppression du compte échouée.",
+    "email_error" => "Envoi du mail échoué.",
+
+];
+
+$errorUsersKey = $_GET["error"] ?? null;
+
+$errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
+
 ?>
 <body onload="loadWelcome()">
     <header>
@@ -220,6 +247,18 @@ if($dataTip){
                     <div class="col-2 pt-3">
                         <p>(<?php echo $connectedUser ?> utilisateur.s connecté.s)</p>
                     </div>
+                </div>
+
+                <div class="col-4">
+                    <?php if (isset($errorUsersMessage)): ?>
+                        <div class="alert alert-danger">
+                            <?php echo htmlspecialchars($errorUsersMessage); ?>
+                        </div>
+                    <?php elseif(isset($successUsersMessage)): ?>
+                        <div class="alert alert-success">
+                            <?php echo htmlspecialchars($successUsersMessage); ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
 
                 <form method="GET" action="index.php#pageusers">

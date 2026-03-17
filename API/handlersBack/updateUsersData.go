@@ -30,8 +30,8 @@ func UpdateUsersData(database *sql.DB) http.HandlerFunc {
 
 		if updateError != nil{
 
-			http.Error(w, "Erreur lors de la mise à jour des données dans la base de données 1", 500)
-			return	
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error#pageusers", 303)
+			return 
 
 		}
 		defer updateStatement.Close()
@@ -40,8 +40,8 @@ func UpdateUsersData(database *sql.DB) http.HandlerFunc {
 
 		if updateStatementExecError != nil{
 
-			http.Error(w, "Erreur lors de la mise à jour des données dans la base de données 2", 500)
-			return	
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error#pageusers", 303)
+			return 	
 
 		}
 
@@ -49,8 +49,8 @@ func UpdateUsersData(database *sql.DB) http.HandlerFunc {
 
 		if updateError2 != nil{
 
-			http.Error(w, "Erreur lors de la mise à jour des données dans la base de données 3", 500)
-			return	
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error#pageusers", 303)
+			return 
 
 		}
 		defer updateStatement2.Close()
@@ -59,12 +59,12 @@ func UpdateUsersData(database *sql.DB) http.HandlerFunc {
 
 		if updateStatementExecError2 != nil{
 
-			http.Error(w, "Erreur lors de la mise à jour des données dans la base de données 4", 500)
-			return	
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error#pageusers", 303)
+			return 
 
 		}
 
-		http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php#pageusers", 303)
+		http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?notif=update_success#pageusers", 303)
 
 	}
 

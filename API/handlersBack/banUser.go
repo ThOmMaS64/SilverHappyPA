@@ -22,8 +22,8 @@ func BanUser(database *sql.DB) http.HandlerFunc {
 
 		if updateError != nil{
 
-			http.Error(w, "Erreur lors de la mise à jour des données dans la base de données 1", 500)
-			return	
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=ban_error#pageusers", 303)
+			return 
 
 		}
 		defer updateStatement.Close()
@@ -32,12 +32,12 @@ func BanUser(database *sql.DB) http.HandlerFunc {
 
 		if updateStatementExecError != nil{
 
-			http.Error(w, "Erreur lors de la mise à jour des données dans la base de données 2", 500)
-			return	
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=ban_error#pageusers", 303)
+			return 
 
 		}
 
-		http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php#pageusers", 303)
+		http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?notif=ban_success#pageusers", 303)
 
 	}
 

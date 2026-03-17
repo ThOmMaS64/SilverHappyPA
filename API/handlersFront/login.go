@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -39,7 +40,7 @@ func Login(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		username := r.FormValue("username")
+		username := strings.ToLower(strings.TrimSpace(r.FormValue("username")))
 		password := r.FormValue("password")
 
 		var dbPassword string
