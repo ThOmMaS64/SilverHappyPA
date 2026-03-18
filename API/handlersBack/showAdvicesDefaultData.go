@@ -27,7 +27,7 @@ func ShowAdvicesDefaultData(database *sql.DB) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		offsetString := r.FormValue("offsetAdvices")
+		offsetString := r.FormValue("offset")
 		offset := 0
 
 		if offsetString != ""{

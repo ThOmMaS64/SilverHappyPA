@@ -3,37 +3,6 @@
 
     include('../includes/db.php');
 
-    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageConn'])){
-        if($_POST['pageConn'] == 'plus'){
-            $_SESSION['offsetConn'] += 10;
-        }
-        if($_POST['pageConn'] == 'moins'){
-            $_SESSION['offsetConn'] -= 10;
-        }
-        if($_SESSION['offsetConn']<0){
-            $_SESSION['offsetConn'] = 0;
-        }
-        
-        $_SESSION['listconn'] = array();
-        $q = 'SELECT ID_USER, username, email, connected FROM user_ LIMIT 10 OFFSET :offset';
-        $statement = $bdd->prepare($q);
-        $statement->bindValue(':offset', $_SESSION['offsetConn'], PDO::PARAM_INT);
-        $statement->execute();
-        $results = $statement->fetchAll();
-        foreach($results as $user){
-            $userConn = [
-                'ID_USER' => $user['ID_USER'],
-                'username' => $user['username'],
-                'email' => $user['email'],
-                'connected' => $user['connected']
-            ];
-            $_SESSION['listconn'][] = $userConn;
-        }
-
-        header('Location: http://localhost/ProjetAnnuel/Backoffice/#pageconnexion');
-        exit();
-    }
-
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageUsers'])){
         
         if(!isset($_SESSION['offsetUsers'])){
@@ -79,6 +48,56 @@
         }
 
         $url = $url . "#pageusers";
+
+        header('Location:' . $url);
+        exit();
+    }
+
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pagetips'])){
+        
+        if(!isset($_SESSION['offsetAdvices'])){
+
+            $_SESSION['offsetAdvices'] = 0;
+
+        }
+
+        if($_POST['pagetips'] == "plus"){
+
+            $_SESSION['offsetAdvices'] += 10;
+
+        }elseif($_POST['pagetips'] == "moins"){
+
+            $_SESSION['offsetAdvices'] -= 10;
+
+        }
+
+        if($_SESSION['offsetAdvices'] < 0){
+
+            $_SESSION['offsetAdvices'] = 0;
+
+        }
+
+        $url = "http://localhost/ProjetAnnuel/Backoffice/index.php?";
+
+        if(isset($_POST['researchAdvices']) && !empty($_POST['researchAdvices'])){
+
+            $url = $url . "researchAdvices=" . urlencode($_POST['researchAdvices']);
+
+        }
+        
+        if(isset($_POST['filterAdvices']) && !empty($_POST['filterAdvices'])){
+
+            $url = $url . "&filterAdvices=" . urlencode($_POST['filterAdvices']);
+
+        }
+
+        if(isset($_POST['sortAdvices']) && !empty($_POST['sortAdvices'])){
+
+            $url = $url . "&sortAdvices=" . urlencode($_POST['sortAdvices']);
+
+        }
+
+        $url = $url . "#pagetips";
 
         header('Location:' . $url);
         exit();
@@ -145,38 +164,6 @@
         }
 
         header('Location: http://localhost/ProjetAnnuel/Backoffice/#pageevents');
-        exit();
-    }
-
-    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageTips'])){
-        if($_POST['pageTips'] == 'plus'){
-            $_SESSION['offsetTips'] += 10;
-        }
-        if($_POST['pageTips'] == 'moins'){
-            $_SESSION['offsetTips'] -= 10;
-        }
-        if($_SESSION['offsetTips']<0){
-            $_SESSION['offsetTips'] = 0;
-        }
-
-        $_SESSION['listtips'] = array();
-        $q = 'SELECT ID_ADVICE, title, theme, description, date_publication FROM advice LIMIT 10 OFFSET :offset';
-        $statement = $bdd->prepare($q);
-        $statement->bindValue(':offset', $_SESSION['offsetTips'], PDO::PARAM_INT);
-        $statement->execute();
-        $results = $statement->fetchAll();
-        foreach($results as $tip){
-            $tipValues = [
-                'ID_ADVICE' => $tip['ID_ADVICE'],
-                'title' => $tip['title'],
-                'theme' => $tip['theme'],
-                'description' => $tip['description'],
-                'date_publication' => $tip['date_publication']
-            ];
-            $_SESSION['listtips'][] = $tipValues;
-        }
-
-        header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagetips');
         exit();
     }
 

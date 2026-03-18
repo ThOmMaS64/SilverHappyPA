@@ -18,7 +18,7 @@ func UpdateAdviceData(database *sql.DB) http.HandlerFunc {
 
 		if updateError != nil{
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error1#pagetips", 303)
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error#pagetips", 303)
 			return 
 
 		}
@@ -28,7 +28,7 @@ func UpdateAdviceData(database *sql.DB) http.HandlerFunc {
 
 		if updateStatementExecError != nil{
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error2#pagetips", 303)
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error#pagetips", 303)
 			return
 
 		}

@@ -53,6 +53,7 @@ func main() {
 	http.HandleFunc("/deleteUser", handlersBack.DeleteUser(database))
 	http.HandleFunc("/updateAdviceData", handlersBack.UpdateAdviceData(database))
 	http.HandleFunc("/deleteAdvice", handlersBack.DeleteAdvice(database))
+	http.HandleFunc("/addAdvice", handlersBack.AddAdvice(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 

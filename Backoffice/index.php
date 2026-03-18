@@ -89,11 +89,11 @@ $offsetAdvices = $_SESSION['offsetAdvices'];
 
 if(isset($_GET['researchAdvices']) || isset($_GET['filterAdvices']) || isset($_GET['sortAdvices'])){
 
-    $response = @file_get_contents("http://localhost:8081/showAdvicesPersonalizedData?research=$researchAdvices&filter=$filterAdvices&sort=$sortAdvices&offset=$offsetAdvices");
+    $response = file_get_contents("http://localhost:8081/showAdvicesPersonalizedData?research=$researchAdvices&filter=$filterAdvices&sort=$sortAdvices&offset=$offsetAdvices");
 
 }else{
 
-    $response = @file_get_contents("http://localhost:8081/showAdvicesDefaultData?offset=$offsetAdvices");
+    $response = file_get_contents("http://localhost:8081/showAdvicesDefaultData?offset=$offsetAdvices");
 
 }
 
@@ -170,6 +170,9 @@ $notifUsers = [
     "ban_success" => "Bannissement mis à jour.",
     "delete_success" => "Suppression du compte réussi.",
     "email_sent" => "Envoi du mail réussi.",
+    "delete_success" => "Suppression réussie.",
+    "add_success" => "Ajout réussi.",
+    "update_success" => "Mise à jour réussie.",
 
 ];
 
@@ -183,6 +186,9 @@ $errorUsers = [
     "ban_error" => "Échec de la mise à jour du bannissement.",
     "delete_error" => "Suppression du compte échouée.",
     "email_error" => "Envoi du mail échoué.",
+    "delete_error" => "Suppression échouée.",
+    "add_error" => "Ajout échoué.",
+    "update_error" => "Mise à jour échouée.",
 
 ];
 
@@ -694,10 +700,22 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
             
             <section id="pagetips" class="mt-5">
                 <?php if(isset($_SESSION['listAdvices'])): ?>
-                <h1>Liste des conseils</h1>
+                <h1>Gestion des conseils</h1>
+
+                <div class="col-4">
+                    <?php if (isset($errorUsersMessage)): ?>
+                        <div class="alert alert-danger">
+                            <?php echo htmlspecialchars($errorUsersMessage); ?>
+                        </div>
+                    <?php elseif(isset($successUsersMessage)): ?>
+                        <div class="alert alert-success">
+                            <?php echo htmlspecialchars($successUsersMessage); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
 
                 <form method="GET" action="index.php#pagetips">
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-2">
                             <div class="input-group">
                                 <input value="<?php if(isset($_GET['researchAdvices'])){ echo htmlspecialchars($_GET['researchAdvices']); }else{ echo ""; } ?>" class="form-control" name="researchAdvices" placeholder="<?php if(isset($_GET['researchAdvices']) && $_GET['researchAdvices'] != ""){ echo $_GET['researchAdvices']; }else{ ?><?php echo "Tapez votre recherche"; ?> <?php } ?>" aria-label="Search">
@@ -784,43 +802,40 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                 </table>
 
                 <form method="POST" action="traitement_offset.php">
-                    <button type="submit" name="pageTips" value="moins">Précedent</button>
-                    <button type="submit" name="pageTips" value="plus">Suivant</button>
-                    <button type="submit" name="pageTips">Rafraîchir</button>
+                    <button type="submit" name="pagetips" value="moins">Précedent</button>
+                    <button type="submit" name="pagetips" value="plus">Suivant</button>
+                    <button type="submit" name="pagetips">Rafraîchir</button>
 
                     <input type="hidden" name="researchAdvices" value="<?php if(isset($_GET['researchAdvices'])){ echo $_GET['researchAdvices']; } ?>">
                     <input type="hidden" name="filterAdvices" value="<?php if(isset($_GET['filterAdvices'])){ echo $_GET['filterAdvices']; } ?>">
                     <input type="hidden" name="sortAdvices" value="<?php if(isset($_GET['sortAdvices'])){ echo $_GET['sortAdvices']; } ?>">
                 </form>
 
-                <h2>Ajouter un conseil</h2>
+                <h5 class="pt-5">Ajouter un conseil</h5>
 
-                <table class="table table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                        <th scope="col">Titre</th>
-                        <th scope="col">Thème</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Date de publication</th>
-                        <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <form method="POST" action="traitement_add.php">
+                <form method="POST" action="http://localhost:8081/addAdvice">
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
                             <tr>
-                                <td><input class="mediumtext" type="text" name="title"></td>
+                            <th scope="col">Titre</th>
+                            <th scope="col">Thème</th>
+                            <th scope="col">Description</th>
+                            <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input class="form-control mediumtext" type="text" name="title"></td>
 
-                                <td><input class="mediumtext" type="text" name="theme"></td>
+                                <td><input class="form-control mediumtext" type="text" name="theme"></td>
 
-                                <td><input class="bigtext" type="text" name="description"></td>
-
-                                <td><input class="mediumtext" type="date" name="date_publication"></td>
+                                <td><input class="form-control bigtext" type="text" name="description"></td>
                                         
                                 <td><button class="button" type="submit" name="addtip">Ajouter</button></td>
-                            </tr>
-                        </form>
-                    </tbody>
-                </table>
+                            </tr>                   
+                        </tbody>
+                    </table>
+                </form>
                 <?php endif; ?>
             </section>
 
