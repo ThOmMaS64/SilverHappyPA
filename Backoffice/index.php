@@ -27,6 +27,11 @@ if(!isset($_SESSION['offsetUsers'])){
     $_SESSION['offsetUsers'] = 0;
 
 }
+if(!isset($_SESSION['offsetAdvices'])){
+
+    $_SESSION['offsetAdvices'] = 0;
+
+}
 
 $research = isset($_GET['research']) ? urlencode($_GET['research']) : "";
 $filter = isset($_GET['filter']) ? urlencode($_GET['filter']) : "";
@@ -44,10 +49,6 @@ if(isset($_GET['research']) || isset($_GET['filter']) || isset($_GET['sort'])){
 
 }
 
-$dataShop = @file_get_contents("http://localhost:8081/backShowShop");
-$dataEvent = @file_get_contents("http://localhost:8081/backShowEvents");
-$dataTip = @file_get_contents("http://localhost:8081/backShowTips");
-
 if($dataUsers){
 
     $users = json_decode($dataUsers, true);
@@ -55,7 +56,7 @@ if($dataUsers){
 
     if(is_array($users)){
         foreach($users as $user){
-            $registeredUser = [
+            $_SESSION['listUsers'][] = [
                 'ID_USER' => $user['ID_USER'],
                 'username' => $user['username'],
                 'name' => $user['name'],
@@ -76,10 +77,54 @@ if($dataUsers){
                 'birth_date' => $user['birthDate'],
                 'banned' => $user['banned']
             ];
-            $_SESSION['listUsers'][] = $registeredUser;
         }
     }
 }
+
+$researchAdvices = isset($_GET['researchAdvices']) ? urlencode($_GET['researchAdvices']) : "";
+$filterAdvices = isset($_GET['filterAdvices']) ? urlencode($_GET['filterAdvices']) : "";
+$sortAdvices = isset($_GET['sortAdvices']) ? urlencode($_GET['sortAdvices']) : "";
+
+$offsetAdvices = $_SESSION['offsetAdvices'];
+
+if(isset($_GET['researchAdvices']) || isset($_GET['filterAdvices']) || isset($_GET['sortAdvices'])){
+
+    $response = @file_get_contents("http://localhost:8081/showAdvicesPersonalizedData?research=$researchAdvices&filter=$filterAdvices&sort=$sortAdvices&offset=$offsetAdvices");
+
+}else{
+
+    $response = @file_get_contents("http://localhost:8081/showAdvicesDefaultData?offset=$offsetAdvices");
+
+}
+
+$distinctThemes = [];
+
+if($response){
+
+    $decodedResponse = json_decode($response, true);
+    $_SESSION['listAdvices'] = array();
+
+    if(isset($decodedResponse['advices']) && is_array($decodedResponse['advices'])){
+        foreach($decodedResponse['advices'] as $advice){
+            $_SESSION['listAdvices'][] = [
+                'ID_ADVICE' => $advice['ID_ADVICE'],
+                'title' => $advice['title'],
+                'theme' => $advice['theme'],
+                'description' => $advice['description'],
+                'date_publication' => $advice['date_publication'],
+                'author' => $advice['auteur']
+            ];
+        }
+    }
+
+    if(isset($decodedResponse['themes']) && is_array($decodedResponse['themes'])){
+        $distinctThemes = $decodedResponse['themes'];
+    }
+
+}
+
+$dataShop = @file_get_contents("http://localhost:8081/backShowShop");
+$dataEvent = @file_get_contents("http://localhost:8081/backShowEvents");
 
 if($dataShop){
 
@@ -115,25 +160,6 @@ if($dataEvent){
                 'description' => $event['description']
             ];
             $_SESSION['listevents'][] = $registeredEvents;
-        }
-    }
-}
-
-if($dataTip){
-
-    $tips = json_decode($dataTip, true);
-    $_SESSION['listtips'] = array();
-
-    if(is_array($tips)){
-        foreach($tips as $tip){
-            $registeredTips = [
-                'ID_ADVICE' => $tip['ID_ADVICE'],
-                'title' => $tip['title'],
-                'theme' => $tip['theme'],
-                'description' => $tip['description'],
-                'date_publication' => $tip['date_publication']
-            ];
-            $_SESSION['listtips'][] = $registeredTips;
         }
     }
 }
@@ -667,8 +693,42 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
             </section>
             
             <section id="pagetips" class="mt-5">
-                <?php if(isset($_SESSION['listtips'])): ?>
+                <?php if(isset($_SESSION['listAdvices'])): ?>
                 <h1>Liste des conseils</h1>
+
+                <form method="GET" action="index.php#pagetips">
+                    <div class="row">
+                        <div class="col-2">
+                            <div class="input-group">
+                                <input value="<?php if(isset($_GET['researchAdvices'])){ echo htmlspecialchars($_GET['researchAdvices']); }else{ echo ""; } ?>" class="form-control" name="researchAdvices" placeholder="<?php if(isset($_GET['researchAdvices']) && $_GET['researchAdvices'] != ""){ echo $_GET['researchAdvices']; }else{ ?><?php echo "Tapez votre recherche"; ?> <?php } ?>" aria-label="Search">
+                                <button class="searchButton" type="submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="filterAdvices" class="selectFilter" onchange="this.form.submit()">
+                                <option disabled selected><?php echo "Choisissez un thème" ?></option>
+                                <?php foreach($distinctThemes as $theme): ?>
+                                    <option value="<?= htmlspecialchars($theme) ?>" <?php if(isset($_GET['filterAdvices']) && $_GET['filterAdvices'] == $theme){ echo 'selected'; } ?> ><?= htmlspecialchars($theme) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="sortAdvices" class="selectSort" onchange="this.form.submit()">
+                                <option disabled <?php if(!isset($_GET['sortAdvices']) || $_GET['sortAdvices'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
+                                <option value="1" <?php if(isset($_GET['sortAdvices']) && $_GET['sortAdvices'] == "1"){echo 'selected';} ?>>Plus anciens en premier</option>
+                                <option value="2" <?php if(isset($_GET['sortAdvices']) && $_GET['sortAdvices'] == "2"){echo 'selected';} ?>>Plus récents en premier</option>
+                                <option value="3" <?php if(isset($_GET['sortAdvices']) && $_GET['sortAdvices'] == "3"){echo 'selected';} ?>>Plus enregistrés en premier</option>
+                                <option value="4" <?php if(isset($_GET['sortAdvices']) && $_GET['sortAdvices'] == "4"){echo 'selected';} ?>>Moins enregistrés en premier</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
 
                 <table class="table table-striped">
                     <thead class="thead-dark">
@@ -678,29 +738,48 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <th scope="col">Thème</th>
                         <th scope="col">Description</th>
                         <th scope="col">Date de publication</th>
+                        <th scope="col">Auteur</th>
+                        <th scope="col">Modifier</th>
+                        <th scope="col">Supprimer</th>
                         <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <form method="POST" action="traitement_edit.php">
-                            <?php
-                                for($i=0; $i<count($_SESSION['listtips']); $i++){
-                                    echo '<tr>';
-                                        echo '<th scope="row">' . htmlspecialchars($_SESSION['listtips'][$i]['ID_ADVICE']) . '</th>';
+                        <?php
+                            foreach($_SESSION['listAdvices'] as $advice){
 
-                                        echo '<td><input class="mediumtext" type="text" name="newtitle[' . $_SESSION['listtips'][$i]['ID_ADVICE'] . ']" value="' . $_SESSION['listtips'][$i]['title'] . '"></td>'; 
+                                $idFormAdvice = "form_advice_" . $advice['ID_ADVICE'];
+                        ?>
+                                <tr>
+                                    <th scope="row"> <?= htmlspecialchars($advice['ID_ADVICE']) ?></th>
 
-                                        echo '<td><input class="mediumtext" type="text" name="newtheme[' . $_SESSION['listtips'][$i]['ID_ADVICE'] . ']" value="' . $_SESSION['listtips'][$i]['theme'] . '"></td>'; 
+                                    <td><input class="form-control" form="<?= $idFormAdvice ?>" name="title" class="mediumtext" type="text" value="<?= htmlspecialchars($advice['title'] ?? '') ?>"></td>
 
-                                        echo '<td><input class="bigtext" type="text" name="newdescription[' . $_SESSION['listtips'][$i]['ID_ADVICE'] . ']" value="' . $_SESSION['listtips'][$i]['description'] . '"></td>'; 
+                                    <td><input class="form-control" form="<?= $idFormAdvice ?>" name="theme" class="mediumtext" type="text" value="<?= htmlspecialchars($advice['theme'] ?? '') ?>"></td>
 
-                                        echo '<td><input class="mediumtext" type="text" name="newdate_publication[' . $_SESSION['listtips'][$i]['ID_ADVICE'] . ']" value="' . $_SESSION['listtips'][$i]['date_publication'] . '"></td>'; 
+                                    <td><input class="form-control" form="<?= $idFormAdvice ?>" name="description" class="mediumtext" type="text" value="<?= htmlspecialchars($advice['description'] ?? '') ?>"></td>
                                         
-                                        echo '<td><button class="button" type="submit" name="updatetip" value="' . $_SESSION['listtips'][$i]['ID_ADVICE'] . '">Update</button></td>';
-                                    echo '</tr>';
-                                }
-                            ?>
-                        </form>
+                                    <td><?= htmlspecialchars($advice['date_publication'] ?? '') ?></td>
+
+                                    <td><?= htmlspecialchars($advice['author'] ?? '') ?></td>
+
+                                    <td>
+                                        <form id="<?= $idFormAdvice ?>" method="POST" action="http://localhost:8081/updateAdviceData">
+                                            <button type="submit" value="<?= $advice['ID_ADVICE'] ?>">Modifier</button>
+                                            <input type="hidden" name="id" value="<?= $advice['ID_ADVICE'] ?>">
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST" action="http://localhost:8081/deleteAdvice">
+                                            <button type="submit" value="<?= $advice['ID_ADVICE'] ?>">Supprimer</button>
+                                            <input type="hidden" name="id" value="<?= $advice['ID_ADVICE'] ?>">
+                                        </form>
+                                    </td>
+
+                                </tr>
+
+                            <?php } ?>
                     </tbody>
                 </table>
 
@@ -708,9 +787,13 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     <button type="submit" name="pageTips" value="moins">Précedent</button>
                     <button type="submit" name="pageTips" value="plus">Suivant</button>
                     <button type="submit" name="pageTips">Rafraîchir</button>
+
+                    <input type="hidden" name="researchAdvices" value="<?php if(isset($_GET['researchAdvices'])){ echo $_GET['researchAdvices']; } ?>">
+                    <input type="hidden" name="filterAdvices" value="<?php if(isset($_GET['filterAdvices'])){ echo $_GET['filterAdvices']; } ?>">
+                    <input type="hidden" name="sortAdvices" value="<?php if(isset($_GET['sortAdvices'])){ echo $_GET['sortAdvices']; } ?>">
                 </form>
 
-                <h2>Ajouter une ligne</h2>
+                <h2>Ajouter un conseil</h2>
 
                 <table class="table table-striped">
                     <thead class="thead-dark">
@@ -731,7 +814,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
 
                                 <td><input class="bigtext" type="text" name="description"></td>
 
-                                <td><input class="mediumtext" type="text" name="date_publication"></td>
+                                <td><input class="mediumtext" type="date" name="date_publication"></td>
                                         
                                 <td><button class="button" type="submit" name="addtip">Ajouter</button></td>
                             </tr>

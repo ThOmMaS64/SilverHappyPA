@@ -44,12 +44,15 @@ func main() {
 
 	http.HandleFunc("/backShowShop", handlersBack.BackShowShop(database))
 	http.HandleFunc("/backShowEvents", handlersBack.BackShowEvents(database))
-	http.HandleFunc("/backShowTips", handlersBack.BackShowTips(database))
+	http.HandleFunc("/showAdvicesDefaultData", handlersBack.ShowAdvicesDefaultData(database))
+	http.HandleFunc("/showAdvicesPersonalizedData", handlersBack.ShowAdvicesPersonalizedData(database))
 	http.HandleFunc("/showUsersDefaultData", handlersBack.ShowUsersDefaultData(database))
 	http.HandleFunc("/showUsersPersonalizedData", handlersBack.ShowUsersPersonalizedData(database))
 	http.HandleFunc("/updateUsersData", handlersBack.UpdateUsersData(database))
 	http.HandleFunc("/banUser", handlersBack.BanUser(database))
 	http.HandleFunc("/deleteUser", handlersBack.DeleteUser(database))
+	http.HandleFunc("/updateAdviceData", handlersBack.UpdateAdviceData(database))
+	http.HandleFunc("/deleteAdvice", handlersBack.DeleteAdvice(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 
