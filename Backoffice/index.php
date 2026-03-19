@@ -757,6 +757,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <th scope="col">Description</th>
                         <th scope="col">Date de publication</th>
                         <th scope="col">Auteur</th>
+                        <th scope="col">Sélectionner</th>
                         <th scope="col">Modifier</th>
                         <th scope="col">Supprimer</th>
                         <th scope="col"></th>
@@ -780,6 +781,12 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                     <td><?= htmlspecialchars($advice['date_publication'] ?? '') ?></td>
 
                                     <td><?= htmlspecialchars($advice['author'] ?? '') ?></td>
+
+                                    <td>
+                                         <div class="form-check">
+                                            <input form="selectedAdvice" name="selectedAdvice" class="form-check-input" type="radio" value="<?php echo htmlspecialchars($advice['ID_ADVICE']); ?>">
+                                        </div>
+                                    </td>
 
                                     <td>
                                         <form id="<?= $idFormAdvice ?>" method="POST" action="http://localhost:8081/updateAdviceData">
@@ -835,6 +842,20 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                             </tr>                   
                         </tbody>
                     </table>
+                </form>
+
+                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par les conseils sélectionnés</h5>
+
+                <form id="selectedAdvice" method="POST" action="sendEmailSelectedAdvice.php">
+
+                    <label>Objet</label>
+                    <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
+
+                    <label>Corps de l'email</label>
+                    <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
+
+                    <button type="submit"class="mb-5">Envoyer</button>
+
                 </form>
                 <?php endif; ?>
             </section>
