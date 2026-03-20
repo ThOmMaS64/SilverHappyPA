@@ -311,6 +311,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                 <option disabled <?php if(!isset($_GET['filter']) || $_GET['filter'] == ""){echo 'selected';} ?>>Choisissez un filtre</option>
                                 <option value="1" <?php if(isset($_GET['filter']) && $_GET['filter'] == "1"){echo 'selected';} ?>>Adhérents uniquement</option>
                                 <option value="2" <?php if(isset($_GET['filter']) && $_GET['filter'] == "2"){echo 'selected';} ?>>Prestataires uniquement</option>
+                                <option value="5" <?php if(isset($_GET['filter']) && $_GET['filter'] == "5"){echo 'selected';} ?>>Prestataires à valider</option>
                                 <option value="3" <?php if(isset($_GET['filter']) && $_GET['filter'] == "3"){echo 'selected';} ?>>Connectés uniquement</option>
                                 <option value="4" <?php if(isset($_GET['filter']) && $_GET['filter'] == "4"){echo 'selected';} ?>>Déconnectés uniquement</option>
                             </select>
