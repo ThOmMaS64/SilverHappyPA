@@ -1,6 +1,0 @@
-UPDATE USER_ 
-SET profilePicture = '' 
-WHERE profilePicture IS NULL;
-
-ALTER TABLE USER_ 
-ALTER COLUMN profilePicture SET DEFAULT '';

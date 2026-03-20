@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=6">
     <script src="script.js"></script>
 </head>
 <?php
@@ -453,6 +453,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                 <th scope="col">Key word 2</th>
                                 <th scope="col">Key word 3</th>
                                 <th scope="col">Status</th>
+                                <th scope="col">Casier judiciaire</th>
                                 <th scope="col">Date d'inscription</th>
                                 <th scope="col">Connexion</th>
                                 <th scope="col">Bannissement</th>
@@ -492,6 +493,13 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                         <td><input class="form-control" form="<?= $idForm ?>" name="keyWord3" class="bigtext" type="text" value="<?= htmlspecialchars($user['keyWord3'] ?? '') ?>"></td>
 
                                         <td><input class="form-control" form="<?= $idForm ?>" name="status" class="bigtext" type="text" value="<?= htmlspecialchars($user['status'] ?? '0') ?>"></td>
+
+                                        <td>
+                                            <?php if($user['status'] == -2 || $user['status'] == 3 || $user['status'] == 4){ $criminalRecordPath = "../data/documents/criminal_record_" . htmlspecialchars($user['username']) . ".pdf"; ?>
+                                            <a href="<?php echo $criminalRecordPath ?>" target="_blank"><button>PDF</button></a>
+                                            <?php }else{ echo ""; } ?>
+                                        </td>
+
                                         <td><input class="form-control" form="<?= $idForm ?>" name="date_inscription" class="mediumtext" type="date" value="<?= htmlspecialchars($user['date_inscription'] ?? '0') ?>"></td>
                                         <td><?php if($user['connected'] == 1){echo "en cours";}else{echo date("d/m/Y", strtotime($user['last_connection']));} ?></td>
                                         <td><?= htmlspecialchars($user['banned'] ?? '') ?></td>

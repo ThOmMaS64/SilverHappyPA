@@ -138,3 +138,12 @@ button {
 table .form-control {
   width: fit-content;
 }
+
+.docLink {
+  color: black;
+}
+
+button:hover {
+  background-color: #99a0a8;
+  transform: scale(1.025);
+}
