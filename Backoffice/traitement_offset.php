@@ -103,6 +103,56 @@
         exit();
     }
 
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageevents'])){
+        
+        if(!isset($_SESSION['offsetEvents'])){
+
+            $_SESSION['offsetEvents'] = 0;
+
+        }
+
+        if($_POST['pageevents'] == "plus"){
+
+            $_SESSION['offsetEvents'] += 10;
+
+        }elseif($_POST['pageevents'] == "moins"){
+
+            $_SESSION['offsetEvents'] -= 10;
+
+        }
+
+        if($_SESSION['offsetEvents'] < 0){
+
+            $_SESSION['offsetEvents'] = 0;
+
+        }
+
+        $url = "http://localhost/ProjetAnnuel/Backoffice/index.php?";
+
+        if(isset($_POST['researchEvents']) && !empty($_POST['researchEvents'])){
+
+            $url = $url . "researchEvents=" . urlencode($_POST['researchEvents']);
+
+        }
+        
+        if(isset($_POST['filterEvents']) && !empty($_POST['filterEvents'])){
+
+            $url = $url . "&filterEvents=" . urlencode($_POST['filterEvents']);
+
+        }
+
+        if(isset($_POST['sortEvents']) && !empty($_POST['sortEvents'])){
+
+            $url = $url . "&sortEvents=" . urlencode($_POST['sortEvents']);
+
+        }
+
+        $url = $url . "#pageevents";
+
+        header('Location:' . $url);
+        exit();
+    }
+
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageShop'])){
         if($_POST['pageShop'] == 'plus'){
             $_SESSION['offsetShop'] += 10;
@@ -132,38 +182,6 @@
         }
 
         header('Location: http://localhost/ProjetAnnuel/Backoffice/#pageshop');
-        exit();
-    }
-
-    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageEvents'])){
-        if($_POST['pageEvents'] == 'plus'){
-            $_SESSION['offsetEvents'] += 10;
-        }
-        if($_POST['pageEvents'] == 'moins'){
-            $_SESSION['offsetEvents'] -= 10;
-        }
-        if($_SESSION['offsetEvents']<0){
-            $_SESSION['offsetEvents'] = 0;
-        }
-
-        $_SESSION['listevents'] = array();
-        $q = 'SELECT ID_EVENT, name, type, date_, description FROM event LIMIT 10 OFFSET :offset';
-        $statement = $bdd->prepare($q);
-        $statement->bindValue(':offset', $_SESSION['offsetEvents'], PDO::PARAM_INT);
-        $statement->execute();
-        $results = $statement->fetchAll();
-        foreach($results as $event){
-            $userEvents = [
-                'ID_EVENT' => $event['ID_EVENT'],
-                'name' => $event['name'],
-                'type' => $event['type'],
-                'date_' => $event['date_'],
-                'description' => $event['description']
-            ];
-            $_SESSION['listevents'][] = $userEvents;
-        }
-
-        header('Location: http://localhost/ProjetAnnuel/Backoffice/#pageevents');
         exit();
     }
 

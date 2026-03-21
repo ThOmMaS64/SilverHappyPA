@@ -165,6 +165,7 @@ if($response){
                 'nb_street' => $event['nb_street'],
                 'postal_code' => $event['postal_code'],
                 'username' => $event['username'],
+                'ID_WORK_ADDRESS' => $event['ID_WORK_ADDRESS']
             ];
         }
     }
@@ -781,7 +782,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                     
                                     <td><input class="form-control" form="<?= $idFormEvent ?>" name="postal_code" class="mediumtext" type="text" value="<?= htmlspecialchars($event['postal_code'] ?? '') ?>"></td>
 
-                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="username" class="mediumtext" type="text" value="<?= htmlspecialchars($event['username'] ?? '') ?>"></td>
+                                    <td><?= htmlspecialchars($event['username'] ?? '') ?></td>
                                         
                                     <td>
                                          <div class="form-check">
@@ -793,6 +794,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                         <form id="<?= $idFormEvent ?>" method="POST" action="http://localhost:8081/updateEventData">
                                             <button type="submit" value="<?= $event['ID_EVENT'] ?>">Modifier</button>
                                             <input type="hidden" name="id" value="<?= $event['ID_EVENT'] ?>">
+                                            <input type="hidden" name="ID_WORK_ADDRESS" value="<?= $event['ID_WORK_ADDRESS'] ?>">
                                         </form>
                                     </td>
 
@@ -825,21 +827,39 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     <table class="table table-striped">
                         <thead class="thead-dark">
                             <tr>
-                            <th scope="col">Nom</th>
                             <th scope="col">Type</th>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Date de début</th>
+                            <th scope="col">Date de fin</th>
                             <th scope="col">Description</th>
+                            <th scope="col">Ville</th>
+                            <th scope="col">Rue</th>
+                            <th scope="col">Numéro de rue</th>
+                            <th scope="col">Code postal</th>
                             <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><input class="form-control mediumtext" type="text" name="title"></td>
+                                <td><input class="form-control mediumtext" type="text" name="type"></td>
 
-                                <td><input class="form-control mediumtext" type="text" name="theme"></td>
+                                <td><input class="form-control mediumtext" type="text" name="name"></td>
+
+                                <td><input class="form-control mediumtext" type="datetime-local" name="date_start"></td>
+
+                                <td><input class="form-control mediumtext" type="datetime-local" name="date_end"></td>
 
                                 <td><input class="form-control bigtext" type="text" name="description"></td>
+
+                                <td><input class="form-control bigtext" type="text" name="city"></td>
+
+                                <td><input class="form-control bigtext" type="text" name="street"></td>
+
+                                <td><input class="form-control bigtext" type="number" name="nb_street"></td>
+
+                                <td><input class="form-control bigtext" type="text" name="postal_code"></td>
                                         
-                                <td><button class="button" type="submit" name="addtip">Ajouter</button></td>
+                                <td><button class="button" type="submit" name="addevent">Ajouter</button></td>
                             </tr>                   
                         </tbody>
                     </table>
