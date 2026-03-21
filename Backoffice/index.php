@@ -32,6 +32,11 @@ if(!isset($_SESSION['offsetAdvices'])){
     $_SESSION['offsetAdvices'] = 0;
 
 }
+if(!isset($_SESSION['offsetEvents'])){
+
+    $_SESSION['offsetEvents'] = 0;
+
+}
 
 $research = isset($_GET['research']) ? urlencode($_GET['research']) : "";
 $filter = isset($_GET['filter']) ? urlencode($_GET['filter']) : "";
@@ -123,8 +128,54 @@ if($response){
 
 }
 
+$researchEvents = isset($_GET['researchEvents']) ? urlencode($_GET['researchEvents']) : "";
+$filterEvents = isset($_GET['filterEvents']) ? urlencode($_GET['filterEvents']) : "";
+$sortEvents = isset($_GET['sortEvents']) ? urlencode($_GET['sortEvents']) : "";
+
+$offsetEvents = $_SESSION['offsetEvents'];
+
+if(isset($_GET['researchEvents']) || isset($_GET['filterEvents']) || isset($_GET['sortEvents'])){
+
+    $response = file_get_contents("http://localhost:8081/showEventsPersonalizedData?research=$researchEvents&filter=$filterEvents&sort=$sortEvents&offset=$offsetEvents");
+
+}else{
+
+    $response = file_get_contents("http://localhost:8081/showEventsDefaultData?offset=$offsetEvents");
+
+}
+
+$distinctTypes = [];
+
+if($response){
+
+    $decodedResponse = json_decode($response, true);
+    $_SESSION['listEvents'] = array();
+
+    if(isset($decodedResponse['events']) && is_array($decodedResponse['events'])){
+        foreach($decodedResponse['events'] as $event){
+            $_SESSION['listEvents'][] = [
+                'ID_EVENT' => $event['ID_EVENT'],
+                'type' => $event['type'],
+                'name' => $event['name'],
+                'date_start' => $event['date_start'],
+                'date_end' => $event['date_end'],
+                'description' => $event['description'],
+                'city' => $event['city'],
+                'street' => $event['street'],
+                'nb_street' => $event['nb_street'],
+                'postal_code' => $event['postal_code'],
+                'username' => $event['username'],
+            ];
+        }
+    }
+
+    if(isset($decodedResponse['types']) && is_array($decodedResponse['types'])){
+        $distinctTypes = $decodedResponse['types'];
+    }
+
+}
+
 $dataShop = @file_get_contents("http://localhost:8081/backShowShop");
-$dataEvent = @file_get_contents("http://localhost:8081/backShowEvents");
 
 if($dataShop){
 
@@ -141,25 +192,6 @@ if($dataShop){
                 'price' => $product['price']
             ];
             $_SESSION['listshop'][] = $registeredProduct;
-        }
-    }
-}
-
-if($dataEvent){
-
-    $events = json_decode($dataEvent, true);
-    $_SESSION['listevents'] = array();
-
-    if(is_array($events)){
-        foreach($events as $event){
-            $registeredEvents = [
-                'ID_EVENT' => $event['ID_EVENT'],
-                'name' => $event['name'],
-                'type' => $event['type'],
-                'date_' => $event['date_'],
-                'description' => $event['description']
-            ];
-            $_SESSION['listevents'][] = $registeredEvents;
         }
     }
 }
@@ -650,55 +682,181 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
             </section>
 
             <section id="pageevents" class="mt-5">
-                <?php if(isset($_SESSION['listevents'])): ?>
-                <h1>Liste des événements</h1>
+                <?php if(isset($_SESSION['listEvents'])): ?>
+                <h1>Gestion des événements</h1>
 
-                <div>
-                    <form method="POST" action="traitement_search.php">
-                        <input type="text" class="" name="searchvalue" placeholder="Rechercher un élément...">
-                        <input type="hidden" name="action" value="events">
-                    </form>
+                <div class="col-4">
+                    <?php if (isset($errorUsersMessage)): ?>
+                        <div class="alert alert-danger">
+                            <?php echo htmlspecialchars($errorUsersMessage); ?>
+                        </div>
+                    <?php elseif(isset($successUsersMessage)): ?>
+                        <div class="alert alert-success">
+                            <?php echo htmlspecialchars($successUsersMessage); ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
-                <br>
+
+                <form method="GET" action="index.php#pageevents">
+                    <div class="row mb-3">
+                        <div class="col-2">
+                            <div class="input-group">
+                                <input value="<?php if(isset($_GET['researchEvents'])){ echo htmlspecialchars($_GET['researchEvents']); }else{ echo ""; } ?>" class="form-control" name="researchEvents" placeholder="<?php if(isset($_GET['researchEvents']) && $_GET['researchEvents'] != ""){ echo $_GET['researchEvents']; }else{ ?><?php echo "Tapez votre recherche"; ?> <?php } ?>" aria-label="Search">
+                                <button class="searchButton" type="submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="filterEvents" class="selectFilter" onchange="this.form.submit()">
+                                <option disabled selected><?php echo "Choisissez un filtre" ?></option>
+                                <?php foreach($distinctTypes as $type): ?>
+                                    <option value="<?= htmlspecialchars($type) ?>" <?php if(isset($_GET['filterEvents']) && $_GET['filterEvents'] == $type){ echo 'selected'; } ?> ><?= htmlspecialchars($type) ?></option>
+                                <?php endforeach; ?>
+                                    <option value="perso1" <?php if(isset($_GET['filterEvents']) && $_GET['filterEvents'] == "perso1"){echo 'selected';} ?>>Terminés uniquement</option>
+                                    <option value="perso2" <?php if(isset($_GET['filterEvents']) && $_GET['filterEvents'] == "perso2"){echo 'selected';} ?>>N'ayant pas commencés uniquement</option>
+                            </select>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="sortEvents" class="selectSort" onchange="this.form.submit()">
+                                <option disabled <?php if(!isset($_GET['sortEvents']) || $_GET['sortEvents'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
+                                <option value="1" <?php if(isset($_GET['sortEvents']) && $_GET['sortEvents'] == "1"){echo 'selected';} ?>>Date de début la plus proche</option>
+                                <option value="2" <?php if(isset($_GET['sortEvents']) && $_GET['sortEvents'] == "2"){echo 'selected';} ?>>Date de début la plus tard</option>
+                                <option value="5" <?php if(isset($_GET['sortEvents']) && $_GET['sortEvents'] == "5"){echo 'selected';} ?>>Terminés uniquement</option>
+                                <option value="6" <?php if(isset($_GET['sortEvents']) && $_GET['sortEvents'] == "6"){echo 'selected';} ?>>N'ayant pas commencés uniquement</option>
+                                <option value="3" <?php if(isset($_GET['sortEvents']) && $_GET['sortEvents'] == "3"){echo 'selected';} ?>>Haut niveau de participation</option>
+                                <option value="4" <?php if(isset($_GET['sortEvents']) && $_GET['sortEvents'] == "4"){echo 'selected';} ?>>Bas niveau de participation</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
 
                 <table class="table table-striped">
                     <thead class="thead-dark">
                         <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Nom</th>
                         <th scope="col">Type</th>
-                        <th scope="col">Date</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Date de début</th>
+                        <th scope="col">Date de fin</th>
                         <th scope="col">Description</th>
-                        <th scope="col"></th>
+                        <th scope="col">Ville</th>
+                        <th scope="col">Rue</th>
+                        <th scope="col">Numéro de rue</th>
+                        <th scope="col">Code postal</th>
+                        <th scope="col">Organisateur</th>
+                        <th scope="col">Sélectionner</th>
+                        <th scope="col">Modifier</th>
+                        <th scope="col">Supprimer</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <form method="POST" action="traitement_edit.php">
-                            <?php
-                                for($i=0; $i<count($_SESSION['listevents']); $i++){
-                                    echo '<tr>';
-                                        echo '<th scope="row">' . htmlspecialchars($_SESSION['listevents'][$i]['ID_EVENT']) . '</th>';
+                        <?php
+                            foreach($_SESSION['listEvents'] as $event){
 
-                                        echo '<td><input class="mediumtext" type="text" name="newname[' . $_SESSION['listevents'][$i]['ID_EVENT'] . ']" value="' . $_SESSION['listevents'][$i]['name'] . '"></td>'; 
+                                $idFormEvent = "form_event_" . $event['ID_EVENT'];
+                        ?>
+                                <tr>
+                                    <th scope="row"> <?= htmlspecialchars($event['ID_EVENT']) ?></th>
 
-                                        echo '<td><input class="mediumtext" type="text" name="newtype[' . $_SESSION['listevents'][$i]['ID_EVENT'] . ']" value="' . $_SESSION['listevents'][$i]['type'] . '"></td>';
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="type" class="mediumtext" type="text" value="<?= htmlspecialchars($event['type'] ?? '') ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="name" class="mediumtext" type="text" value="<?= htmlspecialchars($event['name'] ?? '') ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="date_start" class="mediumtext" type="datetime-local" value="<?= !empty($event['date_start']) ? date('Y-m-d\TH:i', strtotime($event['date_start'])) : '' ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="date_end" class="mediumtext" type="datetime-local" value="<?= !empty($event['date_end']) ? date('Y-m-d\TH:i', strtotime($event['date_end'])) : '' ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="description" class="mediumtext" type="text" value="<?= htmlspecialchars($event['description'] ?? '') ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="city" class="mediumtext" type="text" value="<?= htmlspecialchars($event['city'] ?? '') ?>"></td>
+                                    
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="street" class="mediumtext" type="text" value="<?= htmlspecialchars($event['street'] ?? '') ?>"></td>
+                                    
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="nb_street" class="mediumtext" type="text" value="<?= htmlspecialchars($event['nb_street'] ?? '') ?>"></td>
+                                    
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="postal_code" class="mediumtext" type="text" value="<?= htmlspecialchars($event['postal_code'] ?? '') ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="username" class="mediumtext" type="text" value="<?= htmlspecialchars($event['username'] ?? '') ?>"></td>
                                         
-                                        echo '<td><input class="mediumtext" type="text" name="newdate_[' . $_SESSION['listevents'][$i]['ID_EVENT'] . ']" value="' . $_SESSION['listevents'][$i]['date_'] . '"></td>'; 
+                                    <td>
+                                         <div class="form-check">
+                                            <input form="selectedEvent" name="selectedEvent" class="form-check-input" type="radio" value="<?php echo htmlspecialchars($event['ID_EVENT']); ?>">
+                                        </div>
+                                    </td>
 
-                                        echo '<td><input class="bigtext" type="text" name="newdescription[' . $_SESSION['listevents'][$i]['ID_EVENT'] . ']" value="' . $_SESSION['listevents'][$i]['description'] . '"></td>'; 
-                                        
-                                        echo '<td><button class="button" type="submit" name="updateevent" value="' . $_SESSION['listevents'][$i]['ID_EVENT'] . '">Update</button></td>';
-                                    echo '</tr>';
-                                }
-                            ?>
-                        </form>
+                                    <td>
+                                        <form id="<?= $idFormEvent ?>" method="POST" action="http://localhost:8081/updateEventData">
+                                            <button type="submit" value="<?= $event['ID_EVENT'] ?>">Modifier</button>
+                                            <input type="hidden" name="id" value="<?= $event['ID_EVENT'] ?>">
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST" action="http://localhost:8081/deleteEvent">
+                                            <button type="submit" value="<?= $event['ID_EVENT'] ?>">Supprimer</button>
+                                            <input type="hidden" name="id" value="<?= $event['ID_EVENT'] ?>">
+                                        </form>
+                                    </td>
+
+                                </tr>
+
+                            <?php } ?>
                     </tbody>
                 </table>
 
                 <form method="POST" action="traitement_offset.php">
-                    <button type="submit" name="pageEvents" value="moins">Précedent</button>
-                    <button type="submit" name="pageEvents" value="plus">Suivant</button>
-                    <button type="submit" name="pageEvents">Rafraîchir</button>
+                    <button type="submit" name="pageevents" value="moins">Précedent</button>
+                    <button type="submit" name="pageevents" value="plus">Suivant</button>
+                    <button type="submit" name="pageevents">Rafraîchir</button>
+
+                    <input type="hidden" name="researchEvents" value="<?php if(isset($_GET['researchEvents'])){ echo $_GET['researchEvents']; } ?>">
+                    <input type="hidden" name="filterEvents" value="<?php if(isset($_GET['filterEvents'])){ echo $_GET['filterEvents']; } ?>">
+                    <input type="hidden" name="sortEvents" value="<?php if(isset($_GET['sortEvents'])){ echo $_GET['sortEvents']; } ?>">
+                </form>
+
+                <h5 class="pt-5">Ajouter un événement</h5>
+
+                <form method="POST" action="http://localhost:8081/addEvent">
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Description</th>
+                            <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input class="form-control mediumtext" type="text" name="title"></td>
+
+                                <td><input class="form-control mediumtext" type="text" name="theme"></td>
+
+                                <td><input class="form-control bigtext" type="text" name="description"></td>
+                                        
+                                <td><button class="button" type="submit" name="addtip">Ajouter</button></td>
+                            </tr>                   
+                        </tbody>
+                    </table>
+                </form>
+
+                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par l'événement sélectionnés</h5>
+
+                <form id="selectedEvent" method="POST" action="sendEmailSelectedEvent.php">
+
+                    <label>Objet</label>
+                    <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
+
+                    <label>Corps de l'email</label>
+                    <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
+
+                    <button type="submit"class="mb-5">Envoyer</button>
+
                 </form>
                 <?php endif; ?>
             </section>
@@ -853,7 +1011,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     </table>
                 </form>
 
-                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par les conseils sélectionnés</h5>
+                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par le conseil sélectionnés</h5>
 
                 <form id="selectedAdvice" method="POST" action="sendEmailSelectedAdvice.php">
 
