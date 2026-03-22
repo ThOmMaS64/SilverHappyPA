@@ -1253,7 +1253,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                             <th scope="col">Expéditeur</th>
                             <th scope="col">Sélectionner</th>
                             <th scope="col">Supprimer</th>
-                            <th scope="col">Changer le status</th>
+                            <th scope="col">Changer le statut</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1265,8 +1265,8 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                 <tr>
                                     <th scope="row"> <?= htmlspecialchars($message['ID_MESSAGE']) ?></th>
 
-                                    <td><?= htmlspecialchars($message['date'] ?? '') ?></td>
-
+                                    <td><?= date("d/m/Y H:m:s", strtotime($message['date'])) ?></td>
+                                    
                                     <td><input class="form-control" form="<?= $idFormMessage ?>" name="content" class="mediumtext" type="text" value="<?= htmlspecialchars($message['content'] ?? '') ?>"></td>
 
                                     <td><?= htmlspecialchars($message['sender'] ?? '') ?></td>
