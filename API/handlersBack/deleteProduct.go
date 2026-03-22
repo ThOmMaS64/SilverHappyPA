@@ -11,7 +11,7 @@ func DeleteProduct(database *sql.DB) http.HandlerFunc {
 
 		id := r.FormValue("id")
 
-		deleteStatement, deleteError := database.Prepare("DELETE FROM PRODUCT WHERE ID_PRODUCT = ?")
+		deleteStatement, deleteError := database.Prepare("DELETE FROM ORDER_LINE WHERE ID_PRODUCT = ?")
 
 		if deleteError != nil{
 
@@ -24,6 +24,25 @@ func DeleteProduct(database *sql.DB) http.HandlerFunc {
 		_, deleteStatementExecError := deleteStatement.Exec(id)
 
 		if deleteStatementExecError != nil{
+
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=delete_error#pageshop", 303)
+			return	
+
+		}
+
+		deleteStatement2, deleteError2 := database.Prepare("DELETE FROM PRODUCT WHERE ID_PRODUCT = ?")
+
+		if deleteError2 != nil{
+
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=delete_error#pageshop", 303)
+			return	
+
+		}
+		defer deleteStatement2.Close()
+
+		_, deleteStatementExecError2 := deleteStatement2.Exec(id)
+
+		if deleteStatementExecError2 != nil{
 
 			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=delete_error#pageshop", 303)
 			return	

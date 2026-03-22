@@ -666,8 +666,8 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <div class="col-2">
                             <select name="sortShop" class="selectSort" onchange="this.form.submit()">
                                 <option disabled <?php if(!isset($_GET['sortShop']) || $_GET['sortShop'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
-                                <option value="1" <?php if(isset($_GET['sortShop']) && $_GET['sortShop'] == "1"){echo 'selected';} ?>>Du moins cher au plus cher</option>
-                                <option value="2" <?php if(isset($_GET['sortShop']) && $_GET['sortShop'] == "2"){echo 'selected';} ?>>Du plus cher au moins cher</option>
+                                <option value="1" <?php if(isset($_GET['sortShop']) && $_GET['sortShop'] == "1"){echo 'selected';} ?>>Prix croissant</option>
+                                <option value="2" <?php if(isset($_GET['sortShop']) && $_GET['sortShop'] == "2"){echo 'selected';} ?>>Prix décroissant</option>
                             </select>
                         </div>
                     </div>
@@ -681,6 +681,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <th scope="col">Type</th>
                         <th scope="col">Description</th>
                         <th scope="col">Prix</th>
+                        <th scope="col">Sélectionner</th>
                         <th scope="col">Modifier</th>
                         <th scope="col">Supprimer</th>
                         </tr>
@@ -701,6 +702,12 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                     <td><input class="form-control" form="<?= $idFormProduct ?>" name="description" class="bigtext" type="text" value="<?= htmlspecialchars($product['description'] ?? '') ?>"></td>
 
                                     <td><input class="form-control" form="<?= $idFormProduct ?>" name="price" class="smalltext" type="text" value="<?= htmlspecialchars($product['price'] ?? '') ?>"></td>
+
+                                    <td>
+                                        <div class="form-check">
+                                            <input form="selectedProduct" name="selectedProduct" class="form-check-input" type="radio" value="<?php echo htmlspecialchars($product['ID_PRODUCT']); ?>">
+                                        </div>
+                                    </td>
 
                                     <td>
                                         <form id="<?= $idFormProduct ?>" method="POST" action="http://localhost:8081/updateProductData">
@@ -759,6 +766,21 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                             </tr>                   
                         </tbody>
                     </table>
+                </form>
+
+                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par l'article sélectionné</h5>
+
+                <form id="selectedProduct" method="POST" action="sendEmailSelectedProduct.php">
+
+                    <label>Objet</label>
+                    <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
+
+                    <label>Corps de l'email</label>
+                    <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
+
+                    <button type="submit"class="mb-5">Envoyer</button>
+
+                </form>
                 <?php endif; ?>
             </section>
 
@@ -945,7 +967,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     </table>
                 </form>
 
-                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par l'événement sélectionnés</h5>
+                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par l'événement sélectionné</h5>
 
                 <form id="selectedEvent" method="POST" action="sendEmailSelectedEvent.php">
 
@@ -1111,7 +1133,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     </table>
                 </form>
 
-                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par le conseil sélectionnés</h5>
+                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par le conseil sélectionné</h5>
 
                 <form id="selectedAdvice" method="POST" action="sendEmailSelectedAdvice.php">
 

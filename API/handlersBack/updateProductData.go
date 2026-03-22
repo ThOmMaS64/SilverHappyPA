@@ -13,8 +13,9 @@ func UpdateProductData(database *sql.DB) http.HandlerFunc {
 		name:= r.FormValue("name")
 		prodType:= r.FormValue("type")
 		description := r.FormValue("description")
+		price := r.FormValue("price")
 
-		updateStatement, updateError := database.Prepare("UPDATE PRODUCT SET name = ?, type = ?, description = ? WHERE ID_PRODUCT = ?")
+		updateStatement, updateError := database.Prepare("UPDATE PRODUCT SET name = ?, type = ?, description = ?, price = ? WHERE ID_PRODUCT = ?")
 
 		if updateError != nil{
 
@@ -24,7 +25,7 @@ func UpdateProductData(database *sql.DB) http.HandlerFunc {
 		}
 		defer updateStatement.Close()
 
-		_, updateStatementExecError := updateStatement.Exec(name, prodType, description, id)
+		_, updateStatementExecError := updateStatement.Exec(name, prodType, description, price, id)
 
 		if updateStatementExecError != nil{
 
