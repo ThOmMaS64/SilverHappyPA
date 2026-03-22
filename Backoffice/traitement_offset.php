@@ -202,4 +202,32 @@
         header('Location:' . $url);
         exit();
     }
+
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pagemessages'])){
+        
+        if(!isset($_SESSION['offsetMessages'])){
+
+            $_SESSION['offsetMessages'] = 0;
+
+        }
+
+        if($_POST['pagemessages'] == "plus"){
+
+            $_SESSION['offsetMessages'] += 10;
+
+        }elseif($_POST['pagemessages'] == "moins"){
+
+            $_SESSION['offsetMessages'] -= 10;
+
+        }
+
+        if($_SESSION['offsetMessages'] < 0){
+
+            $_SESSION['offsetMessages'] = 0;
+
+        }
+
+        header('Location:http://localhost/ProjetAnnuel/Backoffice/index.php#pagemessages');
+        exit();
+    }
 ?>

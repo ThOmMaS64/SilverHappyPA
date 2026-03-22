@@ -44,6 +44,12 @@ if(!isset($_SESSION['offsetShop'])){
 
 }
 
+if(!isset($_SESSION['offsetMessages'])){
+
+    $_SESSION['offsetMessages'] = 0;
+
+}
+
 $research = isset($_GET['research']) ? urlencode($_GET['research']) : "";
 $filter = isset($_GET['filter']) ? urlencode($_GET['filter']) : "";
 $sort = isset($_GET['sort']) ? urlencode($_GET['sort']) : "";
@@ -221,6 +227,28 @@ if($response){
         $distinctTypesShop = $decodedResponse['types'];
     }
 
+}
+
+$offsetMessages = $_SESSION['offsetMessages'];
+
+$dataMessages = @file_get_contents("http://localhost:8081/showMessagesDefaultData?offset=$offsetMessages");
+
+if($dataMessages){
+
+    $decodedResponse = json_decode($dataMessages, true);
+    $_SESSION['listMessages'] = array();
+
+    if(isset($decodedResponse['messages']) && is_array($decodedResponse['messages'])){
+        foreach($decodedResponse['messages'] as $message){
+            $_SESSION['listMessages'][] = [
+                'ID_MESSAGE' => $message['ID_MESSAGE'],
+                'date' => $message['date'],
+                'content' => $message['content'],
+                'sender' => $message['sender'],
+                'suspected_status' => $message['suspected_status'],
+            ];
+        }
+    }
 }
 
 $notifUsers = [
@@ -1196,6 +1224,99 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     <button type="submit" name="pageNotifs" value="moins">Précedent</button>
                     <button type="submit" name="pageNotifs" value="plus">Suivant</button>
                     <button type="submit" name="pageNotifs">Rafraîchir</button>
+                </form>
+                <?php endif; ?>
+            </section>
+
+            <section id="pagemessages" class="mt-5">
+                <?php if(isset($_SESSION['listMessages'])): ?>
+                <h1>Contrôle des messages</h1>
+
+                <div class="col-4">
+                    <?php if (isset($errorUsersMessage)): ?>
+                        <div class="alert alert-danger">
+                            <?php echo htmlspecialchars($errorUsersMessage); ?>
+                        </div>
+                    <?php elseif(isset($successUsersMessage)): ?>
+                        <div class="alert alert-success">
+                            <?php echo htmlspecialchars($successUsersMessage); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Date d'envoi</th>
+                            <th scope="col">Contenu</th>
+                            <th scope="col">Expéditeur</th>
+                            <th scope="col">Sélectionner</th>
+                            <th scope="col">Supprimer</th>
+                            <th scope="col">Changer le status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            foreach($_SESSION['listMessages'] as $message){
+
+                                $idFormMessage = "form_message_" . $message['ID_MESSAGE'];
+                        ?>
+                                <tr>
+                                    <th scope="row"> <?= htmlspecialchars($message['ID_MESSAGE']) ?></th>
+
+                                    <td><?= htmlspecialchars($message['date'] ?? '') ?></td>
+
+                                    <td><input class="form-control" form="<?= $idFormMessage ?>" name="content" class="mediumtext" type="text" value="<?= htmlspecialchars($message['content'] ?? '') ?>"></td>
+
+                                    <td><?= htmlspecialchars($message['sender'] ?? '') ?></td>
+
+                                    <td>
+                                        <div class="form-check">
+                                            <input form="selectedMessage" name="selectedMessage" class="form-check-input" type="radio" value="<?php echo htmlspecialchars($message['ID_MESSAGE']); ?>">
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST" action="http://localhost:8081/deleteMessage">
+                                            <button type="submit" value="<?= $message['ID_MESSAGE'] ?>">Supprimer</button>
+                                            <input type="hidden" name="id" value="<?= $message['ID_MESSAGE'] ?>">
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST" action="http://localhost:8081/updateMessageStatus">
+                                            <button type="submit" value="<?= $message['ID_MESSAGE'] ?>">Changer</button>
+                                            <input type="hidden" name="id" value="<?= $message['ID_MESSAGE'] ?>">
+                                        </form>
+                                    </td>
+
+                                </tr>
+
+                            <?php } ?>
+                    </tbody>
+                </table>
+
+                <form method="POST" action="traitement_offset.php">
+                    <button type="submit" name="pagemessages" value="moins">Précedent</button>
+                    <button type="submit" name="pagemessages" value="plus">Suivant</button>
+                    <button type="submit" name="pagemessages">Rafraîchir</button>
+
+                    <input type="hidden" name="sortMessages" value="<?php if(isset($_GET['sortMessages'])){ echo $_GET['sortMessages']; } ?>">
+                </form>
+
+                <h5 class="pt-5">Contacter par emails l'expéditeur'</h5>
+
+                <form id="selectedMessage" method="POST" action="sendEmailSelectedMessage.php">
+
+                    <label>Objet</label>
+                    <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
+
+                    <label>Corps de l'email</label>
+                    <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
+
+                    <button type="submit"class="mb-5">Envoyer</button>
+
                 </form>
                 <?php endif; ?>
             </section>

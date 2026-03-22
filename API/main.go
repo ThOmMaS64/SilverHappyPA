@@ -62,6 +62,9 @@ func main() {
 	http.HandleFunc("/addAdvice", handlersBack.AddAdvice(database))
 	http.HandleFunc("/addEvent", handlersBack.AddEvent(database))
 	http.HandleFunc("/addProduct", handlersBack.AddProduct(database))
+	http.HandleFunc("/showMessagesDefaultData", handlersBack.ShowMessagesDefaultData(database))
+	http.HandleFunc("/deleteMessage", handlersBack.DeleteMessage(database))
+	http.HandleFunc("/updateMessageStatus", handlersBack.UpdateMessageStatus(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 
