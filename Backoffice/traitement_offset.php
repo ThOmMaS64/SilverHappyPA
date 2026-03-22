@@ -153,66 +153,53 @@
         exit();
     }
 
-    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageShop'])){
-        if($_POST['pageShop'] == 'plus'){
-            $_SESSION['offsetShop'] += 10;
-        }
-        if($_POST['pageShop'] == 'moins'){
-            $_SESSION['offsetShop'] -= 10;
-        }
-        if($_SESSION['offsetShop']<0){
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageshop'])){
+        
+        if(!isset($_SESSION['offsetShop'])){
+
             $_SESSION['offsetShop'] = 0;
+
         }
 
-        $_SESSION['listshop'] = array();
-        $q = 'SELECT ID_PRODUCT, name, type, description, price FROM product LIMIT 10 OFFSET :offset';
-        $statement = $bdd->prepare($q);
-        $statement->bindValue(':offset', $_SESSION['offsetShop'], PDO::PARAM_INT);
-        $statement->execute();
-        $results = $statement->fetchAll();
-        foreach($results as $product){
-            $registeredProduct = [
-                'ID_PRODUCT' => $product['ID_PRODUCT'],
-                'name' => $product['name'],
-                'type' => $product['type'],
-                'description' => $product['description'],
-                'price' => $product['price']
-            ];
-            $_SESSION['listshop'][] = $registeredProduct;
+        if($_POST['pageshop'] == "plus"){
+
+            $_SESSION['offsetShop'] += 10;
+
+        }elseif($_POST['pageshop'] == "moins"){
+
+            $_SESSION['offsetShop'] -= 10;
+
         }
 
-        header('Location: http://localhost/ProjetAnnuel/Backoffice/#pageshop');
-        exit();
-    }
+        if($_SESSION['offsetShop'] < 0){
 
-    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageNotifs'])){
-        if($_POST['pageNotifs'] == 'plus'){
-            $_SESSION['offsetNotifs'] += 10;
-        }
-        if($_POST['pageNotifs'] == 'moins'){
-            $_SESSION['offsetNotifs'] -= 10;
-        }
-        if($_SESSION['offsetNotifs']<0){
-            $_SESSION['offsetNotifs'] = 0;
+            $_SESSION['offsetShop'] = 0;
+
         }
 
-        $_SESSION['listnotifs'] = array();
-        $q = 'SELECT ID_NOTIFICATION, title, description, type FROM notification LIMIT 10 OFFSET :offset';
-        $statement = $bdd->prepare($q);
-        $statement->bindValue(':offset', $_SESSION['offsetNotifs'], PDO::PARAM_INT);
-        $statement->execute();
-        $results = $statement->fetchAll();
-        foreach($results as $notif){
-            $notifValues = [
-                'ID_NOTIFICATION' => $notif['ID_NOTIFICATION'],
-                'title' => $notif['title'],
-                'description' => $notif['description'],
-                'type' => $notif['type']
-            ];
-            $_SESSION['listnotifs'][] = $notifValues;
+        $url = "http://localhost/ProjetAnnuel/Backoffice/index.php?";
+
+        if(isset($_POST['researchShop']) && !empty($_POST['researchShop'])){
+
+            $url = $url . "researchShop=" . urlencode($_POST['researchShop']);
+
+        }
+        
+        if(isset($_POST['filterShop']) && !empty($_POST['filterShop'])){
+
+            $url = $url . "&filterShop=" . urlencode($_POST['filterShop']);
+
         }
 
-        header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagenotifs');
+        if(isset($_POST['sortShop']) && !empty($_POST['sortShop'])){
+
+            $url = $url . "&sortShop=" . urlencode($_POST['sortShop']);
+
+        }
+
+        $url = $url . "#pageshop";
+
+        header('Location:' . $url);
         exit();
     }
 ?>

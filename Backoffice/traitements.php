@@ -26,22 +26,6 @@
             break;
 
         case 'notifs':
-            $_SESSION['offsetNotifs'] = 0;
-            $_SESSION['listnotifs'] = array();
-            $q = 'SELECT ID_NOTIFICATION, title, description, type FROM notification LIMIT 10';
-            $statement = $bdd->prepare($q);
-            $statement->execute();
-            $results = $statement->fetchAll();
-            foreach($results as $notif){
-                $notifValues = array([
-                    'ID_NOTIFICATION' => $notif['ID_NOTIFICATION'],
-                    'title' => $notif['title'],
-                    'description' => $notif['description'],
-                    'type' => $notif['type']
-                ]);
-                $_SESSION['listnotifs'][] = $notifValues;
-            }
-
             header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagenotifs');
             exit();
             break;

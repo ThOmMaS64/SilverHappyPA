@@ -38,6 +38,12 @@ if(!isset($_SESSION['offsetEvents'])){
 
 }
 
+if(!isset($_SESSION['offsetShop'])){
+
+    $_SESSION['offsetShop'] = 0;
+
+}
+
 $research = isset($_GET['research']) ? urlencode($_GET['research']) : "";
 $filter = isset($_GET['filter']) ? urlencode($_GET['filter']) : "";
 $sort = isset($_GET['sort']) ? urlencode($_GET['sort']) : "";
@@ -176,25 +182,45 @@ if($response){
 
 }
 
-$dataShop = @file_get_contents("http://localhost:8081/backShowShop");
+$researchShop = isset($_GET['researchShop']) ? urlencode($_GET['researchShop']) : "";
+$filterShop = isset($_GET['filterShop']) ? urlencode($_GET['filterShop']) : "";
+$sortShop = isset($_GET['sortShop']) ? urlencode($_GET['sortShop']) : "";
 
-if($dataShop){
+$offsetShop = $_SESSION['offsetShop'];
 
-    $shop = json_decode($dataShop, true);
-    $_SESSION['listshop'] = array();
+if(isset($_GET['researchShop']) || isset($_GET['filterShop']) || isset($_GET['sortShop'])){
 
-    if(is_array($shop)){
-        foreach($shop as $product){
-            $registeredProduct = [
+    $response = file_get_contents("http://localhost:8081/showProductsPersonalizedData?research=$researchShop&filter=$filterShop&sort=$sortShop&offset=$offsetShop");
+
+}else{
+
+    $response = file_get_contents("http://localhost:8081/showProductsDefaultData?offset=$offsetShop");
+
+}
+
+$distinctTypesShop = [];
+
+if($response){
+
+    $decodedResponse = json_decode($response, true);
+    $_SESSION['listShop'] = array();
+
+    if(isset($decodedResponse['products']) && is_array($decodedResponse['products'])){
+        foreach($decodedResponse['products'] as $product){
+            $_SESSION['listShop'][] = [
                 'ID_PRODUCT' => $product['ID_PRODUCT'],
                 'name' => $product['name'],
                 'type' => $product['type'],
                 'description' => $product['description'],
                 'price' => $product['price']
             ];
-            $_SESSION['listshop'][] = $registeredProduct;
         }
     }
+
+    if(isset($decodedResponse['types']) && is_array($decodedResponse['types'])){
+        $distinctTypesShop = $decodedResponse['types'];
+    }
+
 }
 
 $notifUsers = [
@@ -600,16 +626,52 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
             </section>
 
             <section id="pageshop" class="mt-5">
-                <?php if(isset($_SESSION['listshop'])): ?>
-                <h1>Liste des articles du magasin</h1>
+                <?php if(isset($_SESSION['listShop'])): ?>
+                <h1>Gestion de la boutique</h1>
 
-                <div>
-                    <form method="POST" action="traitement_search.php">
-                        <input type="text" class="" name="searchvalue" placeholder="Rechercher un élément...">
-                        <input type="hidden" name="action" value="shop">
-                    </form>
+                <div class="col-4">
+                    <?php if (isset($errorUsersMessage)): ?>
+                        <div class="alert alert-danger">
+                            <?php echo htmlspecialchars($errorUsersMessage); ?>
+                        </div>
+                    <?php elseif(isset($successUsersMessage)): ?>
+                        <div class="alert alert-success">
+                            <?php echo htmlspecialchars($successUsersMessage); ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
-                <br>
+
+                <form method="GET" action="index.php#pageshop">
+                    <div class="row mb-3">
+                        <div class="col-2">
+                            <div class="input-group">
+                                <input value="<?php if(isset($_GET['researchShop'])){ echo htmlspecialchars($_GET['researchShop']); }else{ echo ""; } ?>" class="form-control" name="researchShop" placeholder="<?php if(isset($_GET['researchShop']) && $_GET['researchShop'] != ""){ echo $_GET['researchShop']; }else{ ?><?php echo "Tapez votre recherche"; ?> <?php } ?>" aria-label="Search">
+                                <button class="searchButton" type="submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="filterShop" class="selectFilter" onchange="this.form.submit()">
+                                <option disabled selected><?php echo "Choisissez un filtre" ?></option>
+                                <?php foreach($distinctTypesShop as $type): ?>
+                                    <option value="<?= htmlspecialchars($type) ?>" <?php if(isset($_GET['filterShop']) && $_GET['filterShop'] == $type){ echo 'selected'; } ?> ><?= htmlspecialchars($type) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="sortShop" class="selectSort" onchange="this.form.submit()">
+                                <option disabled <?php if(!isset($_GET['sortShop']) || $_GET['sortShop'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
+                                <option value="1" <?php if(isset($_GET['sortShop']) && $_GET['sortShop'] == "1"){echo 'selected';} ?>>Du moins cher au plus cher</option>
+                                <option value="2" <?php if(isset($_GET['sortShop']) && $_GET['sortShop'] == "2"){echo 'selected';} ?>>Du plus cher au moins cher</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
 
                 <table class="table table-striped">
                     <thead class="thead-dark">
@@ -619,66 +681,84 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <th scope="col">Type</th>
                         <th scope="col">Description</th>
                         <th scope="col">Prix</th>
-                        <th scope="col"></th>
+                        <th scope="col">Modifier</th>
+                        <th scope="col">Supprimer</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <form method="POST" action="traitement_edit.php">
-                            <?php
-                                for($i=0; $i<count($_SESSION['listshop']); $i++){
-                                    echo '<tr>';
-                                        echo '<th scope="row">' . htmlspecialchars($_SESSION['listshop'][$i]['ID_PRODUCT']) . '</th>';
+                        <?php
+                            foreach($_SESSION['listShop'] as $product){
 
-                                        echo '<td><input class="bigtext" type="text" name="newname[' . $_SESSION['listshop'][$i]['ID_PRODUCT'] . ']" value="' . $_SESSION['listshop'][$i]['name'] . '"></td>'; 
-                                        
-                                        echo '<td><input class="mediumtext" type="text" name="newtype[' . $_SESSION['listshop'][$i]['ID_PRODUCT'] . ']" value="' . $_SESSION['listshop'][$i]['type'] . '"></td>'; 
+                                $idFormProduct = "form_product_" . $product['ID_PRODUCT'];
+                        ?>
+                                <tr>
+                                    <th scope="row"> <?= htmlspecialchars($product['ID_PRODUCT']) ?></th>
 
-                                        echo '<td><input class="bigtext" type="text" name="newdescription[' . $_SESSION['listshop'][$i]['ID_PRODUCT'] . ']" value="' . $_SESSION['listshop'][$i]['description'] . '"></td>';
+                                    <td><input class="form-control" form="<?= $idFormProduct ?>" name="name" class="mediumtext" type="text" value="<?= htmlspecialchars($product['name'] ?? '') ?>"></td>
 
-                                        echo '<td><input class="smalltext" type="text" name="newprice[' . $_SESSION['listshop'][$i]['ID_PRODUCT'] . ']" value="' . $_SESSION['listshop'][$i]['price'] . '"></td>'; 
+                                    <td><input class="form-control" form="<?= $idFormProduct ?>" name="type" class="mediumtext" type="text" value="<?= htmlspecialchars($product['type'] ?? '') ?>"></td>
 
-                                        echo '<td><button class="button" type="submit" name="updateshop" value="' . $_SESSION['listshop'][$i]['ID_PRODUCT'] . '">Update</button></td>';
-                                    echo '</tr>';
-                                }
-                            ?>
-                        </form>
+                                    <td><input class="form-control" form="<?= $idFormProduct ?>" name="description" class="bigtext" type="text" value="<?= htmlspecialchars($product['description'] ?? '') ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormProduct ?>" name="price" class="smalltext" type="text" value="<?= htmlspecialchars($product['price'] ?? '') ?>"></td>
+
+                                    <td>
+                                        <form id="<?= $idFormProduct ?>" method="POST" action="http://localhost:8081/updateProductData">
+                                            <button type="submit" value="<?= $product['ID_PRODUCT'] ?>">Modifier</button>
+                                            <input type="hidden" name="id" value="<?= $product['ID_PRODUCT'] ?>">
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST" action="http://localhost:8081/deleteProduct">
+                                            <button type="submit" value="<?= $product['ID_PRODUCT'] ?>">Supprimer</button>
+                                            <input type="hidden" name="id" value="<?= $product['ID_PRODUCT'] ?>">
+                                        </form>
+                                    </td>
+
+                                </tr>
+
+                            <?php } ?>
                     </tbody>
                 </table>
 
                 <form method="POST" action="traitement_offset.php">
-                    <button type="submit" name="pageShop" value="moins">Précedent</button>
-                    <button type="submit" name="pageShop" value="plus">Suivant</button>
-                    <button type="submit" name="pageShop">Rafraîchir</button>
+                    <button type="submit" name="pageshop" value="moins">Précedent</button>
+                    <button type="submit" name="pageshop" value="plus">Suivant</button>
+                    <button type="submit" name="pageshop">Rafraîchir</button>
+
+                    <input type="hidden" name="researchShop" value="<?php if(isset($_GET['researchShop'])){ echo $_GET['researchShop']; } ?>">
+                    <input type="hidden" name="filterShop" value="<?php if(isset($_GET['filterShop'])){ echo $_GET['filterShop']; } ?>">
+                    <input type="hidden" name="sortShop" value="<?php if(isset($_GET['sortShop'])){ echo $_GET['sortShop']; } ?>">
                 </form>
 
-                <h2>Ajouter une ligne</h2>
+                <h5 class="pt-5">Ajouter un article</h5>
 
-                <table class="table table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                        <th scope="col">Nom</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Prix</th>
-                        <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <form method="POST" action="traitement_add.php">
+                <form method="POST" action="http://localhost:8081/addProduct">
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
                             <tr>
-                                <td><input class="bigtext" type="text" name="name"></td>
-
-                                <td><input class="mediumtext" type="text" name="type"></td>
-
-                                <td><input class="bigtext" type="text" name="description"></td>
-
-                                <td><input class="smalltext" type="text" name="price"></td>
-                                        
-                                <td><button class="button" type="submit" name="addproduct">Ajouter</button></td>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Prix</th>
+                            <th scope="col"></th>
                             </tr>
-                        </form>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input class="form-control mediumtext" type="text" name="name"></td>
+
+                                <td><input class="form-control mediumtext" type="text" name="type"></td>
+
+                                <td><input class="form-control bigtext" type="text" name="description"></td>
+
+                                <td><input class="form-control smalltext" type="text" name="price"></td>
+                                        
+                                <td><button class="button" type="submit" name="addevent">Ajouter</button></td>
+                            </tr>                   
+                        </tbody>
+                    </table>
                 <?php endif; ?>
             </section>
 

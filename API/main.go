@@ -42,7 +42,8 @@ func main() {
 	http.HandleFunc("/showUpdatedData", handlersFront.ShowUpdatedData(database))
 	http.HandleFunc("/getDataPutInSession", handlersFront.GetDataPutInSession(database))
 
-	http.HandleFunc("/backShowShop", handlersBack.BackShowShop(database))
+	http.HandleFunc("/showProductsDefaultData", handlersBack.ShowProductsDefaultData(database))
+	http.HandleFunc("/showProductsPersonalizedData", handlersBack.ShowProductsPersonalizedData(database))
 	http.HandleFunc("/showEventsDefaultData", handlersBack.ShowEventsDefaultData(database))
 	http.HandleFunc("/showEventsPersonalizedData", handlersBack.ShowEventsPersonalizedData(database))
 	http.HandleFunc("/showAdvicesDefaultData", handlersBack.ShowAdvicesDefaultData(database))
@@ -54,10 +55,13 @@ func main() {
 	http.HandleFunc("/deleteUser", handlersBack.DeleteUser(database))
 	http.HandleFunc("/updateAdviceData", handlersBack.UpdateAdviceData(database))
 	http.HandleFunc("/updateEventData", handlersBack.UpdateEventData(database))
+	http.HandleFunc("/updateProductData", handlersBack.UpdateProductData(database))
 	http.HandleFunc("/deleteAdvice", handlersBack.DeleteAdvice(database))
 	http.HandleFunc("/deleteEvent", handlersBack.DeleteEvent(database))
+	http.HandleFunc("/deleteProduct", handlersBack.DeleteProduct(database))
 	http.HandleFunc("/addAdvice", handlersBack.AddAdvice(database))
 	http.HandleFunc("/addEvent", handlersBack.AddEvent(database))
+	http.HandleFunc("/addProduct", handlersBack.AddProduct(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 
