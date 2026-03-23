@@ -10,6 +10,12 @@
             exit();
             break;
 
+        
+        case 'services':
+            header('Location: http://localhost/ProjetAnnuel/Backoffice/#pageservices');
+            exit();
+            break;
+
         case 'shop':
             header('Location: http://localhost/ProjetAnnuel/Backoffice/#pageshop');
             exit();
@@ -29,7 +35,7 @@
             header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagenotifs');
             exit();
             break;
-
+        
         case 'messages':
             header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagemessages');
             exit();

@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func ShowProductsPersonalizedData(database *sql.DB) http.HandlerFunc {
+func ShowServicesPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -26,12 +26,12 @@ func ShowProductsPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		response := ResponseProducts{
+		response := ResponseServices{
 			Types: []string{},
-			Products: []Product{},
+			Services: []Service{},
 		}
 
-		rowSelectType, errSelectType := database.Query("SELECT DISTINCT type FROM PRODUCT ORDER BY type ASC")
+		rowSelectType, errSelectType := database.Query("SELECT DISTINCT type FROM SERVICE ORDER BY type ASC")
 	
 		if errSelectType != nil {
 
@@ -44,13 +44,13 @@ func ShowProductsPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 		for rowSelectType.Next(){
 
-			var productType string
+			var serviceType string
 
-			err := rowSelectType.Scan(&productType)
+			err := rowSelectType.Scan(&serviceType)
 
 			if err == nil{
 
-				response.Types = append(response.Types, productType)
+				response.Types = append(response.Types, serviceType)
 
 			}
 
@@ -58,12 +58,12 @@ func ShowProductsPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 		var args []any
 		 
-		basicQuery := "SELECT ID_PRODUCT, name, type, description, price FROM PRODUCT WHERE 1=1"
+		basicQuery := "SELECT ID_SERVICE, type, formation, place, cost, is_medical_confidential FROM SERVICE WHERE 1=1"
 
 		if research != ""{
 
-			basicQuery += " AND (type LIKE CONCAT('%', ?, '%') OR name LIKE CONCAT('%', ?, '%') OR description LIKE CONCAT('%', ?, '%'))"
-			args = append(args, research, research, research)
+			basicQuery += " AND (type LIKE CONCAT('%', ?, '%') OR place LIKE CONCAT('%', ?, '%'))"
+			args = append(args, research, research)
 
 		}
 
@@ -78,11 +78,11 @@ func ShowProductsPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 			if sort == "1"{
 
-				basicQuery += " ORDER BY price ASC"
+				basicQuery += " ORDER BY cost ASC"
 
 			}else if sort == "2"{
 
-				basicQuery += " ORDER BY price DESC"
+				basicQuery += " ORDER BY cost DESC"
 
 			}
 
@@ -91,24 +91,24 @@ func ShowProductsPersonalizedData(database *sql.DB) http.HandlerFunc {
 		basicQuery += " LIMIT 10 OFFSET ?"
 		args = append(args, offset)
 
-		rowsProd, err := database.Query(basicQuery, args...)
+		rowsServices, err := database.Query(basicQuery, args...)
 
 		if err != nil {
 			http.Error(w, "Erreur lors de la récupération des données depuis la base de données.", 500)
 			return 
 		}	
-		defer rowsProd.Close()
+		defer rowsServices.Close()
 
-		for rowsProd.Next(){
+		for rowsServices.Next(){
 
-			var prod Product
+			var service Service
 
-			err := rowsProd.Scan(&prod.ID_PRODUCT, &prod.Name, &prod.Type, &prod.Description, &prod.Price)
+			err := rowsServices.Scan(&service.ID_SERVICE, &service.Type, &service.Formation, &service.Place, &service.Cost, &service.IsMedicalConfidential)
 			if err != nil {
 				continue
 			}
 
-			response.Products = append(response.Products, prod)
+			response.Services = append(response.Services, service)
 		}
 		
 		w.Header().Set("Content-Type", "application/json")

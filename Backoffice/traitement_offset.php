@@ -203,6 +203,56 @@
         exit();
     }
 
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageservices'])){
+        
+        if(!isset($_SESSION['offsetServices'])){
+
+            $_SESSION['offsetServices'] = 0;
+
+        }
+
+        if($_POST['pageservices'] == "plus"){
+
+            $_SESSION['offsetServices'] += 10;
+
+        }elseif($_POST['pageservices'] == "moins"){
+
+            $_SESSION['offsetServices'] -= 10;
+
+        }
+
+        if($_SESSION['offsetServices'] < 0){
+
+            $_SESSION['offsetServices'] = 0;
+
+        }
+
+        $url = "http://localhost/ProjetAnnuel/Backoffice/index.php?";
+
+        if(isset($_POST['researchServices']) && !empty($_POST['researchServices'])){
+
+            $url = $url . "researchServices=" . urlencode($_POST['researchServices']);
+
+        }
+        
+        if(isset($_POST['filterServices']) && !empty($_POST['filterServices'])){
+
+            $url = $url . "&filterServices=" . urlencode($_POST['filterServices']);
+
+        }
+
+        if(isset($_POST['sortServices']) && !empty($_POST['sortServices'])){
+
+            $url = $url . "&sortServices=" . urlencode($_POST['sortServices']);
+
+        }
+
+        $url = $url . "#pageservices";
+
+        header('Location:' . $url);
+        exit();
+    }
+
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pagemessages'])){
         
         if(!isset($_SESSION['offsetMessages'])){

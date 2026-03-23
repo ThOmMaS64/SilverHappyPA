@@ -44,6 +44,12 @@ if(!isset($_SESSION['offsetShop'])){
 
 }
 
+if(!isset($_SESSION['offsetServices'])){
+
+    $_SESSION['offsetServices'] = 0;
+
+}
+
 if(!isset($_SESSION['offsetMessages'])){
 
     $_SESSION['offsetMessages'] = 0;
@@ -229,6 +235,48 @@ if($response){
 
 }
 
+$researchServices = isset($_GET['researchServices']) ? urlencode($_GET['researchServices']) : "";
+$filterServices = isset($_GET['filterServices']) ? urlencode($_GET['filterServices']) : "";
+$sortServices = isset($_GET['sortServices']) ? urlencode($_GET['sortServices']) : "";
+
+$offsetServices = $_SESSION['offsetServices'];
+
+if(isset($_GET['researchServices']) || isset($_GET['filterServices']) || isset($_GET['sortServices'])){
+
+    $response = file_get_contents("http://localhost:8081/showServicesPersonalizedData?research=$researchServices&filter=$filterServices&sort=$sortServices&offset=$offsetServices");
+
+}else{
+
+    $response = file_get_contents("http://localhost:8081/showServicesDefaultData?offset=$offsetServices");
+
+}
+
+$distinctTypesServices = [];
+
+if($response){
+
+    $decodedResponse = json_decode($response, true);
+    $_SESSION['listServices'] = array();
+
+    if(isset($decodedResponse['services']) && is_array($decodedResponse['services'])){
+        foreach($decodedResponse['services'] as $service){
+            $_SESSION['listServices'][] = [
+                'ID_SERVICE' => $service['ID_SERVICE'],
+                'type' => $service['type'],
+                'formation' => $service['formation'],
+                'place' => $service['place'],
+                'cost' => $service['cost'],
+                'is_medical_confidential' => $service['is_medical_confidential']
+            ];
+        }
+    }
+
+    if(isset($decodedResponse['types']) && is_array($decodedResponse['types'])){
+        $distinctTypesServices = $decodedResponse['types'];
+    }
+
+}
+
 $offsetMessages = $_SESSION['offsetMessages'];
 
 $dataMessages = @file_get_contents("http://localhost:8081/showMessagesDefaultData?offset=$offsetMessages");
@@ -301,6 +349,11 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     <input type="hidden" name="action" value="users">
                 </form>
                 <li><a href="#pageusers" onclick="hideWelcome(); document.getElementById('userForm').submit(); return false;">Gestion des utilisateurs</a></li>
+
+                <form id="serviceForm" method="POST" action="traitements.php">
+                    <input type="hidden" name="action" value="services">
+                </form>
+                <li><a href="#pageservices" onclick="hideWelcome(); document.getElementById('serviceForm').submit(); return false;">Gestion des services</a></li>
 
                 <form id="shopForm" method="POST" action="traitements.php">
                     <input type="hidden" name="action" value="shop">
@@ -651,6 +704,191 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     <button type="submit"class="mb-5">Envoyer</button>
 
                 </form>
+            </section>
+
+            <section id="pageservices" class="mt-5">
+                <?php if(isset($_SESSION['listServices'])): ?>
+                <h1>Gestion des services</h1>
+
+                <div class="col-4">
+                    <?php if (isset($errorUsersMessage)): ?>
+                        <div class="alert alert-danger">
+                            <?php echo htmlspecialchars($errorUsersMessage); ?>
+                        </div>
+                    <?php elseif(isset($successUsersMessage)): ?>
+                        <div class="alert alert-success">
+                            <?php echo htmlspecialchars($successUsersMessage); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <form method="GET" action="index.php#pageservices">
+                    <div class="row mb-3">
+                        <div class="col-2">
+                            <div class="input-group">
+                                <input value="<?php if(isset($_GET['researchServices'])){ echo htmlspecialchars($_GET['researchServices']); }else{ echo ""; } ?>" class="form-control" name="researchServices" placeholder="<?php if(isset($_GET['researchServices']) && $_GET['researchServices'] != ""){ echo $_GET['researchServices']; }else{ ?><?php echo "Tapez votre recherche"; ?> <?php } ?>" aria-label="Search">
+                                <button class="searchButton" type="submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="filterServices" class="selectFilter" onchange="this.form.submit()">
+                                <option disabled selected><?php echo "Choisissez un filtre" ?></option>
+                                <?php foreach($distinctTypesServices as $type): ?>
+                                    <option value="<?= htmlspecialchars($type) ?>" <?php if(isset($_GET['filterServices']) && $_GET['filterServices'] == $type){ echo 'selected'; } ?> ><?= htmlspecialchars($type) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="sortServices" class="selectSort" onchange="this.form.submit()">
+                                <option disabled <?php if(!isset($_GET['sortServices']) || $_GET['sortServices'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
+                                <option value="1" <?php if(isset($_GET['sortServices']) && $_GET['sortServices'] == "1"){echo 'selected';} ?>>Coût croissant</option>
+                                <option value="2" <?php if(isset($_GET['sortServices']) && $_GET['sortServices'] == "2"){echo 'selected';} ?>>Coût décroissant</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Formation</th>
+                        <th scope="col">Place</th>
+                        <th scope="col">Coût</th>
+                        <th scope="col">Confidentiel ?</th>
+                        <th scope="col">Sélectionner</th>
+                        <th scope="col">Modifier</th>
+                        <th scope="col">Supprimer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            foreach($_SESSION['listServices'] as $service){
+
+                                $idFormService = "form_service_" . $service['ID_SERVICE'];
+                        ?>
+                                <tr>
+                                    <th scope="row"> <?= htmlspecialchars($service['ID_SERVICE']) ?></th>
+
+                                    <td><input class="form-control" form="<?= $idFormService ?>" name="type" class="mediumtext" type="text" value="<?= htmlspecialchars($service['type'] ?? '') ?>"></td>
+
+                                    <td>
+                                        <select class="form-control" form="<?= $idFormService ?>" name="formation"> 
+                                            <option class="smalltext" value="0" <?= htmlspecialchars($service['formation'] ?? 0) == 0 ? 'selected' : '' ?>>Non</option>
+                                            <option class="smalltext" value="1" <?= htmlspecialchars($service['formation'] ?? 0) == 1 ? 'selected' : '' ?>>Oui</option>
+                                        </select>
+                                    </td>
+
+                                    <td><input class="form-control" form="<?= $idFormService ?>" name="place" class="bigtext" type="text" value="<?= htmlspecialchars($service['place'] ?? '') ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormService ?>" name="cost" class="smalltext" type="text" value="<?= htmlspecialchars($service['cost'] ?? '') ?>"></td>
+
+                                    <td>
+                                        <select class="form-control" form="<?= $idFormService ?>" name="is_medical_confidential"> 
+                                            <option class="smalltext" value="0" <?= htmlspecialchars($service['is_medical_confidential'] ?? 0) == 0 ? 'selected' : '' ?>>Non</option>
+                                            <option class="smalltext" value="1" <?= htmlspecialchars($service['is_medical_confidential'] ?? 0) == 1 ? 'selected' : '' ?>>Oui</option>
+                                        </select>
+                                    </td>
+                                    
+                                    <td>
+                                        <div class="form-check">
+                                            <input form="selectedService" name="selectedService" class="form-check-input" type="radio" value="<?php echo htmlspecialchars($service['ID_SERVICE']); ?>">
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <form id="<?= $idFormService ?>" method="POST" action="http://localhost:8081/updateServiceData">
+                                            <button type="submit" value="<?= $service['ID_SERVICE'] ?>">Modifier</button>
+                                            <input type="hidden" name="id" value="<?= $service['ID_SERVICE'] ?>">
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST" action="http://localhost:8081/deleteService">
+                                            <button type="submit" value="<?= $service['ID_SERVICE'] ?>">Supprimer</button>
+                                            <input type="hidden" name="id" value="<?= $service['ID_SERVICE'] ?>">
+                                        </form>
+                                    </td>
+
+                                </tr>
+
+                            <?php } ?>
+                    </tbody>
+                </table>
+
+                <form method="POST" action="traitement_offset.php">
+                    <button type="submit" name="pageservices" value="moins">Précedent</button>
+                    <button type="submit" name="pageservices" value="plus">Suivant</button>
+                    <button type="submit" name="pageservices">Rafraîchir</button>
+
+                    <input type="hidden" name="researchServices" value="<?php if(isset($_GET['researchServices'])){ echo $_GET['researchServices']; } ?>">
+                    <input type="hidden" name="filterServices" value="<?php if(isset($_GET['filterServices'])){ echo $_GET['filterServices']; } ?>">
+                    <input type="hidden" name="sortServices" value="<?php if(isset($_GET['sortServices'])){ echo $_GET['sortServices']; } ?>">
+                </form>
+
+                <h5 class="pt-5">Ajouter un service</h5>
+
+                <form method="POST" action="http://localhost:8081/addService">
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                            <th scope="col">Type</th>
+                            <th scope="col">Formation</th>
+                            <th scope="col">Place</th>
+                            <th scope="col">Coût</th>
+                            <th scope="col">Confidentiel ?</th>
+                            <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input class="form-control mediumtext" type="text" name="type"></td>
+
+                                <td>
+                                    <select class="form-control" name="formation"> 
+                                        <option class="smalltext" value="0">Non</option>
+                                        <option class="smalltext" value="1">Oui</option>
+                                    </select>
+                                </td>
+
+                                <td><input class="form-control bigtext" type="text" name="place"></td>
+
+                                <td><input class="form-control smalltext" type="text" name="cost"></td>
+
+                                <td>
+                                    <select class="form-control" name="is_medical_confidential"> 
+                                        <option class="smalltext" value="0">Non</option>
+                                        <option class="smalltext" value="1">Oui</option>
+                                    </select>
+                                </td>
+                                        
+                                <td><button class="button" type="submit" name="addevent">Ajouter</button></td>
+                            </tr>                   
+                        </tbody>
+                    </table>
+                </form>
+
+                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par le service sélectionné</h5>
+
+                <form id="selectedService" method="POST" action="sendEmailSelectedService.php">
+
+                    <label>Objet</label>
+                    <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
+
+                    <label>Corps de l'email</label>
+                    <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
+
+                    <button type="submit"class="mb-5">Envoyer</button>
+
+                </form>
+                <?php endif; ?>
             </section>
 
             <section id="pageshop" class="mt-5">
