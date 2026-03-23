@@ -167,11 +167,12 @@ CREATE TABLE ADVICE(
 
 CREATE TABLE MESSAGE(
    ID_MESSAGE INT AUTO_INCREMENT,
-   content VARCHAR(200) ,
-   date_ DATETIME,
-   title VARCHAR(200) ,
+   content TEXT,
+   date DATETIME,
    sender_id INT NOT NULL,
    receiver_id INT NOT NULL,
+   read_at DATETIME DEFAULT NULL,
+   suspected_status INT DEFAULT 0,
    PRIMARY KEY(ID_MESSAGE),
    FOREIGN KEY(sender_id) REFERENCES USER_(ID_USER),
    FOREIGN KEY(receiver_id) REFERENCES USER_(ID_USER)
