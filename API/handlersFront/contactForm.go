@@ -46,7 +46,7 @@ func ContactForm(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		insertStatement, insertError := database.Prepare("INSERT INTO CONTACTS(subject, email, message) VALUES(?, ?, ?)")
+		insertStatement, insertError := database.Prepare("INSERT INTO CONTACTS(date, subject, email, message) VALUES(CURDATE(), ?, ?, ?)")
 
 		if insertError != nil{
 

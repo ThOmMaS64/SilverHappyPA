@@ -40,6 +40,11 @@
             header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagemessages');
             exit();
             break;
+
+        case 'requests':
+            header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagerequests');
+            exit();
+            break;
     }
 
     header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagewelcome');

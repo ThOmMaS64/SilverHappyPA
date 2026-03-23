@@ -10,24 +10,17 @@
 
     session_start();
 
-    include("../includes/db.php");
-
     date_default_timezone_set('Europe/Paris');
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (!isset($_POST['subject']) || empty($_POST['mail'])) {
-                header('Location:index.php#pageservices');
+                header('Location:index.php#pagerequests');
                 exit();
-        }else if (!isset($_POST['selectedService']) || empty($_POST['selectedService'])){
-            header('Location:index.php#pageservices');
+        }else if (!isset($_POST['selectedEmailRequests']) || empty($_POST['selectedEmailRequests'])){
+            header('Location:index.php#pagerequests');
             exit();
         }
-
-        $q = 'SELECT DISTINCT USER_.email FROM USER_ INNER JOIN SERVICE_PROVIDER ON USER_.ID_USER = SERVICE_PROVIDER.ID_USER INNER JOIN OFFER ON SERVICE_PROVIDER.ID_SERVICE_PROVIDER = OFFER.ID_SERVICE_PROVIDER WHERE OFFER.ID_SERVICE = :id AND SERVICE_PROVIDER.ID_SERVICE_PROVIDER != 1';
-        $statement2 = $bdd->prepare($q);
-        $statement2->execute(['id' => $_POST['selectedService']]);
-        $serviceProviderEmails = $statement2->fetchAll(PDO::FETCH_COLUMN);
 
         $mail = new PHPMailer(true);
         try {
@@ -42,12 +35,12 @@
 
             $mail->setFrom('silverhappyoff@gmail.com', 'Silver Happy');
 
-            if(!empty($serviceProviderEmails)){
-                foreach($serviceProviderEmails as $email){
+            $emails = (array)$_POST["selectedEmailRequests"];
 
-                    $mail->addBCC($email);
+            foreach($emails as $email){
 
-                }
+                $mail->addBCC($email);
+
             }
             
             $mail->isHTML(true);
@@ -61,12 +54,12 @@
             
             $mail->send();
 
-            header('location:index.php?notif=email_sent#pageservices');
+            header('location:index.php?notif=email_sent#pagerequests');
             exit();
             
         } catch (Exception $e) {
 
-            header('location:index.php?error=email_error#pageservices');
+            header('location:index.php?error=email_error#pagerequests');
             exit();
 
         }

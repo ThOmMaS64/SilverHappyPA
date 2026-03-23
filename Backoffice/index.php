@@ -56,6 +56,12 @@ if(!isset($_SESSION['offsetMessages'])){
 
 }
 
+if(!isset($_SESSION['offsetRequests'])){
+
+    $_SESSION['offsetRequests'] = 0;
+
+}
+
 $research = isset($_GET['research']) ? urlencode($_GET['research']) : "";
 $filter = isset($_GET['filter']) ? urlencode($_GET['filter']) : "";
 $sort = isset($_GET['sort']) ? urlencode($_GET['sort']) : "";
@@ -299,6 +305,48 @@ if($dataMessages){
     }
 }
 
+$researchRequests = isset($_GET['researchRequests']) ? urlencode($_GET['researchRequests']) : "";
+$filterRequests = isset($_GET['filterRequests']) ? urlencode($_GET['filterRequests']) : "";
+$sortRequests = isset($_GET['sortRequests']) ? urlencode($_GET['sortRequests']) : "";
+
+$offsetRequests = $_SESSION['offsetRequests'];
+
+if (!isset($_SESSION['listRequests'])) {
+    $_SESSION['listRequests'] = [];
+}
+
+if(isset($_GET['researchRequests']) || isset($_GET['filterRequests']) || isset($_GET['sortRequests'])){
+
+    $dataRequests = @file_get_contents("http://localhost:8081/showRequestsPersonalizedData?research=$researchRequests&filter=$filterRequests&sort=$sortRequests&offset=$offsetRequests");
+
+}else{
+
+    $dataRequests = @file_get_contents("http://localhost:8081/showRequestsDefaultData?offset=$offsetRequests");
+
+}
+
+if($dataRequests){
+
+    $decodedResponse = json_decode($dataRequests, true);
+    $_SESSION['listRequests'] = array();
+
+    $distinctSubjects = $decodedResponse['subjects'] ?? [];
+
+    $requests = $decodedResponse['requests'] ?? [];
+
+    if(is_array($requests)){
+        foreach($requests as $request){
+            $_SESSION['listRequests'][] = [
+                'ID_REQUEST' => $request['ID_REQUEST'],
+                'date' => $request['date'],
+                'subject' => $request['subject'],
+                'email' => $request['email'],
+                'request' => $request['request']
+            ];
+        }
+    }
+}
+
 $notifUsers = [
 
     "update_success" => "Mise à jour des informations réussie.",
@@ -384,6 +432,12 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     <input type="hidden" name="action" value="messages">
                 </form>
                 <li><a href="#pagemessages" onclick="hideWelcome(); document.getElementById('messagesForm').submit(); return false;">Contrôle des messages</a></li>
+
+                <form id="requestsForm" method="POST" action="traitements.php">
+                    <input type="hidden" name="action" value="requests">
+                </form>
+                <li><a href="#pagerequests" onclick="hideWelcome(); document.getElementById('requestsForm').submit(); return false;">Contrôle des requêtes</a></li>
+
 
                 <li><a href="deconnexion.php">Se déconnecter</a></li>
             </ul>
@@ -860,7 +914,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
 
                                 <td><input class="form-control bigtext" type="text" name="place"></td>
 
-                                <td><input class="form-control smalltext" type="text" name="cost"></td>
+                                <td><input class="form-control smalltext" type="number" name="cost"></td>
 
                                 <td>
                                     <select class="form-control" name="is_medical_confidential"> 
@@ -875,7 +929,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     </table>
                 </form>
 
-                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par le service sélectionné</h5>
+                <h5 class="pt-5">Contacter par emails les prestataires concernés par le service sélectionné</h5>
 
                 <form id="selectedService" method="POST" action="sendEmailSelectedService.php">
 
@@ -1546,6 +1600,129 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                 <h5 class="pt-5">Contacter par emails l'expéditeur'</h5>
 
                 <form id="selectedMessage" method="POST" action="sendEmailSelectedMessage.php">
+
+                    <label>Objet</label>
+                    <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
+
+                    <label>Corps de l'email</label>
+                    <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
+
+                    <button type="submit"class="mb-5">Envoyer</button>
+
+                </form>
+                <?php endif; ?>
+            </section>
+
+            <section id="pagerequests" class="mt-5">
+                <?php if(isset($_SESSION['listRequests'])): ?>
+                <h1>Gestion des requêtes</h1>
+
+                <div class="col-4">
+                    <?php if (isset($errorUsersMessage)): ?>
+                        <div class="alert alert-danger">
+                            <?php echo htmlspecialchars($errorUsersMessage); ?>
+                        </div>
+                    <?php elseif(isset($successUsersMessage)): ?>
+                        <div class="alert alert-success">
+                            <?php echo htmlspecialchars($successUsersMessage); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <form method="GET" action="index.php#pagerequests">
+                    <div class="row mb-3">
+                        <div class="col-2">
+                            <div class="input-group">
+                                <input value="<?php if(isset($_GET['researchRequests'])){ echo htmlspecialchars($_GET['researchRequests']); }else{ echo ""; } ?>" class="form-control" name="researchRequests" placeholder="<?php if(isset($_GET['researchRequests']) && $_GET['researchRequests'] != ""){ echo $_GET['researchRequests']; }else{ ?><?php echo "Tapez votre recherche"; ?> <?php } ?>" aria-label="Search">
+                                <button class="searchButton" type="submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="filterRequests" class="selectFilter" onchange="this.form.submit()">
+                                <option disabled selected><?php echo "Choisissez un sujet" ?></option>
+                                <?php foreach($distinctSubjects as $subject): ?>
+                                    <option value="<?= htmlspecialchars($subject) ?>" <?php if(isset($_GET['filterRequests']) && $_GET['filterRequests'] == $subject){ echo 'selected'; } ?> ><?= htmlspecialchars($subject) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="sortRequests" class="selectSort" onchange="this.form.submit()">
+                                <option disabled <?php if(!isset($_GET['sortRequests']) || $_GET['sortRequests'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
+                                <option value="1" <?php if(isset($_GET['sortRequests']) && $_GET['sortRequests'] == "1"){echo 'selected';} ?>>Plus anciens en premier</option>
+                                <option value="2" <?php if(isset($_GET['sortRequests']) && $_GET['sortRequests'] == "2"){echo 'selected';} ?>>Plus récents en premier</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Sujet</th>
+                        <th scope="col">Requête</th>
+                        <th scope="col">Contact</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Sélectionner</th>
+                        <th scope="col">Supprimer</th>
+                        <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            foreach($_SESSION['listRequests'] as $request){
+
+                                $idFormRequest = "form_request_" . $request['ID_REQUEST'];
+                        ?>
+                                <tr>
+                                    <th scope="row"> <?= htmlspecialchars($request['ID_REQUEST']) ?></th>
+
+                                    <td><?= htmlspecialchars($request['subject'] ?? '') ?></td>
+
+                                    <td><?= htmlspecialchars($request['request'] ?? '') ?></td>
+
+                                    <td><?= htmlspecialchars($request['email'] ?? '') ?></td>
+                                        
+                                    <td><?= htmlspecialchars($request['date'] ?? '') ?></td>
+
+                                    <td>
+                                        <div class="form-check">
+                                            <input form="selectedEmailRequests" name="selectedEmailRequests[]" class="form-check-input" type="checkbox" value="<?php echo htmlspecialchars($request['email']); ?>">
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST" action="http://localhost:8081/deleteRequest">
+                                            <button type="submit" value="<?= $request['ID_REQUEST'] ?>">Supprimer</button>
+                                            <input type="hidden" name="id" value="<?= $request['ID_REQUEST'] ?>">
+                                        </form>
+                                    </td>
+
+                                </tr>
+
+                            <?php } ?>
+                    </tbody>
+                </table>
+
+                <form method="POST" action="traitement_offset.php">
+                    <button type="submit" name="pagerequests" value="moins">Précedent</button>
+                    <button type="submit" name="pagerequests" value="plus">Suivant</button>
+                    <button type="submit" name="pagerequests">Rafraîchir</button>
+
+                    <input type="hidden" name="researchRequests" value="<?php if(isset($_GET['researchRequests'])){ echo $_GET['researchRequests']; } ?>">
+                    <input type="hidden" name="filterRequests" value="<?php if(isset($_GET['filterRequests'])){ echo $_GET['filterRequests']; } ?>">
+                    <input type="hidden" name="sortRequests" value="<?php if(isset($_GET['sortRequests'])){ echo $_GET['sortRequests']; } ?>">
+                </form>
+
+                <h5 class="pt-5">Contacter les emails sélectionnés</h5>
+
+                <form id="selectedEmailRequests" method="POST" action="sendEmailSelectedRequests.php">
 
                     <label>Objet</label>
                     <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>

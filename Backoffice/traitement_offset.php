@@ -280,4 +280,55 @@
         header('Location:http://localhost/ProjetAnnuel/Backoffice/index.php#pagemessages');
         exit();
     }
+
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pagerequests'])){
+        
+        if(!isset($_SESSION['offsetRequests'])){
+
+            $_SESSION['offsetRequests'] = 0;
+
+        }
+
+        if($_POST['pagerequests'] == "plus"){
+
+            $_SESSION['offsetRequests'] += 10;
+
+        }elseif($_POST['pagerequests'] == "moins"){
+
+            $_SESSION['offsetRequests'] -= 10;
+
+        }
+
+        if($_SESSION['offsetRequests'] < 0){
+
+            $_SESSION['offsetRequests'] = 0;
+
+        }
+
+        $url = "http://localhost/ProjetAnnuel/Backoffice/index.php?";
+
+        if(isset($_POST['researchRequests']) && !empty($_POST['researchRequests'])){
+
+            $url = $url . "researchRequests=" . urlencode($_POST['researchRequests']);
+
+        }
+        
+        if(isset($_POST['filterRequests']) && !empty($_POST['filterRequests'])){
+
+            $url = $url . "&filterRequests=" . urlencode($_POST['filterRequests']);
+
+        }
+
+        if(isset($_POST['sortRequests']) && !empty($_POST['sortRequests'])){
+
+            $url = $url . "&sortRequests=" . urlencode($_POST['sortRequests']);
+
+        }
+
+        $url = $url . "#pagerequests";
+
+        header('Location:' . $url);
+        exit();
+    }
+
 ?>
