@@ -73,6 +73,8 @@ func main() {
 	http.HandleFunc("/showRequestsDefaultData", handlersBack.ShowRequestsDefaultData(database))
 	http.HandleFunc("/deleteRequest", handlersBack.DeleteRequest(database))
 	http.HandleFunc("/showRequestsPersonalizedData", handlersBack.ShowRequestsPersonalizedData(database))
+	http.HandleFunc("/showServiceProvidersDefaultData", handlersBack.ShowServiceProvidersDefaultData(database))
+	http.HandleFunc("/showServiceProvidersPersonalizedData", handlersBack.ShowServiceProvidersPersonalizedData(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 

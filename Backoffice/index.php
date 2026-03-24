@@ -50,6 +50,12 @@ if(!isset($_SESSION['offsetServices'])){
 
 }
 
+if(!isset($_SESSION['offsetServiceProviders'])){
+
+    $_SESSION['offsetServiceProviders'] = 0;
+
+}
+
 if(!isset($_SESSION['offsetMessages'])){
 
     $_SESSION['offsetMessages'] = 0;
@@ -245,7 +251,10 @@ $researchServices = isset($_GET['researchServices']) ? urlencode($_GET['research
 $filterServices = isset($_GET['filterServices']) ? urlencode($_GET['filterServices']) : "";
 $sortServices = isset($_GET['sortServices']) ? urlencode($_GET['sortServices']) : "";
 
+$filterServiceProvider = isset($_GET['filterServiceProvider']) ? urlencode($_GET['filterServiceProvider']) : "";
+
 $offsetServices = $_SESSION['offsetServices'];
+$offsetServiceProviders = $_SESSION['offsetServiceProviders'];
 
 if(isset($_GET['researchServices']) || isset($_GET['filterServices']) || isset($_GET['sortServices'])){
 
@@ -254,6 +263,16 @@ if(isset($_GET['researchServices']) || isset($_GET['filterServices']) || isset($
 }else{
 
     $response = file_get_contents("http://localhost:8081/showServicesDefaultData?offset=$offsetServices");
+
+}
+
+if(isset($_GET['filterServiceProvider'])){
+
+    $response2 = file_get_contents("http://localhost:8081/showServiceProvidersPersonalizedData?filter=$filterServiceProvider&offset=$offsetServiceProviders");
+
+}else{
+
+    $response2 = file_get_contents("http://localhost:8081/showServiceProvidersDefaultData?offset=$offsetServiceProviders");
 
 }
 
@@ -282,6 +301,23 @@ if($response){
         $distinctTypesServices = $decodedResponse['types'];
     }
 
+}
+
+if($response2){
+
+    $decodedResponse2 = json_decode($response2, true);
+    $_SESSION['listServiceProvider'] = array();
+
+    if(is_array($decodedResponse2)){
+        foreach($decodedResponse2 as $service){
+            $_SESSION['listServiceProvider'][] = [
+                'email' => $service['email'],
+                'ID_SERVICE_PROVIDER' => $service['ID_SERVICE_PROVIDER'],
+                'type' => $service['type'],
+                'username' => $service['username']
+            ];
+        }
+    }
 }
 
 $offsetMessages = $_SESSION['offsetMessages'];
@@ -893,6 +929,59 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     <input type="hidden" name="sortServices" value="<?php if(isset($_GET['sortServices'])){ echo $_GET['sortServices']; } ?>">
                 </form>
 
+                <form method="GET" action="index.php#pageservices">
+                    <div class="row mb-3 pt-5 mt-4">
+                        <div class="col-2">
+                            <select name="filterServiceProvider" class="filterServiceProvider" onchange="this.form.submit()">
+                                <option disabled selected><?php echo "Choisissez un filtre" ?></option>
+                                <?php foreach($distinctTypesServices as $type): ?>
+                                    <option value="<?= htmlspecialchars($type) ?>" <?php if(isset($_GET['filterServiceProvider']) && $_GET['filterServiceProvider'] == $type){ echo 'selected'; } ?> ><?= htmlspecialchars($type) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                        <th scope="col">Type</th>
+                        <th scope="col">Prestataire</th>
+                        <th scope="col">Sélectionner</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            foreach($_SESSION['listServiceProvider'] as $serviceProvider){
+
+                            $idForm = "form_service_provider_" . $serviceProvider['ID_SERVICE_PROVIDER'];
+                        ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($serviceProvider['type'] ?? '') ?></td>
+
+                                    
+                                    <td><?= htmlspecialchars($serviceProvider['username'] ?? '') ?></td>
+
+                                    <td>
+                                        <div class="form-check">
+                                            <input form="selectedServiceProviders" name="selectedServiceProviders[]" class="form-check-input" type="checkbox" value="<?php echo htmlspecialchars($serviceProvider['email']); ?>">
+                                        </div>
+                                    </td>
+
+                                </tr>
+
+                            <?php } ?>
+                    </tbody>
+                </table>
+
+                <form method="POST" action="traitement_offset.php">
+                    <button type="submit" name="pageserviceproviders" value="moins">Précedent</button>
+                    <button type="submit" name="pageserviceproviders" value="plus">Suivant</button>
+                    <button type="submit" name="pageserviceproviders">Rafraîchir</button>
+
+                    <input type="hidden" name="filterServiceProvider" value="<?php if(isset($_GET['filterServiceProvider'])){ echo $_GET['filterServiceProvider']; } ?>">
+                </form>
+
                 <h5 class="pt-5">Ajouter un service</h5>
 
                 <form method="POST" action="http://localhost:8081/addService">
@@ -935,19 +1024,38 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     </table>
                 </form>
 
-                <h5 class="pt-5">Contacter par emails les prestataires concernés par le service sélectionné</h5>
+                <div class="row">
+                    <div class="col-6">
+                        <h5 class="pt-5">Contacter par emails les prestataires concernés par le service sélectionné</h5>
 
-                <form id="selectedService" method="POST" action="sendEmailSelectedService.php">
+                        <form id="selectedService" method="POST" action="sendEmailSelectedService.php">
 
-                    <label>Objet</label>
-                    <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
+                            <label>Objet</label>
+                            <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
 
-                    <label>Corps de l'email</label>
-                    <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
+                            <label>Corps de l'email</label>
+                            <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
 
-                    <button type="submit"class="mb-5">Envoyer</button>
+                            <button type="submit"class="mb-5">Envoyer</button>
 
-                </form>
+                        </form>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="pt-5">Contacter par emails les prestataires directement spécifiquement sélectionnés</h5>
+
+                        <form id="selectedServiceProviders" method="POST" action="sendEmailSelectedServiceProviders.php">
+
+                            <label>Objet</label>
+                            <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
+
+                            <label>Corps de l'email</label>
+                            <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
+
+                            <button type="submit"class="mb-5">Envoyer</button>
+
+                        </form>
+                    </div>
+                </div>
                 <?php endif; ?>
             </section>
 

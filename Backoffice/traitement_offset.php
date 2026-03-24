@@ -331,4 +331,44 @@
         exit();
     }
 
+    ///
+
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageserviceproviders'])){
+        
+        if(!isset($_SESSION['offsetServiceProviders'])){
+
+            $_SESSION['offsetServiceProviders'] = 0;
+
+        }
+
+        if($_POST['pageserviceproviders'] == "plus"){
+
+            $_SESSION['offsetServiceProviders'] += 10;
+
+        }elseif($_POST['pageserviceproviders'] == "moins"){
+
+            $_SESSION['offsetServiceProviders'] -= 10;
+
+        }
+
+        if($_SESSION['offsetServiceProviders'] < 0){
+
+            $_SESSION['offsetServiceProviders'] = 0;
+
+        }
+
+        $url = "http://localhost/ProjetAnnuel/Backoffice/index.php?";
+        
+        if(isset($_POST['filterServiceProvider']) && !empty($_POST['filterServiceProvider'])){
+
+            $url = $url . "&filterServiceProvider=" . urlencode($_POST['filterServiceProvider']);
+
+        }
+
+        $url = $url . "#pageservices";
+
+        header('Location:' . $url);
+        exit();
+    }
+
 ?>
