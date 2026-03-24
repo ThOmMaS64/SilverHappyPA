@@ -272,7 +272,8 @@ if($response){
                 'formation' => $service['formation'],
                 'place' => $service['place'],
                 'cost' => $service['cost'],
-                'is_medical_confidential' => $service['is_medical_confidential']
+                'is_medical_confidential' => $service['is_medical_confidential'],
+                'nb' => $service['nb']
             ];
         }
     }
@@ -803,6 +804,8 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                 <option disabled <?php if(!isset($_GET['sortServices']) || $_GET['sortServices'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
                                 <option value="1" <?php if(isset($_GET['sortServices']) && $_GET['sortServices'] == "1"){echo 'selected';} ?>>Coût croissant</option>
                                 <option value="2" <?php if(isset($_GET['sortServices']) && $_GET['sortServices'] == "2"){echo 'selected';} ?>>Coût décroissant</option>
+                                <option value="3" <?php if(isset($_GET['sortServices']) && $_GET['sortServices'] == "3"){echo 'selected';} ?>>Nombre prestatires croissant</option>
+                                <option value="4" <?php if(isset($_GET['sortServices']) && $_GET['sortServices'] == "4"){echo 'selected';} ?>>Nombre prestatires décroissant</option>
                             </select>
                         </div>
                     </div>
@@ -817,6 +820,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <th scope="col">Place</th>
                         <th scope="col">Coût</th>
                         <th scope="col">Confidentiel ?</th>
+                        <th scope="col">Nombre de prestataires</th>
                         <th scope="col">Sélectionner</th>
                         <th scope="col">Modifier</th>
                         <th scope="col">Supprimer</th>
@@ -851,6 +855,8 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                         </select>
                                     </td>
                                     
+                                    <td><?= htmlspecialchars($service['nb'] ?? '') ?></td>
+
                                     <td>
                                         <div class="form-check">
                                             <input form="selectedService" name="selectedService" class="form-check-input" type="radio" value="<?php echo htmlspecialchars($service['ID_SERVICE']); ?>">

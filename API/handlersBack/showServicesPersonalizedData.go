@@ -58,7 +58,7 @@ func ShowServicesPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 		var args []any
 		 
-		basicQuery := "SELECT ID_SERVICE, type, formation, place, cost, is_medical_confidential FROM SERVICE WHERE 1=1"
+		basicQuery := "SELECT SERVICE.ID_SERVICE, type, formation, place, cost, is_medical_confidential, COUNT(OFFER.ID_SERVICE) AS nb FROM SERVICE LEFT JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE WHERE 1=1"
 
 		if research != ""{
 
@@ -74,6 +74,8 @@ func ShowServicesPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 		}
 
+		basicQuery += " GROUP BY SERVICE.ID_SERVICE"
+
 		if sort != ""{
 
 			if sort == "1"{
@@ -83,6 +85,14 @@ func ShowServicesPersonalizedData(database *sql.DB) http.HandlerFunc {
 			}else if sort == "2"{
 
 				basicQuery += " ORDER BY cost DESC"
+
+			}else if sort == "3"{
+
+				basicQuery += " ORDER BY COUNT(OFFER.ID_SERVICE) ASC"
+
+			}else if sort == "4"{
+
+				basicQuery += " ORDER BY COUNT(OFFER.ID_SERVICE) DESC"
 
 			}
 
@@ -103,7 +113,7 @@ func ShowServicesPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 			var service Service
 
-			err := rowsServices.Scan(&service.ID_SERVICE, &service.Type, &service.Formation, &service.Place, &service.Cost, &service.IsMedicalConfidential)
+			err := rowsServices.Scan(&service.ID_SERVICE, &service.Type, &service.Formation, &service.Place, &service.Cost, &service.IsMedicalConfidential, &service.Nb)
 			if err != nil {
 				continue
 			}
