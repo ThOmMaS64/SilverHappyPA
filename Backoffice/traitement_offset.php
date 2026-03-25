@@ -331,8 +331,6 @@
         exit();
     }
 
-    ///
-
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageserviceproviders'])){
         
         if(!isset($_SESSION['offsetServiceProviders'])){
@@ -366,6 +364,100 @@
         }
 
         $url = $url . "#pageservices";
+
+        header('Location:' . $url);
+        exit();
+    }
+
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pagenotifs'])){
+        
+        if(!isset($_SESSION['offsetNotifs'])){
+
+            $_SESSION['offsetNotifs'] = 0;
+
+        }
+
+        if($_POST['pagenotifs'] == "plus"){
+
+            $_SESSION['offsetNotifs'] += 10;
+
+        }elseif($_POST['pagenotifs'] == "moins"){
+
+            $_SESSION['offsetNotifs'] -= 10;
+
+        }
+
+        if($_SESSION['offsetNotifs'] < 0){
+
+            $_SESSION['offsetNotifs'] = 0;
+
+        }
+
+        $url = "http://localhost/ProjetAnnuel/Backoffice/index.php?";
+
+        if(isset($_POST['researchNotifs']) && !empty($_POST['researchNotifs'])){
+
+            $url = $url . "researchNotifs=" . urlencode($_POST['researchNotifs']);
+
+        }
+        
+        if(isset($_POST['filterNotifs']) && !empty($_POST['filterNotifs'])){
+
+            $url = $url . "&filterNotifs=" . urlencode($_POST['filterNotifs']);
+
+        }
+
+        if(isset($_POST['sortNotifs']) && !empty($_POST['sortNotifs'])){
+
+            $url = $url . "&sortNotifs=" . urlencode($_POST['sortNotifs']);
+
+        }
+
+        $url = $url . "#pagenotifs";
+
+        header('Location:' . $url);
+        exit();
+    }
+
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pagemoney'])){
+        
+        if(!isset($_SESSION['offsetInvoices'])){
+
+            $_SESSION['offsetInvoices'] = 0;
+
+        }
+
+        if($_POST['pagemoney'] == "plus"){
+
+            $_SESSION['offsetInvoices'] += 10;
+
+        }elseif($_POST['pagemoney'] == "moins"){
+
+            $_SESSION['offsetInvoices'] -= 10;
+
+        }
+
+        if($_SESSION['offsetInvoices'] < 0){
+
+            $_SESSION['offsetInvoices'] = 0;
+
+        }
+
+        $url = "http://localhost/ProjetAnnuel/Backoffice/index.php?";
+
+        if(isset($_POST['researchInvoices']) && !empty($_POST['researchInvoices'])){
+
+            $url = $url . "researchInvoices=" . urlencode($_POST['researchInvoices']);
+
+        }
+
+        if(isset($_POST['sortInvoices']) && !empty($_POST['sortInvoices'])){
+
+            $url = $url . "&sortInvoices=" . urlencode($_POST['sortInvoices']);
+
+        }
+
+        $url = $url . "#pagemoney";
 
         header('Location:' . $url);
         exit();

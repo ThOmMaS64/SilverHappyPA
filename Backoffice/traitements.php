@@ -21,6 +21,11 @@
             exit();
             break;
 
+        case 'money':
+            header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagemoney');
+            exit();
+            break;
+
         case 'events':
             header('Location: http://localhost/ProjetAnnuel/Backoffice/#pageevents');
             exit();

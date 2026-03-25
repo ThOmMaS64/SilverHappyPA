@@ -68,6 +68,18 @@ if(!isset($_SESSION['offsetRequests'])){
 
 }
 
+if(!isset($_SESSION['offsetNotifs'])){
+
+    $_SESSION['offsetNotifs'] = 0;
+
+}
+
+if(!isset($_SESSION['offsetInvoices'])){
+
+    $_SESSION['offsetInvoices'] = 0;
+
+}
+
 $research = isset($_GET['research']) ? urlencode($_GET['research']) : "";
 $filter = isset($_GET['filter']) ? urlencode($_GET['filter']) : "";
 $sort = isset($_GET['sort']) ? urlencode($_GET['sort']) : "";
@@ -387,6 +399,83 @@ if($dataRequests){
     }
 }
 
+$researchNotifs = isset($_GET['researchNotifs']) ? urlencode($_GET['researchNotifs']) : "";
+$filterNotifs = isset($_GET['filterNotifs']) ? urlencode($_GET['filterNotifs']) : "";
+$sortNotifs = isset($_GET['sortNotifs']) ? urlencode($_GET['sortNotifs']) : "";
+
+$offsetNotifs = $_SESSION['offsetNotifs'];
+
+if(isset($_GET['researchNotifs']) || isset($_GET['filterNotifs']) || isset($_GET['sortNotifs'])){
+
+    $response = file_get_contents("http://localhost:8081/showNotificationsPersonalizedData?research=$researchNotifs&filter=$filterNotifs&sort=$sortNotifs&offset=$offsetNotifs");
+
+}else{
+
+    $response = file_get_contents("http://localhost:8081/showNotificationsDefaultData?offset=$offsetNotifs");
+
+}
+
+$distinctTypesNotifs = [];
+
+if($response){
+
+    $decodedResponse = json_decode($response, true);
+    $_SESSION['listNotifs'] = array();
+
+    if(isset($decodedResponse['notifs']) && is_array($decodedResponse['notifs'])){
+        foreach($decodedResponse['notifs'] as $advice){
+            $_SESSION['listNotifs'][] = [
+                'ID_NOTIFICATION' => $advice['ID_NOTIFICATION'],
+                'title' => $advice['title'],
+                'description' => $advice['description'],
+                'type' => $advice['type'],
+                'username' => $advice['username'],
+                'ID_CONSUMER' => $advice['ID_CONSUMER']
+            ];
+        }
+    }
+
+    if(isset($decodedResponse['types']) && is_array($decodedResponse['types'])){
+        $distinctTypesNotifs = $decodedResponse['types'];
+    }
+
+}
+
+$researchInvoices = isset($_GET['researchInvoices']) ? urlencode($_GET['researchInvoices']) : "";
+$sortInvoices = isset($_GET['sortInvoices']) ? urlencode($_GET['sortInvoices']) : "";
+
+$offsetInvoices = $_SESSION['offsetInvoices'];
+
+if(isset($_GET['researchInvoices']) || isset($_GET['filterInvoices']) || isset($_GET['sortInvoices'])){
+
+    $response = file_get_contents("http://localhost:8081/showInvoicesPersonalizedData?research=$researchInvoices&sort=$sortInvoices&offset=$offsetInvoices");
+
+}else{
+
+    $response = file_get_contents("http://localhost:8081/showInvoicesDefaultData?offset=$offsetInvoices");
+
+}
+
+if($response){
+
+    $decodedResponse = json_decode($response, true);
+    $_SESSION['listInvoices'] = array();
+
+    if(isset($decodedResponse['invoices']) && is_array($decodedResponse['invoices'])){
+        foreach($decodedResponse['invoices'] as $invoice){
+            $_SESSION['listInvoices'][] = [
+                'ID_INVOICE' => $invoice['ID_INVOICE'],
+                'amount' => $invoice['amount'],
+                'nb_services_provided' => $invoice['nb_services_provided'],
+                'month_billed' => $invoice['month_billed'],
+                'year_billed' => $invoice['year_billed'],
+                'pdf_path' => $invoice['pdf_path'],
+                'service_provider' => $invoice['service_provider']
+            ];
+        }
+    }
+}
+
 $notifUsers = [
 
     "update_success" => "Mise à jour des informations réussie.",
@@ -456,7 +545,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                 <form id="moneyForm" method="POST" action="traitements.php">
                     <input type="hidden" name="action" value="money">
                 </form>
-                <li><a href="#pageùoney" onclick="hideWelcome(); document.getElementById('moneyForm').submit(); return false;">Gestion financière</a></li>
+                <li><a href="#pagemoney" onclick="hideWelcome(); document.getElementById('moneyForm').submit(); return false;">Gestion financière</a></li>
 
                 <form id="tipsForm" method="POST" action="traitements.php">
                     <input type="hidden" name="action" value="tips">
@@ -1029,7 +1118,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
 
                 <div class="row">
                     <div class="col-6">
-                        <h5 class="pt-5">Contacter par emails les prestataires concernés par le service sélectionné</h5>
+                        <h5 class="pt-5">Contacter par email les prestataires concernés par le service sélectionné</h5>
 
                         <form id="selectedService" method="POST" action="sendEmailSelectedService.php">
 
@@ -1044,7 +1133,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         </form>
                     </div>
                     <div class="col-6">
-                        <h5 class="pt-5">Contacter par emails les prestataires directement spécifiquement sélectionnés</h5>
+                        <h5 class="pt-5">Contacter par email les prestataires directement spécifiquement sélectionnés</h5>
 
                         <form id="selectedServiceProviders" method="POST" action="sendEmailSelectedServiceProviders.php">
 
@@ -1205,7 +1294,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     </table>
                 </form>
 
-                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par l'article sélectionné</h5>
+                <h5 class="pt-5">Contacter par email les utilisateurs concernés par l'article sélectionné</h5>
 
                 <form id="selectedProduct" method="POST" action="sendEmailSelectedProduct.php">
 
@@ -1436,7 +1525,116 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
             </section>
 
             <section id="pagemoney" class="mt-5">
-                
+                <?php if(isset($_SESSION['listInvoices'])): ?>
+                <h1>Gestion Financière</h1>
+                <br>
+                <h1>Gestion des factures</h1>
+
+                <div class="col-4">
+                    <?php if (isset($errorUsersMessage)): ?>
+                        <div class="alert alert-danger">
+                            <?php echo htmlspecialchars($errorUsersMessage); ?>
+                        </div>
+                    <?php elseif(isset($successUsersMessage)): ?>
+                        <div class="alert alert-success">
+                            <?php echo htmlspecialchars($successUsersMessage); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <form method="GET" action="index.php#pagemoney">
+                    <div class="row mb-3">
+                        <div class="col-2">
+                            <div class="input-group">
+                                <input value="<?php if(isset($_GET['researchInvoices'])){ echo htmlspecialchars($_GET['researchInvoices']); }else{ echo ""; } ?>" class="form-control" name="researchInvoices" placeholder="<?php if(isset($_GET['researchInvoices']) && $_GET['researchInvoices'] != ""){ echo $_GET['researchInvoices']; }else{ ?><?php echo "Tapez votre recherche"; ?> <?php } ?>" aria-label="Search">
+                                <button class="searchButton" type="submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="sortInvoices" class="selectSort" onchange="this.form.submit()">
+                                <option disabled <?php if(!isset($_GET['sortInvoices']) || $_GET['sortInvoices'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
+                                <option value="1" <?php if(isset($_GET['sortInvoices']) && $_GET['sortInvoices'] == "1"){echo 'selected';} ?>>Plus anciens en premier</option>
+                                <option value="2" <?php if(isset($_GET['sortInvoices']) && $_GET['sortInvoices'] == "2"){echo 'selected';} ?>>Plus récents en premier</option>
+                                <option value="3" <?php if(isset($_GET['sortInvoices']) && $_GET['sortInvoices'] == "3"){echo 'selected';} ?>>Montant croissant</option>
+                                <option value="4" <?php if(isset($_GET['sortInvoices']) && $_GET['sortInvoices'] == "4"){echo 'selected';} ?>>Montant décroissant</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Montant</th>
+                        <th scope="col">Nombre de services réalisés</th>
+                        <th scope="col">Mois payé</th>
+                        <th scope="col">Année payée</th>
+                        <th scope="col">Lien PDF</th>
+                        <th scope="col">Prestataire</th>
+                        <th scope="col">Sélectionner</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            foreach($_SESSION['listInvoices'] as $product){
+
+                                $idFormInvoice = "form_invoice_" . $invoice['ID_INVOICE'];
+                        ?>
+                                <tr>
+                                    <th scope="row"> <?= htmlspecialchars($invoice['ID_INVOICE']) ?></th>
+
+                                    <td><?= htmlspecialchars($invoice['amount'] ?? '') ?></td>
+
+                                    <td><?= htmlspecialchars($invoice['nb_services_provided'] ?? '') ?></td>
+
+                                    <td><?= htmlspecialchars($invoice['month_billed'] ?? '') ?></td>
+
+                                    <td><?= htmlspecialchars($invoice['year_billed'] ?? '') ?></td>
+
+                                    <td><?= htmlspecialchars($invoice['pdf_path'] ?? '') ?></td>
+
+                                    <td><?= htmlspecialchars($invoice['service_provider'] ?? '') ?></td>
+
+                                    <td>
+                                        <div class="form-check">
+                                            <input form="selectedInvoice" name="selectedInvoice" class="form-check-input" type="radio" value="<?php echo htmlspecialchars($invoice['ID_INVOICE']); ?>">
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            <?php } ?>
+                    </tbody>
+                </table>
+
+                <form method="POST" action="traitement_offset.php">
+                    <button type="submit" name="pagemoney" value="moins">Précedent</button>
+                    <button type="submit" name="pagemoney" value="plus">Suivant</button>
+                    <button type="submit" name="pagemoney">Rafraîchir</button>
+
+                    <input type="hidden" name="researchInvoices" value="<?php if(isset($_GET['researchInvoices'])){ echo $_GET['researchInvoices']; } ?>">
+                    <input type="hidden" name="sortInvoices" value="<?php if(isset($_GET['sortInvoices'])){ echo $_GET['sortInvoices']; } ?>">
+                </form>
+
+                <h5 class="pt-5">Contacter par email le prestataire concerné par la facture sélectionnée</h5>
+
+                <form id="selectedInvoice" method="POST" action="sendEmailSelectedInvoice.php">
+
+                    <label>Objet</label>
+                    <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
+
+                    <label>Corps de l'email</label>
+                    <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
+
+                    <button type="submit"class="mb-5">Envoyer</button>
+
+                </form>
+                <?php endif; ?>
             </section>
             
             <section id="pagetips" class="mt-5">
@@ -1585,7 +1783,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     </table>
                 </form>
 
-                <h5 class="pt-5">Contacter par emails les utilisateurs concernés par le conseil sélectionné</h5>
+                <h5 class="pt-5">Contacter par email les utilisateurs concernés par le conseil sélectionné</h5>
 
                 <form id="selectedAdvice" method="POST" action="sendEmailSelectedAdvice.php">
 
@@ -1602,16 +1800,50 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
             </section>
 
             <section id="pagenotifs" class="mt-5">
-                <?php if(isset($_SESSION['listnotifs'])): ?>
-                <h1>Liste des notifications</h1>
+                <?php if(isset($_SESSION['listNotifs'])): ?>
+                <h1>Gestion des notifications personnalisées</h1>
 
-                <div>
-                    <form method="POST" action="traitement_search.php">
-                        <input type="text" class="" name="searchvalue" placeholder="Rechercher un élément...">
-                        <input type="hidden" name="action" value="notifs">
-                    </form>
+                <div class="col-4">
+                    <?php if (isset($errorUsersMessage)): ?>
+                        <div class="alert alert-danger">
+                            <?php echo htmlspecialchars($errorUsersMessage); ?>
+                        </div>
+                    <?php elseif(isset($successUsersMessage)): ?>
+                        <div class="alert alert-success">
+                            <?php echo htmlspecialchars($successUsersMessage); ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
-                <br>
+
+                <form method="GET" action="index.php#pagenotifs">
+                    <div class="row mb-3">
+                        <div class="col-2">
+                            <div class="input-group">
+                                <input value="<?php if(isset($_GET['researchNotifs'])){ echo htmlspecialchars($_GET['researchNotifs']); }else{ echo ""; } ?>" class="form-control" name="researchNotifs" placeholder="<?php if(isset($_GET['researchNotifs']) && $_GET['researchNotifs'] != ""){ echo $_GET['researchNotifs']; }else{ ?><?php echo "Tapez votre recherche"; ?> <?php } ?>" aria-label="Search">
+                                <button class="searchButton" type="submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="filterNotifs" class="selectFilter" onchange="this.form.submit()">
+                                <option disabled selected><?php echo "Choisissez un type" ?></option>
+                                <?php foreach($distinctTypesNotifs as $type): ?>
+                                    <option value="<?= htmlspecialchars($type) ?>" <?php if(isset($_GET['filterNotifs']) && $_GET['filterNotifs'] == $type){ echo 'selected'; } ?> ><?= htmlspecialchars($type) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-2">
+                            <select name="sortNotifs" class="selectSort" onchange="this.form.submit()">
+                                <option disabled <?php if(!isset($_GET['sortNotifs']) || $_GET['sortNotifs'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
 
                 <table class="table table-striped">
                     <thead class="thead-dark">
@@ -1620,34 +1852,101 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <th scope="col">Titre</th>
                         <th scope="col">Description</th>
                         <th scope="col">Type</th>
+                        <th scope="col">Pour l'adhérent</th>
+                        <th scope="col">Sélectionner</th>
+                        <th scope="col">Modifier</th>
+                        <th scope="col">Supprimer</th>
                         <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <form method="POST" action="traitement_edit.php">
-                            <?php
-                                for($i=0; $i<count($_SESSION['listnotifs']); $i++){
-                                    echo '<tr>';
-                                        echo '<th scope="row">' . htmlspecialchars($_SESSION['listnotifs'][$i]['ID_NOTIFICATION']) . '</th>';
-                                        
-                                        echo '<td><input class="mediumtext" type="text" name="newtitle[' . $_SESSION['listnotifs'][$i]['ID_NOTIFICATION'] . ']" value="' . $_SESSION['listnotifs'][$i]['title'] . '"></td>'; 
-                                        
-                                        echo '<td><input class="bigtext" type="text" name="newdescription[' . $_SESSION['listnotifs'][$i]['ID_NOTIFICATION'] . ']" value="' . $_SESSION['listnotifs'][$i]['description'] . '"></td>'; 
+                        <?php
+                            foreach($_SESSION['listNotifs'] as $notif){
 
-                                        echo '<td><input class="mediumtext" type="text" name="newtype[' . $_SESSION['listnotifs'][$i]['ID_NOTIFICATION'] . ']" value="' . $_SESSION['listnotifs'][$i]['type'] . '"></td>'; 
+                                $idFormNotif = "form_notif_" . $notif['ID_NOTIFICATION'];
+                        ?>
+                                <tr>
+                                    <th scope="row"> <?= htmlspecialchars($notif['ID_NOTIFICATION']) ?></th>
 
-                                        echo '<td><button class="button" type="submit" name="updatenotif" value="' . $_SESSION['listnotifs'][$i]['ID_NOTIFICATION'] . '">Update</button></td>';
-                                    echo '</tr>';
-                                }
-                            ?>
-                        </form>
+                                    <td><input class="form-control" form="<?= $idFormNotif ?>" name="title" class="mediumtext" type="text" value="<?= htmlspecialchars($notif['title'] ?? '') ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormNotif ?>" name="description" class="mediumtext" type="text" value="<?= htmlspecialchars($notif['description'] ?? '') ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormNotif ?>" name="type" class="mediumtext" type="text" value="<?= htmlspecialchars($notif['type'] ?? '') ?>"></td>
+
+                                    <td><?= htmlspecialchars($notif['username'] ?? '') ?></td>
+
+                                    <td>
+                                         <div class="form-check">
+                                            <input form="selectedNotif" name="selectedNotif" class="form-check-input" type="radio" value="<?php echo htmlspecialchars($notif['ID_NOTIFICATION']); ?>">
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <form id="<?= $idFormNotif ?>" method="POST" action="http://localhost:8081/updateNotificationData">
+                                            <button type="submit" value="<?= $notif['ID_NOTIFICATION'] ?>">Modifier</button>
+                                            <input type="hidden" name="id" value="<?= $notif['ID_NOTIFICATION'] ?>">
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST" action="http://localhost:8081/deleteNotification">
+                                            <button type="submit" value="<?= $notif['ID_NOTIFICATION'] ?>">Supprimer</button>
+                                            <input type="hidden" name="id" value="<?= $notif['ID_NOTIFICATION'] ?>">
+                                        </form>
+                                    </td>
+
+                                </tr>
+
+                            <?php } ?>
                     </tbody>
                 </table>
 
                 <form method="POST" action="traitement_offset.php">
-                    <button type="submit" name="pageNotifs" value="moins">Précedent</button>
-                    <button type="submit" name="pageNotifs" value="plus">Suivant</button>
-                    <button type="submit" name="pageNotifs">Rafraîchir</button>
+                    <button type="submit" name="pagenotifs" value="moins">Précedent</button>
+                    <button type="submit" name="pagenotifs" value="plus">Suivant</button>
+                    <button type="submit" name="pagenotifs">Rafraîchir</button>
+
+                    <input type="hidden" name="researchNotifs" value="<?php if(isset($_GET['researchNotifs'])){ echo $_GET['researchNotifs']; } ?>">
+                    <input type="hidden" name="filterNotifs" value="<?php if(isset($_GET['filterNotifs'])){ echo $_GET['filterNotifs']; } ?>">
+                    <input type="hidden" name="sortNotifs" value="<?php if(isset($_GET['sortNotifs'])){ echo $_GET['sortNotifs']; } ?>">
+                </form>
+
+                <h5 class="pt-5">Ajouter une notification</h5>
+
+                <form method="POST" action="http://localhost:8081/addNotification">
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                            <th scope="col">Titre</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">ID de l'adhérent</th>
+                            <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input class="form-control mediumtext" type="text" name="title"></td>
+
+                                <td><input class="form-control bigtext" type="text" name="description"></td>
+
+                                <td><input class="form-control mediumtext" type="text" name="type"></td>
+
+                                <td><input class="form-control smalltext" type="text" name="id"></td>
+                                        
+                                <td><button class="button" type="submit" name="addnotif">Ajouter</button></td>
+                            </tr>                   
+                        </tbody>
+                    </table>
+                </form>
+
+                <h5 class="pt-5">Envoyer la notification sélectionnée</h5>
+
+                <form id="selectedNotif" method="POST" action="sendEmailSelectedNotif.php">
+
+                    <button type="submit"class="mb-5">Envoyer</button>
+
                 </form>
                 <?php endif; ?>
             </section>
@@ -1729,7 +2028,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     <input type="hidden" name="sortMessages" value="<?php if(isset($_GET['sortMessages'])){ echo $_GET['sortMessages']; } ?>">
                 </form>
 
-                <h5 class="pt-5">Contacter par emails l'expéditeur'</h5>
+                <h5 class="pt-5">Contacter par email l'expéditeur'</h5>
 
                 <form id="selectedMessage" method="POST" action="sendEmailSelectedMessage.php">
 
