@@ -15,13 +15,15 @@ func UpdateEventData(database *sql.DB) http.HandlerFunc {
 		date_start := r.FormValue("date_start")
 		date_end := r.FormValue("date_end")
 		description := r.FormValue("description")
+		price := r.FormValue("price")
+		capacity := r.FormValue("capacity")
 		city := r.FormValue("city")
 		street := r.FormValue("street")
 		nb_street := r.FormValue("nb_street")
 		postal_code := r.FormValue("postal_code")
 		id_work_address := r.FormValue("ID_WORK_ADDRESS")
 
-		updateStatement, updateError := database.Prepare("UPDATE EVENT SET type = ?, name = ?, date_start = ?, date_end = ?, description = ? WHERE ID_EVENT = ?")
+		updateStatement, updateError := database.Prepare("UPDATE EVENT SET type = ?, name = ?, date_start = ?, date_end = ?, description = ?, price = ?, capacity = ? WHERE ID_EVENT = ?")
 
 		if updateError != nil{
 
@@ -31,7 +33,7 @@ func UpdateEventData(database *sql.DB) http.HandlerFunc {
 		}
 		defer updateStatement.Close()
 
-		_, updateStatementExecError := updateStatement.Exec(eventType, name, date_start, date_end, description, id)
+		_, updateStatementExecError := updateStatement.Exec(eventType, name, date_start, date_end, description, price, capacity, id)
 
 		if updateStatementExecError != nil{
 

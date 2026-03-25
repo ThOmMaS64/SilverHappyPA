@@ -14,6 +14,9 @@ type Event struct{
 	DateStart string `json:"date_start"`
 	DateEnd string `json:"date_end"`
 	Description string `json:"description"`
+	Price float64 `json:"price"`
+	Capacity int `json:"capacity"`
+	NbInscription int `json:"nb_inscription"`
 	City string `json:"city"`
 	Street string `json:"street"`
 	NbStreet int `json:"nb_street"`
@@ -72,7 +75,7 @@ func ShowEventsDefaultData(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		rowsEvents, err := database.Query("SELECT EVENT.ID_EVENT, EVENT.type, EVENT.name, EVENT.date_start, EVENT.date_end, EVENT.description, EVENT.ID_WORK_ADDRESS, WORK_ADDRESS.city, WORK_ADDRESS.street, WORK_ADDRESS.nb_street, WORK_ADDRESS.postal_code, USER_.username FROM EVENT LEFT JOIN WORK_ADDRESS on EVENT.ID_WORK_ADDRESS = WORK_ADDRESS.ID_WORK_ADDRESS LEFT JOIN CONDUCT ON EVENT.ID_EVENT = CONDUCT.ID_EVENT LEFT JOIN SERVICE_PROVIDER ON CONDUCT.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER LEFT JOIN USER_ ON SERVICE_PROVIDER.ID_USER = USER_.ID_USER LIMIT 10 OFFSET ?", offset)
+		rowsEvents, err := database.Query("SELECT EVENT.ID_EVENT, EVENT.type, EVENT.name, EVENT.date_start, EVENT.date_end, EVENT.description, EVENT.price, EVENT.capacity, EVENT.nb_inscription, EVENT.ID_WORK_ADDRESS, WORK_ADDRESS.city, WORK_ADDRESS.street, WORK_ADDRESS.nb_street, WORK_ADDRESS.postal_code, USER_.username FROM EVENT LEFT JOIN WORK_ADDRESS on EVENT.ID_WORK_ADDRESS = WORK_ADDRESS.ID_WORK_ADDRESS LEFT JOIN CONDUCT ON EVENT.ID_EVENT = CONDUCT.ID_EVENT LEFT JOIN SERVICE_PROVIDER ON CONDUCT.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER LEFT JOIN USER_ ON SERVICE_PROVIDER.ID_USER = USER_.ID_USER LIMIT 10 OFFSET ?", offset)
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return 
@@ -84,9 +87,10 @@ func ShowEventsDefaultData(database *sql.DB) http.HandlerFunc {
 			var event Event
 
 			var dateStart, dateEnd, description, city, street, postalCode sql.NullString
-			var nbStreet sql.NullInt64
+			var nbStreet, capacity, nb_inscription sql.NullInt64
+			var price sql.NullFloat64
 
-			err := rowsEvents.Scan(&event.ID_EVENT, &event.Type, &event.Name, &dateStart, &dateEnd, &description, &event.ID_WORK_ADDRESS, &city, &street, &nbStreet, &postalCode, &event.Username)	
+			err := rowsEvents.Scan(&event.ID_EVENT, &event.Type, &event.Name, &dateStart, &dateEnd, &description, &price, &capacity, &nb_inscription, &event.ID_WORK_ADDRESS, &city, &street, &nbStreet, &postalCode, &event.Username)	
 			if err != nil {
 				continue
 			}
@@ -94,6 +98,9 @@ func ShowEventsDefaultData(database *sql.DB) http.HandlerFunc {
 			event.DateStart = dateStart.String
 			event.DateEnd = dateEnd.String
 			event.Description = description.String
+			event.Price = float64(price.Float64)
+			event.Capacity =  int(capacity.Int64)
+			event.NbInscription =  int(nb_inscription.Int64)
 			event.City = city.String
 			event.Street = street.String
 			event.NbStreet = int(nbStreet.Int64)

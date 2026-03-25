@@ -14,6 +14,8 @@ func AddEvent(database *sql.DB) http.HandlerFunc {
 		date_start:= r.FormValue("date_start")
 		date_end:= r.FormValue("date_end")
 		description:= r.FormValue("description")
+		price:= r.FormValue("price")
+		capacity:= r.FormValue("capacity")
 
 		city:= r.FormValue("city")
 		street:= r.FormValue("street")
@@ -56,7 +58,7 @@ func AddEvent(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		insertStatement, insertError := database.Prepare("INSERT INTO EVENT(type, name, date_start, date_end, description, ID_WORK_ADDRESS) VALUES(?, ?, ?, ?, ?, ?)")
+		insertStatement, insertError := database.Prepare("INSERT INTO EVENT(type, name, date_start, date_end, description, price, capacity, ID_WORK_ADDRESS) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")
 
 		if insertError != nil{
 
@@ -66,7 +68,7 @@ func AddEvent(database *sql.DB) http.HandlerFunc {
 		}
 		defer insertStatement.Close()
 
-		insertStatementExec, insertStatementExecError := insertStatement.Exec(eventType, name, date_start, date_end, description, id_work_address)
+		insertStatementExec, insertStatementExecError := insertStatement.Exec(eventType, name, date_start, date_end, description, price, capacity, id_work_address)
 
 		if insertStatementExecError != nil{
 

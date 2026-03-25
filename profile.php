@@ -83,6 +83,51 @@
 
     }
 
+    $dataJson = file_get_contents("http://localhost:8081/showSavedEvent?id=".$_SESSION['id']);
+
+    if($dataJson){
+
+        $response = json_decode($dataJson, true);
+
+        if(isset($response['error']) && $response['error'] != ""){
+
+            $errorMessage = $response['error'];
+
+        }else{
+
+            $eventList = $response['events'];
+
+        }
+
+    }
+
+    if(isset($_POST['id_event'])){
+
+        $response = file_get_contents("http://localhost:8081/saveUnsaveEvent?id=".$_SESSION['id']."&id_event=".$_POST['id_event']);
+
+        header("location:profile.php");
+        exit();
+
+    }
+
+    $dataJson = file_get_contents("http://localhost:8081/showRegisteredEvent?id=".$_SESSION['id']);
+
+    if($dataJson){
+
+        $response = json_decode($dataJson, true);
+
+        if(isset($response['error']) && $response['error'] != ""){
+
+            $errorMessage = $response['error'];
+
+        }else{
+
+            $eventList = $response['events'];
+
+        }
+
+    }
+
     if(!isset($_SESSION['personalizeInputs'])){
         $_SESSION['personalizeInputs'] = 0;
     }
@@ -248,8 +293,89 @@
 
                     <div class="col-5">
                         <div class="backgroundForm" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;color:white;<?php endif;endif; ?>">
-                            <h5>Mes factures</h5>
-                            <div class="line"></div>
+                            <h5><?php echo trad("Mes factures") ?></h5>
+                            <div class="line mb-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center"  style="margin-top:-50px;">
+                    <div class="col-5">
+                        <div class="backgroundForm" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;color:white;<?php endif;endif; ?>; margin-bottom:80px;">
+                            <h5><?php echo trad("Mes événements enregistrés") ?></h5>
+                            <div class="line mb-2"></div>
+
+                            <div class="scrollZone">
+                                <?php if(!empty($eventList)){ ?>
+                                    <?php $isFirstEvent = true; ?>
+                                    <?php foreach($eventList as $event){ ?>
+
+                                            <?php if($isFirstEvent == false){ ?>
+                                                <div class="line2 mt-2 mb-2"></div>
+                                            <?php } ?>
+
+                                            <div class="row">
+                                                <div class="col-2 mt-1 unsaveEventProfilePage">
+                                                    <form method="POST" action="">
+                                                        <input type="hidden" name="id_event" value="<?php echo $event['id_event']; ?>">
+
+                                                        <button type="submit" style="background:none;border:none;padding:0px;display:flex;align-items:center;color:inherit;line-height:1">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                                                            </svg>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="col-10">
+                                                    <p><?php echo htmlspecialchars(tradByAPI($event['name'])) ?></p>
+                                                </div>
+                                            </div>
+                                            <p><?php echo htmlspecialchars(tradByAPI($event['description'])) ?></p>
+                                            <p><small>Du <?php echo htmlspecialchars($event['date_start']) ?> jusqu'au <?php echo htmlspecialchars($event['date_end']) ?> </small></p>
+
+                                            <?php $isFirstEvent = false; ?>
+
+                                    <?php } ?>
+                                <?php }else{ ?>
+
+                                    <p style="justify-self:center;padding-top:10px;"><?php echo trad("Vous n'avez enregistré aucun conseil pour le moment.") ?></p>
+
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="backgroundForm" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;color:white;<?php endif;endif; ?>">
+                            <h5><?php echo trad("Les événements auxquels je suis inscrit") ?></h5>
+                            <div class="line mb-2"></div>
+
+                            <div class="scrollZone">
+                                <?php if(!empty($eventList)){ ?>
+                                    <?php $isFirstEvent = true; ?>
+                                    <?php foreach($eventList as $event){ ?>
+
+                                            <?php if($isFirstEvent == false){ ?>
+                                                <div class="line2 mt-2 mb-2"></div>
+                                            <?php } ?>
+
+                                            <div class="row">
+                                                <div class="col-10">
+                                                    <p><?php echo htmlspecialchars(tradByAPI($event['name'])) ?></p>
+                                                </div>
+                                            </div>
+                                            <p><?php echo htmlspecialchars(tradByAPI($event['description'])) ?></p>
+                                            <p><small>Du <?php echo htmlspecialchars($event['date_start']) ?> jusqu'au <?php echo htmlspecialchars($event['date_end']) ?> </small></p>
+
+                                            <?php $isFirstEvent = false; ?>
+
+                                    <?php } ?>
+                                <?php }else{ ?>
+
+                                    <p style="justify-self:center;padding-top:10px;"><?php echo trad("Vous n'avez enregistré aucun conseil pour le moment.") ?></p>
+
+                                <?php } ?>
+                            </div>
                         </div>
                     </div>
                 </div>

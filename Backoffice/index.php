@@ -190,6 +190,9 @@ if($response){
                 'date_start' => $event['date_start'],
                 'date_end' => $event['date_end'],
                 'description' => $event['description'],
+                'price' => $event['price'],
+                'capacity' => $event['capacity'],
+                'nb_inscription' => $event['nb_inscription'],
                 'city' => $event['city'],
                 'street' => $event['street'],
                 'nb_street' => $event['nb_street'],
@@ -1281,6 +1284,9 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <th scope="col">Date de début</th>
                         <th scope="col">Date de fin</th>
                         <th scope="col">Description</th>
+                        <th scope="col">Prix</th>
+                        <th scope="col">Capacité</th>
+                        <th scope="col">Nombre d'inscrits</th>
                         <th scope="col">Ville</th>
                         <th scope="col">Rue</th>
                         <th scope="col">Numéro de rue</th>
@@ -1309,6 +1315,12 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                     <td><input class="form-control" form="<?= $idFormEvent ?>" name="date_end" class="mediumtext" type="datetime-local" value="<?= !empty($event['date_end']) ? date('Y-m-d\TH:i', strtotime($event['date_end'])) : '' ?>"></td>
 
                                     <td><input class="form-control" form="<?= $idFormEvent ?>" name="description" class="mediumtext" type="text" value="<?= htmlspecialchars($event['description'] ?? '') ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="price" class="mediumtext" type="number" value="<?= htmlspecialchars($event['price'] ?? '') ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormEvent ?>" name="capacity" class="mediumtext" type="number" value="<?= htmlspecialchars($event['capacity'] ?? '') ?>"></td>
+
+                                    <td><?= htmlspecialchars($event['nb_inscription'] ?? '') ?></td>
 
                                     <td><input class="form-control" form="<?= $idFormEvent ?>" name="city" class="mediumtext" type="text" value="<?= htmlspecialchars($event['city'] ?? '') ?>"></td>
                                     
@@ -1368,6 +1380,8 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                             <th scope="col">Date de début</th>
                             <th scope="col">Date de fin</th>
                             <th scope="col">Description</th>
+                            <th scope="col">Prix</th>
+                            <th scope="col">Capacité</th>
                             <th scope="col">Ville</th>
                             <th scope="col">Rue</th>
                             <th scope="col">Numéro de rue</th>
@@ -1386,6 +1400,10 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                 <td><input class="form-control mediumtext" type="datetime-local" name="date_end"></td>
 
                                 <td><input class="form-control bigtext" type="text" name="description"></td>
+
+                                <td><input class="form-control bigtext" type="number" name="price"></td>
+
+                                <td><input class="form-control bigtext" type="number" name="capacity"></td>
 
                                 <td><input class="form-control bigtext" type="text" name="city"></td>
 

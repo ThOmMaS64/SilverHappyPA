@@ -41,6 +41,11 @@ func main() {
 	http.HandleFunc("/personalizeKeyWordDescription", handlersFront.PersonalizeKeyWordDescription(database))
 	http.HandleFunc("/showUpdatedData", handlersFront.ShowUpdatedData(database))
 	http.HandleFunc("/getDataPutInSession", handlersFront.GetDataPutInSession(database))
+	http.HandleFunc("/showDefaultEventsPage", handlersFront.ShowDefaultEventsPage(database))
+	http.HandleFunc("/showPersonalizedEventsPage", handlersFront.ShowPersonalizedEventsPage(database))
+	http.HandleFunc("/saveUnsaveEvent", handlersFront.SaveUnsaveEvent(database))
+	http.HandleFunc("/showSavedEvent", handlersFront.ShowSavedEvent(database))
+	http.HandleFunc("/showRegisteredEvent", handlersFront.ShowRegisteredEvent(database))
 
 	http.HandleFunc("/showServicesDefaultData", handlersBack.ShowServicesDefaultData(database))
 	http.HandleFunc("/showServicesPersonalizedData", handlersBack.ShowServicesPersonalizedData(database))
