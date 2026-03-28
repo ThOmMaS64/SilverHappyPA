@@ -303,6 +303,7 @@ if($response){
             $_SESSION['listServices'][] = [
                 'ID_SERVICE' => $service['ID_SERVICE'],
                 'type' => $service['type'],
+                'description' => $service['description'],
                 'formation' => $service['formation'],
                 'place' => $service['place'],
                 'cost' => $service['cost'],
@@ -944,6 +945,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <tr>
                         <th scope="col">#</th>
                         <th scope="col">Type</th>
+                        <th scope="col">Description</th>
                         <th scope="col">Formation</th>
                         <th scope="col">Place</th>
                         <th scope="col">Coût</th>
@@ -964,6 +966,8 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                     <th scope="row"> <?= htmlspecialchars($service['ID_SERVICE']) ?></th>
 
                                     <td><input class="form-control" form="<?= $idFormService ?>" name="type" class="mediumtext" type="text" value="<?= htmlspecialchars($service['type'] ?? '') ?>"></td>
+
+                                    <td><input class="form-control" form="<?= $idFormService ?>" name="description" class="bigtext" type="text" value="<?= htmlspecialchars($service['description'] ?? '') ?>"></td>
 
                                     <td>
                                         <select class="form-control" form="<?= $idFormService ?>" name="formation"> 
@@ -1081,6 +1085,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <thead class="thead-dark">
                             <tr>
                             <th scope="col">Type</th>
+                            <th scope="col">Description</th>
                             <th scope="col">Formation</th>
                             <th scope="col">Place</th>
                             <th scope="col">Coût</th>
@@ -1091,6 +1096,8 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <tbody>
                             <tr>
                                 <td><input class="form-control mediumtext" type="text" name="type"></td>
+
+                                <td><input class="form-control bigtext" type="text" name="description"></td>
 
                                 <td>
                                     <select class="form-control" name="formation"> 
@@ -1110,7 +1117,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                     </select>
                                 </td>
                                         
-                                <td><button class="button" type="submit" name="addevent">Ajouter</button></td>
+                                <td><button class="button" type="submit" name="addservice">Ajouter</button></td>
                             </tr>                   
                         </tbody>
                     </table>

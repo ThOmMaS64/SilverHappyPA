@@ -46,6 +46,10 @@ func main() {
 	http.HandleFunc("/saveUnsaveEvent", handlersFront.SaveUnsaveEvent(database))
 	http.HandleFunc("/showSavedEvent", handlersFront.ShowSavedEvent(database))
 	http.HandleFunc("/showRegisteredEvent", handlersFront.ShowRegisteredEvent(database))
+	http.HandleFunc("/showDefaultServicesPage", handlersFront.ShowDefaultServicesPage(database))
+	http.HandleFunc("/showPersonalizedServicesPage", handlersFront.ShowPersonalizedServicesPage(database))
+	http.HandleFunc("/saveUnsaveService", handlersFront.SaveUnsaveService(database))
+	http.HandleFunc("/showSavedService", handlersFront.ShowSavedService(database))
 
 	http.HandleFunc("/showInvoicesDefaultData", handlersBack.ShowInvoicesDefaultData(database))
 	http.HandleFunc("/showInvoicesPersonalizedData", handlersBack.ShowInvoicesPersonalizedData(database))

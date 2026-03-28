@@ -10,12 +10,13 @@ func AddService(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		serviceType:= r.FormValue("type")
+		description:= r.FormValue("description")
 		formation := r.FormValue("formation")
 		place := r.FormValue("place")
 		cost := r.FormValue("cost")
 		isMedicalConfidential := r.FormValue("is_medical_confidential")
 
-		insertStatement, insertError := database.Prepare("INSERT INTO SERVICE(type, formation, place, cost, is_medical_confidential) VALUES(?, ?, ?, ?, ?)")
+		insertStatement, insertError := database.Prepare("INSERT INTO SERVICE(type, description, formation, place, cost, is_medical_confidential) VALUES(?, ?, ?, ?, ?, ?)")
 
 		if insertError != nil{
 
@@ -25,7 +26,7 @@ func AddService(database *sql.DB) http.HandlerFunc {
 		}
 		defer insertStatement.Close()
 
-		_, insertStatementExecError := insertStatement.Exec(serviceType, formation, place, cost, isMedicalConfidential)
+		_, insertStatementExecError := insertStatement.Exec(serviceType, description, formation, place, cost, isMedicalConfidential)
 
 		if insertStatementExecError != nil{
 
