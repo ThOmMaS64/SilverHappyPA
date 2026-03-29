@@ -147,3 +147,48 @@ button:hover {
   background-color: #99a0a8;
   transform: scale(1.025);
 }
+
+.backgroundPlain {
+  background-color: rgb(62, 134, 189);
+  width: 100%;
+  min-height: 120vh;
+  gap: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.backgroundForm {
+  background-color: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  transform: translateY(40px);
+}
+
+.backgroundPlain button {
+  background-color: #adb5bf;
+  border-radius: 15px;
+  width: 60%;
+  display: flex;
+  justify-self: center;
+  justify-content: center;
+  transition: 0.3s ease;
+}
+
+.backgroundPlain button:hover {
+  background-color: #99a0a8;
+  transform: scale(1.025);
+}
+
+.backgroundPlain a {
+  display: flex;
+  justify-self: center;
+  text-decoration: none;
+  color: black;
+}
+
+.backgroundPlain a:hover {
+  color: #99a0a8;
+}

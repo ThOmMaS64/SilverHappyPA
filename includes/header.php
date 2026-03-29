@@ -24,7 +24,7 @@
 ?>
 
 <header style="<?php if(isset($_SESSION['id'])):if(isset($_SESSION['darkMode']) && $_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;<?php endif;endif; ?>">
-    <?php if(isset($_SESSION['status']) && ($_SESSION['status'] == 1 || $_SESSION['status'] == 2 || $_SESSION['status'] == 5 || $_SESSION['status'] == 6)){ ?>
+    <?php if(isset($_SESSION['status']) && ($_SESSION['status'] == 1 || $_SESSION['status'] == 2 || $_SESSION['status'] == 5 || $_SESSION['status'] == 6 || $_SESSION['status'] == 9)){ ?>
 
         <nav class="navbar navbar-expand-xl">
             <div class="container-fluid">
@@ -72,7 +72,8 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="profile.php"><?php echo trad("Mon profil") ?></a></li>
-                        <li><a class="dropdown-item" href="cart.php"><?php echo trad("Mon Panier") ?></a></li>
+                        <li><a class="dropdown-item" href="calendar.php"><?php echo trad("Mon planning") ?></a></li>
+                        <li><a class="dropdown-item" href="cart.php"><?php echo trad("Mon panier") ?></a></li>
                         <li><a class="dropdown-item" href="contacts.php"><?php echo trad("Contacts") ?></a></li>
                         <li><a class="dropdown-item" href="parameters.php"><?php echo trad("Paramètres<") ?>/a></li>
                         <li>

@@ -12,3 +12,5 @@ statuts :
 4 = prestataire vérifié
 5 = adhérent renouvellement mensuel
 6 = adhérent renouvellement annuel
+
+9 = admin

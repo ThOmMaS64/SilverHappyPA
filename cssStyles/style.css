@@ -188,6 +188,17 @@ footer p {
   background-color: rgb(62, 134, 189);
   width: 100%;
   min-height: 120vh;
+  gap: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.backgroundPlainCal {
+  background-color: rgb(62, 134, 189);
+  width: 80%;
+  min-height: 120vh;
+  gap: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
