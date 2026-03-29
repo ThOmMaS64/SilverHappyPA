@@ -449,11 +449,11 @@ $offsetInvoices = $_SESSION['offsetInvoices'];
 
 if(isset($_GET['researchInvoices']) || isset($_GET['filterInvoices']) || isset($_GET['sortInvoices'])){
 
-    $response = file_get_contents("http://localhost:8081/showInvoicesPersonalizedData?research=$researchInvoices&sort=$sortInvoices&offset=$offsetInvoices");
+    // $response = file_get_contents("http://localhost:8081/showInvoicesPersonalizedData?research=$researchInvoices&sort=$sortInvoices&offset=$offsetInvoices");
 
 }else{
 
-    $response = file_get_contents("http://localhost:8081/showInvoicesDefaultData?offset=$offsetInvoices");
+    // $response = file_get_contents("http://localhost:8081/showInvoicesDefaultData?offset=$offsetInvoices");
 
 }
 

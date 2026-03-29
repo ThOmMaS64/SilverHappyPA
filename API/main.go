@@ -12,7 +12,7 @@ import (
 
 func main() {
 
-	database, openError := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/silverhappy3")
+	database, openError := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/silverhappy4")
 
 	if openError != nil{
 		log.Fatal("Erreur lors de l'ouverture de la bdd : ", openError)
