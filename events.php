@@ -118,7 +118,7 @@
 
         $notif = [
 
-            "inscription_success" => "Inscription à l'événement validée.",
+            "paiement_success" => "Inscription à l'événement validée. Vous retrouverez votre facture sur votre profil.",
 
         ];
 
@@ -129,6 +129,7 @@
         $error = [
 
             "inscription_error" => "Inscription à l'événement échouée, veuillez réessayer.",
+            "invoice_error" => "Erreur lors de la génération de la facture, veuillez contacter nos services via la page Contacts. Vous êtes en revanche bien inscrit à l'événement."
 
         ];
 

@@ -74,7 +74,7 @@
 
         }
 
-        header("location:../events.php?notif=inscription_success");
+        header("location:http://localhost:8081/generateEventInvoice?id_event=" . $_GET['id_event'] . "&id_consumer=" . $infos['ID_CONSUMER']);
         exit();
 
     }
