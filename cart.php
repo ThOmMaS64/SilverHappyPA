@@ -36,7 +36,7 @@
 
             "update_success" => "Mise à jour du panier réussie.",
             "delete_success" => "Suppression réussie.",
-            "paiement_success" => "Paiement réussi, retrouvez votre facture sur votre profil ainsi que dans vos mails."
+            "paiement_success" => "Paiement réussi, retrouvez votre facture sur votre profil."
 
         ];
 
@@ -48,7 +48,8 @@
 
             "update_error" => "Erreur lors de la mise à jour du panier.",
             "delete_error" => "Erreur lors de la suppression.",
-            "paiement_error" => "Paiement échoué."
+            "paiement_error" => "Paiement échoué.",
+            "invoice_error" => "Erreur lors de la génération de la facture, veuillez contacter nos services via la page Contacts. Votre commande à en revanche bien été prise en compte."
 
         ];
 

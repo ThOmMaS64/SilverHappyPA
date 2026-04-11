@@ -81,7 +81,12 @@
 
         }
 
-        header("location:../cart.php?notif=paiement_success");
+        $qOrder = 'SELECT ID_SHOP_ORDER FROM SHOP_ORDER WHERE ID_CONSUMER = :id_consumer AND status = 1 ORDER BY ID_SHOP_ORDER DESC LIMIT 1';
+        $reqOrder = $bdd->prepare($qOrder);
+        $reqOrder->execute(['id_consumer' => $infos['ID_CONSUMER']]);
+        $shopOrder = $reqOrder->fetch(PDO::FETCH_ASSOC);
+
+        header("location:http://localhost:8081/generateStoreInvoice?id_shop_order=" . $shopOrder['ID_SHOP_ORDER'] . "&id_consumer=" . $infos['ID_CONSUMER']);
         exit();
 
     }
