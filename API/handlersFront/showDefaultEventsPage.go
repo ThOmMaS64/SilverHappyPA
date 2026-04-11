@@ -19,6 +19,10 @@ type Event struct {
 	NbInscription int `json:"nb_inscription"`
 	IsSaved bool `json:"is_saved"`
 	IsSubscribe bool `json:"is_subscribe"`
+	City string `json:"city"`
+	Street string `json:"street"`
+	NbStreet int `json:"nb_street"`
+	PostalCode string `json:"postal_code"` 
 
 }
 

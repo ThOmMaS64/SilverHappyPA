@@ -57,6 +57,7 @@ func main() {
 	http.HandleFunc("/saveUnsaveService", handlersFront.SaveUnsaveService(database))
 	http.HandleFunc("/showSavedService", handlersFront.ShowSavedService(database))
 	http.HandleFunc("/generateEventInvoice", handlersFront.GenerateEventInvoice(database))
+	http.HandleFunc("/generateStoreInvoice", handlersFront.GenerateStoreInvoice(database))
 
 	http.HandleFunc("/showInvoicesDefaultData", handlersBack.ShowInvoicesDefaultData(database))
 	http.HandleFunc("/showInvoicesPersonalizedData", handlersBack.ShowInvoicesPersonalizedData(database))
