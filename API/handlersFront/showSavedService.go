@@ -19,7 +19,7 @@ func ShowSavedService(database *sql.DB) http.HandlerFunc {
 
 		id := r.FormValue("id")
 
-		rowSelectServices, errSelectServices := database.Query("SELECT SERVICE.ID_SERVICE, SERVICE.type, SERVICE.description, SERVICE.formation, SERVICE.place, SERVICE.cost, SERVICE.is_medical_confidential FROM SERVICE JOIN USER_INTERACTION_SERVICE ON SERVICE.ID_SERVICE = USER_INTERACTION_SERVICE.ID_SERVICE WHERE USER_INTERACTION_SERVICE.ID_USER = ?", id)
+		rowSelectServices, errSelectServices := database.Query("SELECT SERVICE.ID_SERVICE, SERVICE.type, SERVICE.description, SERVICE.place, SERVICE.cost, SERVICE.is_medical_confidential FROM SERVICE JOIN USER_INTERACTION_SERVICE ON SERVICE.ID_SERVICE = USER_INTERACTION_SERVICE.ID_SERVICE WHERE USER_INTERACTION_SERVICE.ID_USER = ?", id)
 	
 		if errSelectServices != nil{
 
@@ -36,7 +36,7 @@ func ShowSavedService(database *sql.DB) http.HandlerFunc {
 
 			var service Service
 
-			err := rowSelectServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.Formation, &service.Place, &service.Cost, &service.IsMedicalConfidential)
+			err := rowSelectServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.Place, &service.Cost, &service.IsMedicalConfidential)
 
 			if err == nil{
 

@@ -58,6 +58,7 @@ func main() {
 	http.HandleFunc("/showSavedService", handlersFront.ShowSavedService(database))
 	http.HandleFunc("/generateEventInvoice", handlersFront.GenerateEventInvoice(database))
 	http.HandleFunc("/generateStoreInvoice", handlersFront.GenerateStoreInvoice(database))
+	http.HandleFunc("/generateServiceInvoice", handlersFront.GenerateServiceInvoice(database))
 
 	http.HandleFunc("/showInvoicesDefaultData", handlersBack.ShowInvoicesDefaultData(database))
 	http.HandleFunc("/showInvoicesPersonalizedData", handlersBack.ShowInvoicesPersonalizedData(database))
@@ -99,6 +100,7 @@ func main() {
 	http.HandleFunc("/showRequestsPersonalizedData", handlersBack.ShowRequestsPersonalizedData(database))
 	http.HandleFunc("/showServiceProvidersDefaultData", handlersBack.ShowServiceProvidersDefaultData(database))
 	http.HandleFunc("/showServiceProvidersPersonalizedData", handlersBack.ShowServiceProvidersPersonalizedData(database))
+	http.HandleFunc("/loginBack", handlersBack.LoginBack(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 

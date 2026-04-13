@@ -6,16 +6,26 @@ import (
 	"net/http"
 )
 
+type ServiceSlots struct{
+
+	ID_SERVICE_SLOT int `json:"id_service_slot"`
+	StartTime string `json:"start_time"`
+	EndTime string `json:"end_time"`
+
+}
+
 type Service struct {
 
 	ID_SERVICE int `json:"ID_SERVICE"`
 	Type string `json:"type"`
 	Description string `json:"description"`
-	Formation string `json:"formation"`
 	Place string `json:"place"`
 	Cost float64 `json:"cost"`
-	IsMedicalConfidential string `json:"is_medical_confidential"`
+	IsMedicalConfidential bool `json:"is_medical_confidential"`
 	IsSaved bool `json:"is_saved"`
+	RequiresDate bool `json:"requires_date"`
+	PricingType string `json:"pricing_type"`
+	Slots []ServiceSlots `json:"slots"`
 }
 
 type ResponseService struct {
@@ -66,7 +76,7 @@ func ShowDefaultServicesPage(database *sql.DB) http.HandlerFunc {
 		}
 		
 
-		rowSelectServices, errSelectServices := database.Query("SELECT SERVICE.ID_SERVICE, SERVICE.type, SERVICE.description, SERVICE.formation, SERVICE.place, SERVICE.cost, SERVICE.is_medical_confidential, (USER_INTERACTION_SERVICE.ID_USER IS NOT NULL) AS is_saved FROM SERVICE LEFT JOIN USER_INTERACTION_SERVICE ON SERVICE.ID_SERVICE = USER_INTERACTION_SERVICE.ID_SERVICE AND USER_INTERACTION_SERVICE.ID_USER = ?", id)
+		rowSelectServices, errSelectServices := database.Query("SELECT SERVICE.ID_SERVICE, SERVICE.type, SERVICE.description, COALESCE(SERVICE.place, ''), COALESCE(SERVICE.cost, 0.0), SERVICE.is_medical_confidential, SERVICE.requires_date, SERVICE.pricing_type, (USER_INTERACTION_SERVICE.ID_USER IS NOT NULL) AS is_saved FROM SERVICE LEFT JOIN USER_INTERACTION_SERVICE ON SERVICE.ID_SERVICE = USER_INTERACTION_SERVICE.ID_SERVICE AND USER_INTERACTION_SERVICE.ID_USER = ?", id)
 	
 		if errSelectServices != nil{
 
@@ -82,14 +92,59 @@ func ShowDefaultServicesPage(database *sql.DB) http.HandlerFunc {
 		for rowSelectServices.Next(){
 
 			var service Service
+			service.Slots = []ServiceSlots{}
 
-			err := rowSelectServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.Formation, &service.Place, &service.Cost, &service.IsMedicalConfidential, &service.IsSaved)
+			err := rowSelectServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.Place, &service.Cost, &service.IsMedicalConfidential, &service.RequiresDate, &service.PricingType, &service.IsSaved)
 
-			if err == nil{
+			if err != nil{
 
-				response.Services = append(response.Services, service)
+				w.WriteHeader(500)
+				response.Error = "Erreur lors de la récupération des prestations depuis la base de donnée."
+				json.NewEncoder(w).Encode(response)
+				return 
 
 			}
+
+			if service.RequiresDate {
+
+				rowSlots, errSlots := database.Query("SELECT ID_SERVICE_SLOT, start_time, end_time FROM SERVICE_SLOT WHERE ID_SERVICE = ? AND is_booked = 0 AND start_time > NOW() AND start_time <= DATE_ADD(NOW(), INTERVAL 14 DAY)", service.ID_SERVICE)
+
+				if errSlots != nil{
+
+					w.WriteHeader(500)
+					response.Error = "Erreur lors de la récupération des prestations depuis la base de donnée."
+					json.NewEncoder(w).Encode(response)
+					return 
+
+				}else{
+
+					for rowSlots.Next(){
+
+						var slot ServiceSlots
+						
+						err := rowSlots.Scan(&slot.ID_SERVICE_SLOT, &slot.StartTime, &slot.EndTime)
+
+						if err != nil{
+
+							w.WriteHeader(500)
+							response.Error = "Erreur lors de la récupération des prestations depuis la base de donnée."
+							json.NewEncoder(w).Encode(response)
+							return 
+
+						}
+						
+						service.Slots = append(service.Slots, slot)
+
+					}
+
+					rowSlots.Close()
+
+				}
+
+			}
+
+			response.Services = append(response.Services, service)
+
 		}
 
 		json.NewEncoder(w).Encode(response)

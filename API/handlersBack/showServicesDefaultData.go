@@ -11,7 +11,6 @@ type Service struct{
 	ID_SERVICE int `json:"ID_SERVICE"`
 	Type string `json:"type"`
 	Description string `json:"description"`
-	Formation int `json:"formation"`
 	Place string `json:"place"`
 	Cost float64 `json:"cost"`
 	IsMedicalConfidential int `json:"is_medical_confidential"`
@@ -68,7 +67,7 @@ func ShowServicesDefaultData(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		rowsServices, err := database.Query("SELECT SERVICE.ID_SERVICE, type, description, formation, place, cost, is_medical_confidential, COUNT(OFFER.ID_SERVICE) AS nb FROM SERVICE LEFT JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE GROUP BY SERVICE.ID_SERVICE LIMIT 10 OFFSET ?", offset)
+		rowsServices, err := database.Query("SELECT SERVICE.ID_SERVICE, type, description, place, cost, is_medical_confidential, COUNT(OFFER.ID_SERVICE) AS nb FROM SERVICE LEFT JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE GROUP BY SERVICE.ID_SERVICE LIMIT 10 OFFSET ?", offset)
 		if err != nil {
 			http.Error(w, "Erreur lors de la récupération des données depuis la base de données.", 500)
 			return 
@@ -79,7 +78,7 @@ func ShowServicesDefaultData(database *sql.DB) http.HandlerFunc {
 
 			var service Service
 
-			err := rowsServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.Formation, &service.Place, &service.Cost, &service.IsMedicalConfidential, &service.Nb)
+			err := rowsServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.Place, &service.Cost, &service.IsMedicalConfidential, &service.Nb)
 			if err != nil {
 				continue
 			}

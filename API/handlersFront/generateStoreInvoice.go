@@ -88,7 +88,7 @@ func GenerateStoreInvoice(database *sql.DB) http.HandlerFunc {
 
 		date := time.Now().Format(("02/01/2006"))
 
-		dateIdentifier := time.Now().Format(("02-01-2006"))
+		dateIdentifier := time.Now().Format(("2006-01-02"))
 		identifier := "store_" + idConsumer + "_" + idShopOrder + "_" + dateIdentifier
 
 		config := config.NewBuilder().WithPageSize(pagesize.A4).WithLeftMargin(10).WithRightMargin(10).WithTopMargin(10).WithBottomMargin(10).WithOrientation(orientation.Vertical).Build()

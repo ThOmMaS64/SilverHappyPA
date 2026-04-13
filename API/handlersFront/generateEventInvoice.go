@@ -44,7 +44,6 @@ func GenerateEventInvoice(database *sql.DB) http.HandlerFunc {
 
 		if errUser != nil {
 
-			fmt.Println("ERREUR WriteFile:", errUser)
 			http.Redirect(w, r, "http://localhost/ProjetAnnuel/events.php?&error=invoice_error", 303)	
 			return 
 
@@ -54,7 +53,7 @@ func GenerateEventInvoice(database *sql.DB) http.HandlerFunc {
 
 		priceHT := price / 1.2
 
-		dateIdentifier := time.Now().Format(("02-01-2006"))
+		dateIdentifier := time.Now().Format(("2006-01-02"))
 		identifier := "event_" + idConsumer + "_" + idEvent + "_" + dateIdentifier
 
 		config := config.NewBuilder().WithPageSize(pagesize.A4).WithLeftMargin(10).WithRightMargin(10).WithTopMargin(10).WithBottomMargin(10).WithOrientation(orientation.Vertical).Build()
@@ -160,7 +159,6 @@ func GenerateEventInvoice(database *sql.DB) http.HandlerFunc {
 		err = os.WriteFile(pathName, doc.GetBytes(), 0644)
 
 		if err != nil {
-			fmt.Println("ERREUR WriteFile:", err)
 			http.Redirect(w, r, "http://localhost/ProjetAnnuel/events.php?&error=invoice_error", 303)
 			return
 		}
@@ -175,7 +173,7 @@ func GenerateEventInvoice(database *sql.DB) http.HandlerFunc {
 		}
 		defer insertStatement.Close()
 
-		res, insertExecError := insertStatement.Exec(idConsumer, identifier, "event", date, price, filename)
+		res, insertExecError := insertStatement.Exec(idConsumer, identifier, "event", dateIdentifier, price, filename)
 
 		if insertExecError != nil {
 

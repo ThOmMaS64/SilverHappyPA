@@ -318,7 +318,6 @@ if($response){
                 'ID_SERVICE' => $service['ID_SERVICE'],
                 'type' => $service['type'],
                 'description' => $service['description'],
-                'formation' => $service['formation'],
                 'place' => $service['place'],
                 'cost' => $service['cost'],
                 'is_medical_confidential' => $service['is_medical_confidential'],
@@ -961,7 +960,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <th scope="col">#</th>
                         <th scope="col">Type</th>
                         <th scope="col">Description</th>
-                        <th scope="col">Formation</th>
                         <th scope="col">Place</th>
                         <th scope="col">Coût</th>
                         <th scope="col">Confidentiel ?</th>
@@ -983,13 +981,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                     <td><input class="form-control" form="<?= $idFormService ?>" name="type" class="mediumtext" type="text" value="<?= htmlspecialchars($service['type'] ?? '') ?>"></td>
 
                                     <td><input class="form-control" form="<?= $idFormService ?>" name="description" class="bigtext" type="text" value="<?= htmlspecialchars($service['description'] ?? '') ?>"></td>
-
-                                    <td>
-                                        <select class="form-control" form="<?= $idFormService ?>" name="formation"> 
-                                            <option class="smalltext" value="0" <?= htmlspecialchars($service['formation'] ?? 0) == 0 ? 'selected' : '' ?>>Non</option>
-                                            <option class="smalltext" value="1" <?= htmlspecialchars($service['formation'] ?? 0) == 1 ? 'selected' : '' ?>>Oui</option>
-                                        </select>
-                                    </td>
 
                                     <td><input class="form-control" form="<?= $idFormService ?>" name="place" class="bigtext" type="text" value="<?= htmlspecialchars($service['place'] ?? '') ?>"></td>
 
@@ -1101,7 +1092,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                             <tr>
                             <th scope="col">Type</th>
                             <th scope="col">Description</th>
-                            <th scope="col">Formation</th>
                             <th scope="col">Place</th>
                             <th scope="col">Coût</th>
                             <th scope="col">Confidentiel ?</th>
@@ -1113,13 +1103,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                 <td><input class="form-control mediumtext" type="text" name="type"></td>
 
                                 <td><input class="form-control bigtext" type="text" name="description"></td>
-
-                                <td>
-                                    <select class="form-control" name="formation"> 
-                                        <option class="smalltext" value="0">Non</option>
-                                        <option class="smalltext" value="1">Oui</option>
-                                    </select>
-                                </td>
 
                                 <td><input class="form-control bigtext" type="text" name="place"></td>
 

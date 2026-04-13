@@ -53,7 +53,7 @@ func LoginBack(database *sql.DB) http.HandlerFunc {
 
 		if err == sql.ErrNoRows {
 
-			http.Redirect(w, r, "hhttp://localhost/ProjetAnnuel/backoffice/index.php?error=not_registered", 303)
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=not_registered", 303)
 			return
 
 		} else if status != 9 {
