@@ -17,5 +17,6 @@
                 </div>
             </div>
         </main>
+        <?php include('includes/magnifyingLink.php'); ?>
     </body>
 </html>

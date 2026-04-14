@@ -308,6 +308,7 @@
 
             <?php } ?>
         </main>
+        <?php include('includes/magnifyingLink.php'); ?>
         <script src="jsFunctions/showPassword.js"></script>
     </body>
 </html>
