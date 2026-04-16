@@ -143,7 +143,7 @@
                 <div class="col-3 ps-4 pe-4" style="color:white; background-color:rgb(62, 134, 189); min-height: 120vh; padding-top:150px; clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 0% 100%);<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;<?php endif;endif; ?>;">
                     <h3><?php echo trad("Prestations") ?></h3>
                     <div class="line"></div>
-                    <p><?php echo trad("Cette page vous donne accès aux prestations proposées par les associés de Silver Happy.") ?></p>
+                    <p><?php echo trad("Cette page vous donne accès aux prestations proposées par les prestataires de Silver Happy.") ?></p>
 
                     <div class="col-12">
                         <?php if (isset($errorMessage)): ?>
@@ -204,6 +204,7 @@
                                 <div class="row">
                                     <div class="col-10">
                                         <h5><?php echo htmlspecialchars(trad($service['type'])) ?></h5>
+                                        <small><a class="linkToVisitProfile" href="profileVisit.php?visitedId=<?php echo $service['ID_SERVICE_PROVIDER'] ?>"><?php echo htmlspecialchars(trad($service['service_provider_name'])) ?> <?php echo htmlspecialchars(trad($service['service_provider_surname'])) ?></a></small>
                                         <div class="line"></div>
                                         <p><?php echo htmlspecialchars($service['place']) ?></p>
                                     </div>
@@ -238,7 +239,12 @@
                             <?php if($service['requires_date'] && !empty($service['slots'])){ ?>
                                 <p class="mt-5"><strong><?php echo trad("Choisissez un créneau :") ?></strong></p>
                                 
-                                <form method="GET" action="<?php echo ($service['pricing_type'] == 'fixed') ? 'traitementsPHP/checkoutServices.php' : 'communications.php'; ?>">
+                                <?php if($service['pricing_type'] == 'fixed'){ ?>
+                                    <form method="GET" action="traitementsPHP/checkoutServices.php">
+                                <?php }else{ ?>
+                                    <form method="GET" action="http://localhost:8081/openOrCreateDiscussion">
+                                        <input type="hidden" name="id" value="<?php echo isset($_SESSION['id']) ? htmlspecialchars($_SESSION['id']) : ''; ?>">
+                                <?php } ?>
                                     <?php foreach($service['slots'] as $slot){ ?>
                                         <div class="d-flex align-items-center gap-2 mb-2">
                                             <input type="radio" name="slot" value="<?php echo $slot['id_service_slot']; ?>" id="slot_<?php echo $slot['id_service_slot']; ?>" required>
@@ -266,7 +272,7 @@
                                     </button>
                                 </a>
                                 <?php }else{ ?>
-                                <a href="communications.php?id_service=<?php echo $service['ID_SERVICE'] ?>" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'; return false;" <?php } ?>>
+                                <a href="http://localhost:8081/openOrCreateDiscussion?id=<?php echo isset($_SESSION['id']) ? htmlspecialchars($_SESSION['id']) : ''; ?>&id_service=<?php echo htmlspecialchars($service['ID_SERVICE']) ?>" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'; return false;" <?php } ?>>
                                     <button class="btn" style="width:100%;color:black;" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'; return false;" <?php } ?>>
                                         <?php echo trad("Demander un devis") ?>
                                     </button>

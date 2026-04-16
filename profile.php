@@ -149,7 +149,61 @@
 
         }else{
 
-            $eventList = $response['events'];
+            $eventRegisteredList = $response['events'];
+
+        }
+
+    }
+
+    $dataJson = file_get_contents("http://localhost:8081/showRegisteredService?id=".$_SESSION['id']);
+
+    if($dataJson){
+
+        $response = json_decode($dataJson, true);
+
+        if(isset($response['error']) && $response['error'] != ""){
+
+            $errorMessage = $response['error'];
+
+        }else{
+
+            $serviceRegisteredList = $response['services'];
+
+        }
+
+    }
+
+    $dataJson = file_get_contents("http://localhost:8081/showInvoices?id=".$_SESSION['id']);
+
+    if($dataJson){
+
+        $response = json_decode($dataJson, true);
+
+        if(isset($response['error']) && $response['error'] != ""){
+
+            $errorMessage = $response['error'];
+
+        }else{
+
+            $invoicesList = $response['invoices'];
+
+        }
+
+    }
+
+    $dataJson = file_get_contents("http://localhost:8081/showQuotes?id=".$_SESSION['id']);
+
+    if($dataJson){
+
+        $response = json_decode($dataJson, true);
+
+        if(isset($response['error']) && $response['error'] != ""){
+
+            $errorMessage = $response['error'];
+
+        }else{
+
+            $quotesList = $response['quotes'];
 
         }
 
@@ -322,6 +376,57 @@
                         <div class="backgroundForm" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;color:white;<?php endif;endif; ?>">
                             <h5><?php echo trad("Mes factures") ?></h5>
                             <div class="line mb-2"></div>
+
+                            <div class="scrollZone">
+                                <?php if(!empty($invoicesList)){ ?>
+                                    <?php $isFirstInvoice = true; ?>
+                                    <?php foreach($invoicesList as $invoice){ ?>
+
+                                        <?php if($isFirstInvoice == false){ ?>
+                                            <div class="line2 mt-2 mb-2"></div>
+                                        <?php } ?>
+
+                                        <?php
+                                            if($invoice['invoice_type'] === 'event'){
+
+                                                $typeLabel = trad("Événement");
+                                                $typeFolder = "invoices_events";
+
+                                            }elseif($invoice['invoice_type'] === 'service'){
+
+                                                $typeLabel = trad("Prestation de service");
+                                                $typeFolder = "invoices_services";
+
+                                            }else{
+
+                                                $typeLabel = trad("Commande");
+                                                $typeFolder = "invoices_store";
+                                            }
+                                        ?>
+
+                                        <div class="row align-items-center">
+                                            <div class="col-8">
+                                                <p><strong><?php echo $typeLabel ?></strong></p>
+                                                <p><small><?php echo trad("Émise le") ?> <?php echo date("d/m/Y", strtotime($invoice['date_emission'])) ?></small></p>
+                                            </div>
+                                            <div class="col-4 text-end">
+                                                <a href="data/<?php echo $typeFolder ?>/<?php echo htmlspecialchars($invoice['pdf_path']) ?>" target="_blank" class="btn btn-sm">
+                                                    <svg class="me-1" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                                                        <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z"/>
+                                                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                                                    </svg>
+                                                    <?php echo trad("Ouvrir") ?>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <?php $isFirstInvoice = false; ?>
+
+                                    <?php } ?>
+                                <?php }else{ ?>
+                                    <p style="justify-self:center;padding-top:10px;"><?php echo trad("Vous n'avez aucune facture pour le moment.") ?></p>
+                                <?php } ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -377,10 +482,10 @@
                             <h5><?php echo trad("Les événements auxquels je suis inscrit") ?></h5>
                             <div class="line mb-2"></div>
 
-                            <div class="scrollZone">
-                                <?php if(!empty($eventList)){ ?>
+                            <div class="scrollZone" style="max-height:200px;">
+                                <?php if(!empty($eventRegisteredList)){ ?>
                                     <?php $isFirstEvent = true; ?>
-                                    <?php foreach($eventList as $event){ ?>
+                                    <?php foreach($eventRegisteredList as $event){ ?>
 
                                             <?php if($isFirstEvent == false){ ?>
                                                 <div class="line2 mt-2 mb-2"></div>
@@ -405,8 +510,9 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="row justify-content-center"  style="margin-top:-50px;">
+                </div>
+                
+                <div class="row justify-content-center"  style="margin-top:-50px;">
                     <div class="col-5">
                         <div class="backgroundForm" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;color:white;<?php endif;endif; ?>; margin-bottom:80px;">
                             <h5><?php echo trad("Mes prestations enregistrées") ?></h5>
@@ -446,6 +552,99 @@
 
                                     <p style="justify-self:center;padding-top:10px;"><?php echo trad("Vous n'avez enregistré aucune prestation pour le moment.") ?></p>
 
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="backgroundForm" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;color:white;<?php endif;endif; ?>; margin-bottom:80px;">
+                            <h5><?php echo trad("Prestations auxquelles je me suis inscrit") ?></h5>
+                            <div class="line mb-2"></div>
+
+                            <div class="scrollZone">
+                                <?php if(!empty($serviceRegisteredList)){ ?>
+                                    <?php $isFirstService = true; ?>
+                                    <?php foreach($serviceRegisteredList as $service){ ?>
+
+                                            <?php if($isFirstService == false){ ?>
+                                                <div class="line2 mt-2 mb-2"></div>
+                                            <?php } ?>
+
+                                            <div class="row">
+                                                <div class="col-10">
+                                                    <p><?php echo htmlspecialchars(trad($service['type'])) ?></p>
+                                                </div>
+                                            </div>
+                                            <p><?php echo htmlspecialchars(tradByAPI($service['description'])) ?></p>
+
+                                            <?php $isFirstService = false; ?>
+
+                                    <?php } ?>
+                                <?php }else{ ?>
+
+                                    <p style="justify-self:center;padding-top:10px;"><?php echo trad("Vous n'êtes inscrit à aucune prestation pour le moment.") ?></p>
+
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center"  style="margin-top:-50px;">
+                    <div class="col-5">
+                        <div class="backgroundForm" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;color:white;<?php endif;endif; ?>; margin-bottom:80px;">
+                            <h5><?php echo trad("Mes devis") ?></h5>
+                            <div class="line mb-2"></div>
+
+                            <div class="scrollZone">
+                                <?php if(!empty($quotesList)){ ?>
+                                    <?php $isFirstQuote = true; ?>
+                                    <?php foreach($quotesList as $quote){ ?>
+
+                                        <?php if($isFirstQuote == false){ ?>
+                                            <div class="line2 mt-2 mb-2"></div>
+                                        <?php } ?>
+
+                                        <div class="row align-items-center">
+                                            <div class="col-6">
+                                                <p><?php echo htmlspecialchars($quote['prestation']) ?> - <small><?php if(isset($quote['status']) && $quote['status'] == 0){ echo trad("en attente"); }elseif(isset($quote['status']) && $quote['status'] == 1){ echo trad("validé en attente de paiement"); }elseif(isset($quote['status']) && $quote['status'] == 2){ echo trad("validé et réglé"); }elseif(isset($quote['status']) && $quote['status'] == 3){ echo trad("refusé"); } ?></small></p>
+                                            </div>
+                                            <div class="col-2 text-end">
+                                                <a href="data/quotes/<?php echo htmlspecialchars($quote['pdf_path']) ?>" target="_blank" class="btn btn-sm">
+                                                    <svg class="me-1" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                                                        <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z"/>
+                                                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                                                    </svg>
+                                                    <?php echo trad("Ouvrir") ?>
+                                                </a>
+                                            </div>
+                                            <?php if(isset($quote['status']) && $quote['status'] == 0){ ?>
+                                                <div class="col-2">
+                                                    <form method="POST" action="http://localhost:8081/acceptQuote?id=<?= $_SESSION['id'] ?>&id_quote=<?= $quote['id_quote'] ?>">
+                                                        <button style="border:none;" type="submit">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
+                                                                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                                            </svg>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="col-2">
+                                                    <form method="POST" action="http://localhost:8081/refuseQuote?id=<?= $_SESSION['id'] ?>&id_quote=<?= $quote['id_quote'] ?>">
+                                                        <button style="border:none;" type="submit">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                                            </svg>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+
+                                        <?php $isFirstQuote = false; ?>
+
+                                    <?php } ?>
+                                <?php }else{ ?>
+                                    <p style="justify-self:center;padding-top:10px;"><?php echo trad("Vous n'avez aucun devis pour le moment.") ?></p>
                                 <?php } ?>
                             </div>
                         </div>

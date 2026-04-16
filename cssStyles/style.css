@@ -626,3 +626,58 @@ footer p {
   width: calc(100vw - var(--scrollbar-width));
   transform: scale(var(--scale));
 }
+
+.zoneMessage {
+  height: 450px;
+  overflow-y: auto;
+  background-color: #efeff4;
+  padding: 20px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.myMessage {
+  padding: 12px 18px;
+  background-color: #2f6f9f;
+  color: white;
+  border-radius: 15px 15px 0px 15px;
+  max-width: 75%;
+  align-self: flex-end;
+  width: fit-content;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.othersMessage {
+  padding: 12px 18px;
+  background-color: #ffffff;
+  color: black;
+  border-radius: 15px 15px 15px 0px;
+  max-width: 75%;
+  align-self: flex-start;
+  width: fit-content;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.myMessage a {
+  color: #f2f6fa !important;
+  text-decoration: none;
+}
+.othersMessage a {
+  color: #2f6f9f !important;
+  text-decoration: none;
+}
+
+.writingZone button {
+  background-color: #efeff4;
+}
+
+.writingZone button:hover {
+  background-color: #a8a8a8;
+}
+
+.discussionLink:hover {
+  color: #99a0a8 !important;
+  transform: scale(1.025);
+}

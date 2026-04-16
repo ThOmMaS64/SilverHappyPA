@@ -24,7 +24,7 @@ func ShowPersonalizedServicesPage(database *sql.DB) http.HandlerFunc {
 
 		var args []any
 		 
-		basicQuery := "SELECT SERVICE.ID_SERVICE, SERVICE.type, SERVICE.description, COALESCE(SERVICE.place, ''), COALESCE(SERVICE.cost, 0.0), SERVICE.is_medical_confidential, SERVICE.requires_date, SERVICE.pricing_type, (USER_INTERACTION_SERVICE.ID_USER IS NOT NULL) AS is_saved FROM SERVICE LEFT JOIN USER_INTERACTION_SERVICE ON SERVICE.ID_SERVICE = USER_INTERACTION_SERVICE.ID_SERVICE AND USER_INTERACTION_SERVICE.ID_USER = ? WHERE 1=1"
+		basicQuery := "SELECT SERVICE.ID_SERVICE, SERVICE.type, SERVICE.description, COALESCE(SERVICE.place, ''), COALESCE(SERVICE.cost, 0.0), SERVICE.is_medical_confidential, SERVICE.requires_date, SERVICE.pricing_type, (USER_INTERACTION_SERVICE.ID_USER IS NOT NULL) AS is_saved, USER_.name, USER_.surname, SERVICE_PROVIDER.ID_SERVICE_PROVIDER FROM SERVICE INNER JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE INNER JOIN SERVICE_PROVIDER ON OFFER.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER INNER JOIN USER_ ON SERVICE_PROVIDER.ID_USER = USER_.ID_USER LEFT JOIN USER_INTERACTION_SERVICE ON SERVICE.ID_SERVICE = USER_INTERACTION_SERVICE.ID_SERVICE AND USER_INTERACTION_SERVICE.ID_USER = ? WHERE 1=1"
 		args = append(args, id)
 
 		if research != ""{
@@ -119,7 +119,7 @@ func ShowPersonalizedServicesPage(database *sql.DB) http.HandlerFunc {
 			var service Service
 			service.Slots = []ServiceSlots{}
 
-			err := rowSelectServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.Place, &service.Cost, &service.IsMedicalConfidential, &service.RequiresDate, &service.PricingType, &service.IsSaved)
+			err := rowSelectServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.Place, &service.Cost, &service.IsMedicalConfidential, &service.RequiresDate, &service.PricingType, &service.IsSaved, &service.ServiceProviderName, &service.ServiceProviderSurname, &service.IdServiceProvider)
 
 			if err != nil{
 
@@ -131,7 +131,7 @@ func ShowPersonalizedServicesPage(database *sql.DB) http.HandlerFunc {
 
 				if service.RequiresDate {
 
-					rowSlots, errSlots := database.Query("SELECT ID_SERVICE_SLOT, start_time, end_time FROM SERVICE_SLOT WHERE ID_SERVICE = ? AND is_booked = 0 AND start_time > NOW() AND start_time <= DATE_ADD(NOW(), INTERVAL 14 DAY)", service.ID_SERVICE)
+					rowSlots, errSlots := database.Query("SELECT ID_SERVICE_SLOT, start_time, end_time FROM SERVICE_SLOT WHERE ID_SERVICE = ? AND ID_SERVICE_PROVIDER = ? AND is_booked = 0 AND start_time > NOW() AND start_time <= DATE_ADD(NOW(), INTERVAL 14 DAY)", service.ID_SERVICE, service.IdServiceProvider)
 
 					if errSlots != nil{
 

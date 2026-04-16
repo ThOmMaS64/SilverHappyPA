@@ -32,18 +32,19 @@
     }
  
     if (!empty($eventList)) {
-    foreach ($eventList as $event) {
+        foreach ($eventList as $event) {
 
-        $address = $event['nb_street'] . " " . $event['street'] . ", " . $event['city'] . ", " . $event['postal_code'];
+            $address = $event['nb_street'] . " " . $event['street'] . ", " . $event['city'] . ", " . $event['postal_code'];
 
-        $events[] = [
-            'title' => $event['name'],
-            'start' => $event['date_start'],
-            'end' => $event['date_end'],
-            'location' => $address
-        ];
+            $events[] = [
+                'title' => $event['name'],
+                'start' => $event['date_start'],
+                'end' => $event['date_end'],
+                'location' => $address
+            ];
+        }
+        
     }
-}
 
     ?>
     <head>

@@ -7,6 +7,23 @@
 
         include("includes/db.php");
 
+        $totalAmount = 0;
+
+        if(isset($_SESSION['id'])){
+
+            $q = 'SELECT SUM(QUOTE.amount) as total_unpaid_quote FROM QUOTE INNER JOIN CONSUMER ON QUOTE.ID_CONSUMER = CONSUMER.ID_CONSUMER WHERE QUOTE.status = 1 AND CONSUMER.ID_USER = :id';
+            $req = $bdd->prepare($q);
+            $req->execute(['id' => $_SESSION['id']]);
+            $result = $req->fetch(PDO::FETCH_ASSOC);
+
+            if($result && $result['total_unpaid_quote']){
+
+                $totalAmount = $result['total_unpaid_quote'];
+
+            }
+
+        }
+
         if(isset($_GET['language_changement_request']) && $_GET['language_changement_request'] == 1){
 
             $q = 'SELECT language FROM USER_ WHERE ID_USER = :id';
@@ -38,6 +55,16 @@
             $successMessage = trad("Suppression du compte et annulation de l'abonnement effectuée.");
 
         }
+
+        if ($notif == "quote_paiement_success") {
+
+            $successMessage = trad("Paiement du devis réussi !");
+
+        }elseif($notif == "quote_paiement_error"){
+
+            $errorMessage = trad("Paiement du devis échoué.");
+
+        }
     ?>
 
     <body style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#1A1412;color:white;<?php endif;endif; ?>">
@@ -60,6 +87,14 @@
                 </div>
 
                 <?php if(isset($_SESSION['status']) && ($_SESSION['status'] == 1 || $_SESSION['status'] == 2 || $_SESSION['status'] == 5 || $_SESSION['status'] == 6)) { ?>
+
+                    <?php if($totalAmount > 0){ ?>
+
+                        <div class="alert alert-warning mt-2">
+                            <a style="color:black;text-decoration:none;" href="traitementsPHP/checkoutQuote.php"><?php echo trad("Veuillez régler votre/vos devis en attente de paiement en cliquant ICI (total = ") . $totalAmount . "€)" ?></a>
+                        </div>
+
+                    <?php } ?>
 
                     <p><?php echo trad("Silver Happy, à vos côtés pour vivre plus librement, plus sereinement et plus heureux après 60 ans.") ?></p>
 
