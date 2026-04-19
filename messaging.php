@@ -1,7 +1,9 @@
+<?php 
+    session_start();
+    include('traitementsPHP/deconnexionAuto.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
     <?php
-    session_start();
 
     include("includes/translation.php");
 
@@ -38,13 +40,23 @@
 
     $error = [
 
-        "sending_error" => "Échec lors de l'envoi du message, veuillez réessayer.",
+        "sending_error" => trad("Échec lors de l'envoi du message, veuillez réessayer."),
 
     ];
 
     $errorKey = $_GET["error"] ?? null;
 
     $errorMessage = $error[$errorKey] ?? null;
+
+    $notif = [
+
+            "quote_sent" => trad("Votre devis à été envoyé avec succès."),
+
+        ];
+
+        $notifKey = $_GET["notif"] ?? null;
+
+        $successMessage = $notif[$notifKey] ?? null;
 
     ?>
     <body>
@@ -133,7 +145,7 @@
                                     <input type="hidden" name="id_discussion" value="<?php echo htmlspecialchars($_GET['id_discussion']);?>">
                                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($_SESSION['id']);?>">
                                     <div class="col-11">
-                                        <input type="text" class="form-control" name="content" <?php if(isset($_GET['info']) && $_GET['info'] == "from_services"){ ?> value="Bonjour, je suis intéréssé par la réalisation d'un devis pour l'une de vos prestations." <?php } ?>></input>
+                                        <input type="text" class="form-control" name="content" <?php if(isset($_GET['info']) && $_GET['info'] == "from_services"){ ?> value="Bonjour, je suis intéréssé par la réalisation d'un devis pour l'une de vos prestations." <?php }elseif(isset($_GET['notif']) && $_GET['notif'] == "quote_sent"){ ?> value="Un devis viens de vous être envoyé, retrouvez le sur votre profil et revenez vers moi pour toute demande." <?php } ?>></input>
                                     </div>
                                     <div class="col-1">
                                         <button class="btn" type="submit">

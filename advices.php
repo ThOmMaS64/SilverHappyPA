@@ -1,10 +1,10 @@
+<?php 
+    session_start();
+    include('traitementsPHP/deconnexionAuto.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 
     <?php 
-
-        session_start();
-
         if(isset($_POST['saveUnsaveAdvice'])){
 
             $responseSaveUnsave = file_get_contents("http://localhost:8081/saveUnsaveAdvice?id=".$_SESSION['id']."&id_advice=".$_POST['saveUnsaveAdvice']);

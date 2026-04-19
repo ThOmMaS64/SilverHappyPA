@@ -1,7 +1,9 @@
+<?php 
+    session_start();
+    include('traitementsPHP/deconnexionAuto.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
     <?php
-    session_start();
 
     include("includes/translation.php");
 
@@ -29,8 +31,28 @@
             }
 
         }
+
+        $dataJson = file_get_contents("http://localhost:8081/showRegisteredServicesCalendar?id=".$_SESSION['id']);
+
+        if($dataJson){
+
+            $response = json_decode($dataJson, true);
+
+            if(isset($response['error']) && $response['error'] != ""){
+
+                $errorMessage = $response['error'];
+
+            }else{
+
+                $servicesList = $response['services'];
+
+            }
+
+        }
     }
  
+    $events = [];
+
     if (!empty($eventList)) {
         foreach ($eventList as $event) {
 
@@ -44,6 +66,26 @@
             ];
         }
         
+    }
+
+    if(!empty($servicesList)){
+
+        foreach($servicesList as $service){
+
+            $address = $service['is_at_consumer_home'] ? trad("À votre domicile") : $service['nb_street'] . " " . $service['street'] . ", " . $service['city'] . ", " . $service['postal_code'];
+
+            $events[] = [
+
+                'title' => $service['service_type'],
+                'start' => $service['start_time'],
+                'end' => $service['end_time'],
+                'location' => $address,
+                'color' => '#99a0a8'
+
+            ];
+
+        }
+
     }
 
     ?>

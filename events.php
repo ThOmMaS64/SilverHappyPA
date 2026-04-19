@@ -1,7 +1,9 @@
+<?php 
+    session_start();
+    include('traitementsPHP/deconnexionAuto.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
     <?php
-    session_start();
 
     include("includes/translation.php");
 
@@ -232,6 +234,9 @@
 
                                 <p><?php echo htmlspecialchars(tradByAPI($event['description'])) ?></p>
 
+                                <?php if(isset($event['nb_street']) && isset($event['street']) && isset($event['city']) && isset($event['postal_code'])){ ?>
+                                    <p><small><?php echo trad("Au ") ?><?php echo $event['nb_street'] ?><?php echo " " ?><?php echo $event['street'] ?><?php echo ", " ?><?php echo $event['city'] ?><?php echo ", " ?><?php echo $event['postal_code'] ?></small></p>
+                                <?php }?>
                                 <p><small> <?php echo trad("À partir de ") ?> <?php echo date("d/m/Y H:i", strtotime($event['date_start'])) ?> <?php echo trad(" jusqu'à ") ?> <?php echo date("d/m/Y H:i", strtotime($event['date_end'])) ?></small></p>
                                 <p><small><?php echo $event['price'] ?> <?php echo "€" ?></small></p>
                                 <p><small><?php echo $event['capacity'] - $event['nb_inscription'] ?> <?php echo " places restantes" ?></small></p>

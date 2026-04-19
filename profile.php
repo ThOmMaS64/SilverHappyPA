@@ -1,6 +1,7 @@
-<?php
-
+<?php 
     session_start();
+    include('traitementsPHP/deconnexionAuto.php'); ?>
+<?php
 
     include("includes/translation.php");
 
@@ -397,6 +398,11 @@
                                                 $typeLabel = trad("Prestation de service");
                                                 $typeFolder = "invoices_services";
 
+                                            }elseif($invoice['invoice_type'] === 'serviceByQuote'){
+                                            
+                                                $typeLabel = trad("Prestation de service");
+                                                $typeFolder = "invoices_quotes";
+                                            
                                             }else{
 
                                                 $typeLabel = trad("Commande");

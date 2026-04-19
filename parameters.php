@@ -1,6 +1,7 @@
-<?php
-
+<?php 
     session_start();
+    include('traitementsPHP/deconnexionAuto.php'); ?>
+<?php
 
     include("includes/translation.php");
 

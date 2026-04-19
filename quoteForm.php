@@ -1,8 +1,10 @@
+<?php 
+    session_start();
+    include('traitementsPHP/deconnexionAuto.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 
     <?php 
-        session_start();
 
         include("includes/translation.php");
 
@@ -27,13 +29,13 @@
 
     <body>
         <main>
-            <div class="backgroundPlain">
-                <div class="col-4 backgroundForm mt-5">
+            <div class="backgroundPlain" style="min-height:130vh;">
+                <div class="col-8 backgroundForm" style="margin-top:100px;margin-bottom:50px;">
                     <form class="row g-3 needs-validation" method="POST" action="http://localhost:8081/sendQuote" novalidate>
                         <div class="row">
                             <div class="col-12">
                                 <h3><?php echo trad("Proposez un devis") ?></h3>
-                                <div class="line mb-4"></div>
+                                <div class="line mb-2"></div>
                             </div>
 
                             <div class="col-12">
@@ -49,7 +51,7 @@
                             </div>
 
                             <div class="col-12 mb-3">
-                                <label class="form-label"><strong><?php echo trad("Prestation") ?></strong></label>
+                                <label class="form-label"><?php echo trad("Prestation") ?></label>
                                 <?php if(empty($servicesList)){ ?>
                                     <div class="alert alert-danger">
                                         <?php echo trad("Aucune prestation en attente de devis.") ?>
@@ -93,6 +95,11 @@
                                 <input type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="datePerso" required> 
                             </div>
 
+                            <div class="col-12 mb-3">
+                                <label class="form-label"><?php echo trad("Contenu de l'accord :") ?></label>
+                                <textarea type="text" class="form-control <?php echo isset($errorMessage) ? 'is-invalid' : ''; ?>" name="content" required></textarea> 
+                            </div>
+
                             <input type="hidden" name ="id" value="<?=htmlspecialchars($_SESSION['id']) ?>">
                             <input type="hidden" name ="id_discussion" value="<?=htmlspecialchars($_GET['id_discussion']) ?>">
 
@@ -107,7 +114,8 @@
                 </div>
             </div>
         </main>
-        <?php include('includes/magnifyingLink.php'); ?>
+        <?php 
+        include('includes/magnifyingLink.php'); ?>
         <script src="jsFunctions/showPassword.js"></script>
     </body>
 </html>

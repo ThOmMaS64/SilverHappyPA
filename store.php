@@ -1,9 +1,10 @@
+<?php 
+    session_start();
+    include('traitementsPHP/deconnexionAuto.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 
     <?php 
-
-        session_start();
 
         include("includes/translation.php");
 

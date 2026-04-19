@@ -1,7 +1,9 @@
+<?php 
+    session_start();
+    include('traitementsPHP/deconnexionAuto.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
     <?php
-    session_start();
 
     include("includes/translation.php");
 
@@ -206,7 +208,6 @@
                                         <h5><?php echo htmlspecialchars(trad($service['type'])) ?></h5>
                                         <small><a class="linkToVisitProfile" href="profileVisit.php?visitedId=<?php echo $service['ID_SERVICE_PROVIDER'] ?>"><?php echo htmlspecialchars(trad($service['service_provider_name'])) ?> <?php echo htmlspecialchars(trad($service['service_provider_surname'])) ?></a></small>
                                         <div class="line"></div>
-                                        <p><?php echo htmlspecialchars($service['place']) ?></p>
                                     </div>
                                     <div class="col-2">
                                         <form method="POST" action="">
@@ -229,6 +230,16 @@
                                 </div>
 
                                 <p><?php echo htmlspecialchars(tradByAPI($service['description'])) ?></p>
+
+                                <?php if($service['is_at_consumer_home']){ ?>
+
+                                    <p>À domicile</p>
+
+                                <?php }elseif(!empty($service['city']) && !empty($service['street']) && !empty($service['nb_street']) && !empty($service['postal_code'])){ ?>
+
+                                    <p><small><?= $service['nb_street'] ?><?= " " ?><?= $service['street'] ?><?= ", " ?><?= $service['city'] ?><?= ", " ?><?= $service['postal_code'] ?></small></p>
+
+                                <?php } ?>
 
                                 <?php if($service['pricing_type'] == 'fixed'){ ?>
                                     <p><small><?php echo $service['cost'] ?> <?php echo "€" ?></small></p>
