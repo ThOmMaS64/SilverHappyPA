@@ -182,12 +182,19 @@
 
         </main>
 
-        <?php include("includes/footer.php"); 
-        include('includes/magnifyingLink.php');?>
+        <?php 
+
+            include("includes/footer.php"); 
+            include('includes/magnifyingLink.php');
+
+            include('includes/audioLink.php'); 
+
+        ?>
+        <audio id="audio" src="audios/index.m4a"></audio>
 
         <script src="jsFunctions/hideShowHeader.js"></script>
 
-        <?php if(!$tuto){ ?>
+        <?php if($tuto){ ?>
         
             <link rel="stylesheet" href="cssStyles/styleTuto.css?v=2">
 
@@ -244,6 +251,15 @@
 
         <?php } ?>
 
+        <script>
+
+            document.getElementById('audioButton').addEventListener('click', function(e){
+                e.preventDefault();
+                document.getElementById('audio').play();
+
+            })
+
+        </script>
 
     </body>
     

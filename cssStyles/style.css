@@ -682,3 +682,37 @@ footer p {
   color: #99a0a8 !important;
   transform: scale(1.025);
 }
+
+.audioLink {
+  position: fixed;
+  background-image: linear-gradient(
+    to bottom right,
+    #2f6f9f 0%,
+    #538bb5 60%,
+    #99a0a8 100%
+  );
+  bottom: 0;
+  left: 0;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  width: 80px;
+  height: 80px;
+  z-index: 100000000;
+  border-radius: 15px;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 5px;
+}
+
+.audioLink:hover {
+  background-image: linear-gradient(
+    to bottom right,
+    #2f6f9f 0%,
+    #538bb5 80%,
+    #99a0a8 100%
+  );
+  transform: scale(1.025);
+}

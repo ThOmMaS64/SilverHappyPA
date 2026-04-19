@@ -226,6 +226,19 @@
             </div>
         </main>
         <?php include("includes/footer.php");
-        include('includes/magnifyingLink.php'); ?>
+        include('includes/magnifyingLink.php'); 
+        include('includes/audioLink.php'); ?>
+
+        <audio id="audio" src="audios/advices.m4a"></audio>
+
+        <script>
+
+            document.getElementById('audioButton').addEventListener('click', function(e){
+                e.preventDefault();
+                document.getElementById('audio').play();
+
+            })
+
+        </script>
     </body>
 </html>

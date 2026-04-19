@@ -174,7 +174,10 @@
             </div>
         </main>
         <?php include("includes/footer.php");
-        include('includes/magnifyingLink.php'); ?>
+        include('includes/magnifyingLink.php');
+        include('includes/audioLink.php'); ?>
+
+        <audio id="audio" src="audios/messaging.m4a"></audio>
 
         <script>
             document.addEventListener("DOMContentLoaded", function() {
@@ -183,6 +186,16 @@
                     chatBox.scrollTop = chatBox.scrollHeight;
                 }
             });
+        </script>
+
+        <script>
+
+            document.getElementById('audioButton').addEventListener('click', function(e){
+                e.preventDefault();
+                document.getElementById('audio').play();
+
+            })
+
         </script>
     </body>
 </html>
