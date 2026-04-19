@@ -33,6 +33,8 @@ CREATE TABLE USER_(
    levelFont INT DEFAULT 0,
    fontChange INT DEFAULT 0,
    cursorType INT DEFAULT 0,
+   showZoom BOOLEAN DEFAULT 1,
+   showAudio BOOLEAN DEFAULT 1,
    language VARCHAR(5) DEFAULT 'fr',
    profilePicture VARCHAR(255) DEFAULT '',
    connected INT DEFAULT 0,
