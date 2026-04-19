@@ -35,6 +35,8 @@ func SendQuote(database *sql.DB) http.HandlerFunc {
 		dateFin := strings.TrimSpace(r.FormValue("dateFin"))
 		datePerso := strings.TrimSpace(r.FormValue("datePerso"))
 
+		content := strings.TrimSpace(r.FormValue("content"))
+
 		id := r.FormValue("id")
 		idDiscussion := r.FormValue("id_discussion")
 		idService := r.FormValue("id_service")
@@ -84,18 +86,26 @@ func SendQuote(database *sql.DB) http.HandlerFunc {
 		var dateEnd interface{}
 		var datePersonalized interface{}
 
+		var dateQuote string
+
 		if modeUnique {
 
 			dateStartOrUnique = dateUnique
+
+			dateQuote = dateUnique
 
 		}else if modePeriode{
 
 			dateStartOrUnique = dateDebut
 			dateEnd = dateFin
 
+			dateQuote = fmt.Sprintf("Du %s au %s", dateDebut, dateFin)
+
 		}else if modePerso{
 
 			datePersonalized = datePerso
+
+			dateQuote = datePerso
 
 		}
 
@@ -115,7 +125,7 @@ func SendQuote(database *sql.DB) http.HandlerFunc {
 		filename := fmt.Sprintf("quote_service_%s__%d_%s_%d.pdf", idService, idConsumer, id, randomNumber)
 		pathName := fmt.Sprintf("../data/quotes/%s", filename)
 
-		insertStatement, insertError := database.Prepare("INSERT INTO QUOTE (ID_SERVICE_PROVIDER, ID_CONSUMER, ID_SERVICE, prestation, amount, date_start_or_unique, date_end, date_personalized, status, pdf_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?)")
+		insertStatement, insertError := database.Prepare("INSERT INTO QUOTE (ID_SERVICE_PROVIDER, ID_CONSUMER, ID_SERVICE, prestation, amount, content, date_start_or_unique, date_end, date_personalized, status, pdf_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)")
 
 		if insertError != nil {
 
@@ -125,7 +135,7 @@ func SendQuote(database *sql.DB) http.HandlerFunc {
 		}
 		defer insertStatement.Close()
 
-		_, insertExecError := insertStatement.Exec(idServiceProvider, idConsumer, idService, prestation, prix, dateStartOrUnique, dateEnd, datePersonalized, filename)
+		_, insertExecError := insertStatement.Exec(idServiceProvider, idConsumer, idService, prestation, prix, content, dateStartOrUnique, dateEnd, datePersonalized, filename)
 
 		if insertExecError != nil {
 
@@ -178,7 +188,7 @@ func SendQuote(database *sql.DB) http.HandlerFunc {
 		floatPrice, _ := strconv.ParseFloat(prix, 64)
 
 		finalPrice := float64(floatPrice) * 1.2 + floatPrice * commission
-		finalPriceHT := floatPrice * commission
+		finalPriceHT := floatPrice + floatPrice * commission
 
 		dateIdentifier := time.Now().Format(("2006-01-02"))
 		identifier := fmt.Sprintf("quote_%d_%s_%s%s", idConsumer, id, prestation, dateIdentifier)
@@ -244,9 +254,10 @@ func SendQuote(database *sql.DB) http.HandlerFunc {
 
 		quote.AddRows(
 			mRow.New(6).Add(
-				col.New(6).Add(text.New("Intitulé de la prestation de service", props.Text{Style: fontstyle.Bold})),
-				col.New(3).Add(text.New("Prix HT", props.Text{Style: fontstyle.Bold, Align: align.Right})),
-				col.New(3).Add(text.New("Prix TTC", props.Text{Style: fontstyle.Bold, Align: align.Right})),
+				col.New(4).Add(text.New("Intitulé de la prestation de service", props.Text{Style: fontstyle.Bold})),
+				col.New(4).Add(text.New("Date.s de réalisation", props.Text{Style: fontstyle.Bold, Align: align.Right})),
+				col.New(2).Add(text.New("Prix HT", props.Text{Style: fontstyle.Bold, Align: align.Right})),
+				col.New(2).Add(text.New("Prix TTC", props.Text{Style: fontstyle.Bold, Align: align.Right})),
 			),
 			mRow.New(1).Add(col.New(12).Add(line.New(props.Line{Color: &props.Color{Red: 150, Green: 150, Blue: 150}}))),
 			mRow.New(5),
@@ -254,9 +265,25 @@ func SendQuote(database *sql.DB) http.HandlerFunc {
 
 		quote.AddRows(
 			mRow.New(10).Add(
-				col.New(6).Add(text.New(prestation)),
-				col.New(3).Add(text.New(fmt.Sprintf("%.2f €", finalPriceHT), props.Text{Align: align.Right})),
-				col.New(3).Add(text.New(fmt.Sprintf("%.2f €", finalPrice), props.Text{Align: align.Right})),
+				col.New(4).Add(text.New(prestation)),
+				col.New(4).Add(text.New(fmt.Sprintf(dateQuote), props.Text{Align: align.Right})),
+				col.New(2).Add(text.New(fmt.Sprintf("%.2f €", finalPriceHT), props.Text{Align: align.Right})),
+				col.New(2).Add(text.New(fmt.Sprintf("%.2f €", finalPrice), props.Text{Align: align.Right})),
+			),
+			mRow.New(10),
+		)
+
+		quote.AddRows(
+			mRow.New(6).Add(
+				col.New(12).Add(text.New("Contenu de l'accord de prestation convenu", props.Text{Style: fontstyle.Bold})),
+			),
+			mRow.New(1).Add(col.New(12).Add(line.New(props.Line{Color: &props.Color{Red: 150, Green: 150, Blue: 150}}))),
+			mRow.New(5),
+		)
+
+		quote.AddRows(
+			mRow.New(10).Add(
+				col.New(12).Add(text.New(content)),
 			),
 			mRow.New(10),
 		)

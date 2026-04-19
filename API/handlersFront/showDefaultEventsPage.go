@@ -74,7 +74,7 @@ func ShowDefaultEventsPage(database *sql.DB) http.HandlerFunc {
 		}
 		
 
-		rowSelectEvents, errSelectEvents := database.Query("SELECT EVENT.ID_EVENT, EVENT.type, EVENT.name, EVENT.date_start, EVENT.date_end, EVENT.description, EVENT.price, EVENT.capacity, EVENT.nb_inscription, (USER_INTERACTION_EVENT.ID_USER IS NOT NULL) AS is_saved, (PARTICIPATE.ID_EVENT IS NOT NULL) AS is_subscribe FROM EVENT LEFT JOIN USER_INTERACTION_EVENT ON EVENT.ID_EVENT = USER_INTERACTION_EVENT.ID_EVENT AND USER_INTERACTION_EVENT.ID_USER = ? LEFT JOIN CONSUMER ON CONSUMER.ID_USER = ? LEFT JOIN PARTICIPATE ON PARTICIPATE.ID_CONSUMER = CONSUMER.ID_CONSUMER AND PARTICIPATE.ID_EVENT = EVENT.ID_EVENT", id, id)
+		rowSelectEvents, errSelectEvents := database.Query("SELECT EVENT.ID_EVENT, EVENT.type, EVENT.name, EVENT.date_start, EVENT.date_end, EVENT.description, EVENT.price, EVENT.capacity, EVENT.nb_inscription, COALESCE(WORK_ADDRESS.city, ''), COALESCE(WORK_ADDRESS.street, ''), COALESCE(WORK_ADDRESS.nb_street, 0), COALESCE(WORK_ADDRESS.postal_code, ''), (USER_INTERACTION_EVENT.ID_USER IS NOT NULL) AS is_saved, (PARTICIPATE.ID_EVENT IS NOT NULL) AS is_subscribe FROM EVENT LEFT JOIN USER_INTERACTION_EVENT ON EVENT.ID_EVENT = USER_INTERACTION_EVENT.ID_EVENT AND USER_INTERACTION_EVENT.ID_USER = ? LEFT JOIN CONSUMER ON CONSUMER.ID_USER = ? LEFT JOIN PARTICIPATE ON PARTICIPATE.ID_CONSUMER = CONSUMER.ID_CONSUMER AND PARTICIPATE.ID_EVENT = EVENT.ID_EVENT LEFT JOIN WORK_ADDRESS ON EVENT.ID_WORK_ADDRESS = WORK_ADDRESS.ID_WORK_ADDRESS", id, id)
 	
 		if errSelectEvents != nil{
 
@@ -91,7 +91,7 @@ func ShowDefaultEventsPage(database *sql.DB) http.HandlerFunc {
 
 			var event Event
 
-			err := rowSelectEvents.Scan(&event.IdEvent, &event.Type, &event.Name, &event.DateStart, &event.DateEnd, &event.Description, &event.Price, &event.Capacity, &event.NbInscription, &event.IsSaved, &event.IsSubscribe)
+			err := rowSelectEvents.Scan(&event.IdEvent, &event.Type, &event.Name, &event.DateStart, &event.DateEnd, &event.Description, &event.Price, &event.Capacity, &event.NbInscription, &event.City, &event.Street, &event.NbStreet, &event.PostalCode, &event.IsSaved, &event.IsSubscribe)
 
 			if err == nil{
 

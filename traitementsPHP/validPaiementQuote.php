@@ -28,13 +28,17 @@
 
         $idConsumer = $infos['ID_CONSUMER'];
 
-        $reqQuotes = $bdd->prepare('SELECT QUOTE.ID_SERVICE, SERVICE_PROVIDER.ID_USER as provider_id FROM QUOTE INNER JOIN SERVICE_PROVIDER ON QUOTE.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER WHERE QUOTE.status = 1 AND QUOTE.ID_CONSUMER = :id_consumer');
+        $reqQuotes = $bdd->prepare('SELECT QUOTE.ID_QUOTE, QUOTE.ID_SERVICE, SERVICE_PROVIDER.ID_USER as provider_id FROM QUOTE INNER JOIN SERVICE_PROVIDER ON QUOTE.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER WHERE QUOTE.status = 1 AND QUOTE.ID_CONSUMER = :id_consumer');
         $reqQuotes->execute(['id_consumer' => $idConsumer]);
         $quotesToPay = $reqQuotes->fetchAll(PDO::FETCH_ASSOC);
 
         $bdd->prepare('UPDATE QUOTE SET status = 2 WHERE status = 1 AND ID_CONSUMER = :id')->execute(['id' => $idConsumer]);
 
+        $quotesId = [];
+
         foreach ($quotesToPay as $quote) {
+            $quotesId[] = $quote['ID_QUOTE'];
+
             $reqDisc = $bdd->prepare('SELECT ID_DISCUSSION FROM DISCUSSION WHERE ID_SERVICE = :id_service AND ((user1_id = :u1 AND user2_id = :u2) OR (user1_id = :u2 AND user2_id = :u1)) LIMIT 1');
             $reqDisc->execute(['id_service' => $quote['ID_SERVICE'], 'u1' => $_SESSION['id'], 'u2' => $quote['provider_id']]);
             
@@ -84,7 +88,8 @@
 
         }
 
-        header("location:../index.php?notif=quote_paiement_success");
+        //header("location:../index.php?notif=quote_paiement_success");
+        header("location:http://localhost:8081/generateQuoteServiceInvoice?id_quotes=" . implode('-', $quotesId) . "&id_consumer=" . $infos['ID_CONSUMER']);
         exit();
 
     }

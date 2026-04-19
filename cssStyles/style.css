@@ -555,7 +555,7 @@ footer p {
   margin-right: 20px;
   width: 80px;
   height: 80px;
-  z-index: 10;
+  z-index: 100000000;
   border-radius: 15px;
   border: 1px solid black;
   display: flex;
@@ -589,6 +589,7 @@ footer p {
   background: var(--handle-background);
   background-size: contain;
   filter: drop-shadow(-2px -2px 10px rgba(0, 0, 0, 0.5));
+  z-index: 100000000;
 }
 
 .magnifying-glass {
@@ -613,7 +614,7 @@ footer p {
   width: 30px;
   background-color: white;
   border-radius: 50%;
-  z-index: 10;
+  z-index: 100000000;
   transform: rotate(-45deg);
   opacity: 70%;
 }
