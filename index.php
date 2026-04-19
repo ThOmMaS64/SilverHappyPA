@@ -1,11 +1,31 @@
+<?php 
+    session_start();
+    include('traitementsPHP/deconnexionAuto.php'); 
+
+    include("includes/db.php");
+
+    $tuto = false;
+
+    if(isset($_SESSION['id'])){
+
+        $q = 'SELECT tuto_seen FROM CONSUMER WHERE ID_USER = :id';
+        $req = $bdd->prepare($q);
+        $req->execute(['id' => $_SESSION['id']]);
+        $result = $req->fetch(PDO::FETCH_ASSOC);
+
+        if($result && $result['tuto_seen'] == 0){
+
+            $tuto = true;
+
+        }
+
+    }
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
     <?php 
-
-        session_start();
-
-        include("includes/db.php");
 
         $totalAmount = 0;
 
@@ -166,6 +186,64 @@
         include('includes/magnifyingLink.php');?>
 
         <script src="jsFunctions/hideShowHeader.js"></script>
+
+        <?php if(!$tuto){ ?>
+        
+            <link rel="stylesheet" href="cssStyles/styleTuto.css?v=2">
+
+            <div id="tutoBlackBackground" class="tutoBlackBackground"></div>
+            <div id="tutoTextZone" class="tutoTextZone">
+                <h5>Bienvenue sur Silver Happy !</h5>
+                <div class="line mb-3" style="justify-self:center;"></div>
+                <p id="tutoText"></p>
+                <button id="tutoButton">Suivant</button>
+            </div>
+
+            <script>
+
+                let menuElements = document.querySelectorAll('.navbar-nav > li');
+                let tutoTexts = [
+                    "Explorez notre univers et réservez l'expérience qui vous ressemble.",
+                    "Laissez-vous inspirer par nos événements et rejoignez l'aventure.",
+                    "Succombez à vos envies et découvrez les pépites de notre boutique.",
+                    "Éveillez votre curiosité à travers nos précieux conseils.",
+                    "Retrouvez ici le fil de vos échanges et conversations.",
+                    "Personnalisez votre espace, retrouvez vos informations et cultivez votre profil à votre image."
+                ];
+                
+                let step = 0;
+
+                function startTuto() {
+
+                menuElements.forEach(el => el.classList.remove('tutoShowZone'));
+
+                    if (step >= tutoTexts.length) {
+                        document.getElementById('tutoBlackBackground').remove();
+                        document.getElementById('tutoTextZone').remove();
+                        fetch('traitementsPHP/tutoValidation.php');
+                        return;
+                    }
+
+                    if(menuElements[step]) {
+                        menuElements[step].classList.add('tutoShowZone');
+                    }
+                    document.getElementById('tutoText').innerText = tutoTexts[step];
+                    
+                    if (step === tutoTexts.length - 1) {
+                        document.getElementById('tutoButton').innerText = "Terminer";
+                    }
+                }
+
+                document.getElementById('tutoButton').addEventListener('click', function() {
+                    step++;
+                    startTuto();
+                });
+
+                startTuto();
+            </script>
+
+        <?php } ?>
+
 
     </body>
     
