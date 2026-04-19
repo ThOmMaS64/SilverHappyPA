@@ -325,6 +325,108 @@ func ModifyParameters(database *sql.DB) http.HandlerFunc {
 			http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?need=call_bdd_back&selectedParameter=5&notif=cursor_type_changement_success", 303)
 			return
 
+		}else if paramChoice == "6"{
+
+			zoomChange := r.FormValue(("zoomChange"))
+
+			if zoomChange == "1" {
+
+				updateStatement, updateError := database.Prepare("UPDATE USER_ SET showZoom = ? WHERE ID_USER = ?")
+
+				if updateError != nil{
+
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system2", 303)
+					return	
+
+				}
+				defer updateStatement.Close()
+
+				_, updateStatementExecError := updateStatement.Exec("0", id)
+
+				if updateStatementExecError != nil{
+
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system3", 303)
+					return	
+
+				}
+
+			}else if zoomChange == "0"{
+
+				updateStatement, updateError := database.Prepare("UPDATE USER_ SET showZoom = ? WHERE ID_USER = ?")
+
+				if updateError != nil{
+
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system2", 303)
+					return	
+
+				}
+				defer updateStatement.Close()
+
+				_, updateStatementExecError := updateStatement.Exec("1", id)
+
+				if updateStatementExecError != nil{
+
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system3", 303)
+					return	
+
+				}
+
+			}
+
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?need=call_bdd_back&selectedParameter=6&notif=zoom_change_successful", 303)
+			return	
+
+		}else if paramChoice == "7"{
+
+			audioChange := r.FormValue(("audioChange"))
+
+			if audioChange == "1" {
+
+				updateStatement, updateError := database.Prepare("UPDATE USER_ SET showAudio = ? WHERE ID_USER = ?")
+
+				if updateError != nil{
+
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system2", 303)
+					return	
+
+				}
+				defer updateStatement.Close()
+
+				_, updateStatementExecError := updateStatement.Exec("0", id)
+
+				if updateStatementExecError != nil{
+
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system3", 303)
+					return	
+
+				}
+
+			}else if audioChange == "0"{
+
+				updateStatement, updateError := database.Prepare("UPDATE USER_ SET showAudio = ? WHERE ID_USER = ?")
+
+				if updateError != nil{
+
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system2", 303)
+					return	
+
+				}
+				defer updateStatement.Close()
+
+				_, updateStatementExecError := updateStatement.Exec("1", id)
+
+				if updateStatementExecError != nil{
+
+					http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system3", 303)
+					return	
+
+				}
+
+			}
+
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?need=call_bdd_back&selectedParameter=7&notif=audio_change_successful", 303)
+			return	
+
 		}
 		 
 	}

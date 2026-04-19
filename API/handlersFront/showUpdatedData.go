@@ -29,6 +29,8 @@ type ParametersChangesResponse struct{
 	LevelFont string `json:"levelFont"`
 	FontChange string `json:"fontChange"`
 	CursorType string `json:"cursorType"`
+	ShowZoom string `json:"showZoom"`
+	ShowAudio string `json:"showAudio"`
 	Error string `json:"error"`
 
 }
@@ -94,12 +96,14 @@ func ShowUpdatedData(database *sql.DB) http.HandlerFunc {
 			var levelFont string
 			var fontChange string
 			var cursorType string
+			var showZoom string
+			var showAudio string
 
 			var response ParametersChangesResponse
 
-			rowUser := database.QueryRow("SELECT darkMode, levelFont, fontChange, cursorType FROM user_ WHERE ID_USER = ?", userId)
+			rowUser := database.QueryRow("SELECT darkMode, levelFont, fontChange, cursorType, showZoom, showAudio FROM user_ WHERE ID_USER = ?", userId)
 		
-			errUser := rowUser.Scan(&darkMode, &levelFont, &fontChange, &cursorType)
+			errUser := rowUser.Scan(&darkMode, &levelFont, &fontChange, &cursorType, &showZoom, &showAudio)
 
 			if errUser != nil {
 
@@ -113,6 +117,8 @@ func ShowUpdatedData(database *sql.DB) http.HandlerFunc {
 			response.LevelFont = levelFont
 			response.FontChange = fontChange
 			response.CursorType = cursorType
+			response.ShowZoom = showZoom
+			response.ShowAudio = showAudio
 
 			json.NewEncoder(w).Encode(response)
 

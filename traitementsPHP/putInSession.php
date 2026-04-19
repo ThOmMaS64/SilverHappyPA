@@ -37,6 +37,8 @@
             $_SESSION['keyWord2'] = $response['keyWord2'];
             $_SESSION['keyWord3'] = $response['keyWord3'];
             $_SESSION['banned'] = $response['banned'];
+            $_SESSION['showZoom'] = $response['showZoom'];
+            $_SESSION['showAudio'] = $response['showAudio'];
 
             if(isset($response['tutoSeen']) && $response['tutoSeen'] != ""){
 

@@ -16,12 +16,14 @@
 
             $response = json_decode($dataJson, true);
 
-            if(isset($response['darkMode']) && isset($response['levelFont']) && isset($response['fontChange']) && isset($response['cursorType'])){
+            if(isset($response['darkMode']) && isset($response['levelFont']) && isset($response['fontChange']) && isset($response['cursorType']) && isset($response['showAudio']) && isset($response['showZoom'])){
 
                 $_SESSION['darkMode'] = $response['darkMode'];
                 $_SESSION['levelFont'] = $response['levelFont'];
                 $_SESSION['fontChange'] = $response['fontChange'];
                 $_SESSION['cursorType'] = $response['cursorType'];
+                $_SESSION['showAudio'] = $response['showAudio'];
+                $_SESSION['showZoom'] = $response['showZoom'];
 
             }
         }
@@ -73,6 +75,8 @@
         "font_size_changement_success" => trad("Changement de taille d'écriture effectué."),
         "font_style_changement_success" => trad("Changement de police d'écriture effectué."),
         "cursor_type_changement_success" => trad("Changement de curseur effectué."),
+        "audio_change_successful" => trad("Changement d'affichage du raccourci audio effectué."),
+        "zoom_change_successful" => trad("Changement d'affichage du raccourci loupe effectué."),
 
     ];
 
@@ -132,6 +136,28 @@
 
                                 <button type="submit" value="5" class="parameterButton" name="selectedParameter" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>color:white;<?php endif;endif; ?>">
                                     <?php echo trad("Modifier le curseur") ?>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+                                    </svg>
+                                </button>
+
+                                <button type="submit" value="6" class="parameterButton" name="selectedParameter" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>color:white;<?php endif;endif; ?>">
+                                    <?php if($_SESSION['showZoom'] == 0){?>
+                                    <?php echo trad("Afficher le raccourci loupe") ?> 
+                                    <?php }elseif($_SESSION['showZoom'] == 1){?>
+                                    <?php echo trad("Cacher le raccourci loupe") ?>
+                                    <?php } ?>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+                                    </svg>
+                                </button>
+
+                                <button type="submit" value="7" class="parameterButton" name="selectedParameter" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>color:white;<?php endif;endif; ?>">
+                                    <?php if($_SESSION['showAudio'] == 0){?>
+                                    <?php echo trad("Afficher le raccourci audio") ?> 
+                                    <?php }elseif($_SESSION['showAudio'] == 1){?>
+                                    <?php echo trad("Cacher le raccourci audio") ?>
+                                    <?php } ?>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
                                     </svg>
@@ -330,6 +356,54 @@
 
                                     </form>
                                 <?php } ?>
+
+                            <?php }elseif($selectedParameter == 6){ ?>
+
+                                <?php if($_SESSION['showZoom'] == 1): ?>
+                                    <form method="POST" action="http://localhost:8081/modifyParameters">
+                                        <input type="hidden" name="id" value=<?php echo $_SESSION['id'] ?>> 
+                                        <input type="hidden" name="paramChoice" value="6"> 
+                                        <input type="hidden" name="zoomChange" value="1">
+                                        <p>Voulez-vous cacher le raccourci de la loupe ?</p> 
+                                        <button name="sombre" class="btn">
+                                            Cacher
+                                        </button>
+                                    </form>
+                                <?php elseif($_SESSION['showZoom'] == 0): ?>
+                                    <form method="POST" action="http://localhost:8081/modifyParameters">
+                                        <input type="hidden" name="id" value=<?php echo $_SESSION['id'] ?>> 
+                                        <input type="hidden" name="paramChoice" value="6"> 
+                                        <input type="hidden" name="zoomChange" value="0">
+                                        <p>Voulez-vous afficher le raccourci de la loupe ?</p> 
+                                        <button name="clair" class="btn">
+                                            Afficher
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+
+                            <?php }elseif($selectedParameter == 7){ ?>
+
+                                <?php if($_SESSION['showAudio'] == 1): ?>
+                                    <form method="POST" action="http://localhost:8081/modifyParameters">
+                                        <input type="hidden" name="id" value=<?php echo $_SESSION['id'] ?>> 
+                                        <input type="hidden" name="paramChoice" value="7"> 
+                                        <input type="hidden" name="audioChange" value="1">
+                                        <p>Voulez-vous cacher le raccourci de l'aide audio ?</p> 
+                                        <button name="sombre" class="btn">
+                                            Cacher
+                                        </button>
+                                    </form>
+                                <?php elseif($_SESSION['showAudio'] == 0): ?>
+                                    <form method="POST" action="http://localhost:8081/modifyParameters">
+                                        <input type="hidden" name="id" value=<?php echo $_SESSION['id'] ?>> 
+                                        <input type="hidden" name="paramChoice" value="7"> 
+                                        <input type="hidden" name="audioChange" value="0">
+                                        <p>Voulez-vous afficher le raccourci de l'aide audio ?</p> 
+                                        <button name="clair" class="btn">
+                                            Afficher
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
 
                             <?php } ?>
                         </div>

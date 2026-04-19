@@ -33,6 +33,8 @@ type userDataResponse struct {
 	Profession string `json:"profession"`
 	BirthDate string `json:"birth_date"`
 	Banned string `json:"banned"`
+	ShowZoom string `json:"showZoom"`
+	ShowAudio string `json:"showAudio"`
 	Error string `json:"error"`
 
 
@@ -68,6 +70,9 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		var postalCode string
 		var birth_date string
 		var banned string
+		var showZoom string
+		var showAudio string
+
 
 		var response userDataResponse
 
@@ -106,9 +111,9 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		rowUser := database.QueryRow("SELECT name, surname, username, city, street, nb_street, postal_code, status, email, description, keyword1, keyword2, keyword3, date_inscription, darkMode, levelFont, fontChange, cursorType, language, profilePicture, banned FROM user_ WHERE ID_USER = ?", id)
+		rowUser := database.QueryRow("SELECT name, surname, username, city, street, nb_street, postal_code, status, email, description, keyword1, keyword2, keyword3, date_inscription, darkMode, levelFont, fontChange, cursorType, language, profilePicture, banned, showZoom, showAudio FROM user_ WHERE ID_USER = ?", id)
 		
-		errUser := rowUser.Scan(&name, &surname, &username, &city, &street, &streetNumber, &postalCode, &status, &email, &description, &keyWord1, &keyWord2, &keyWord3, &dateInscription, &darkMode, &levelFont, &fontChange, &cursorType, &language, &profilePicture, &banned)
+		errUser := rowUser.Scan(&name, &surname, &username, &city, &street, &streetNumber, &postalCode, &status, &email, &description, &keyWord1, &keyWord2, &keyWord3, &dateInscription, &darkMode, &levelFont, &fontChange, &cursorType, &language, &profilePicture, &banned, &showZoom, &showAudio)
 
 		if errUser != nil {
 
@@ -140,6 +145,8 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		response.Language = language
 		response.ProfilePicture = profilePicture
 		response.Banned = banned
+		response.ShowZoom = showZoom
+		response.ShowAudio = showAudio
 
 		if(status == "1" || status == "2" || status == "5" || status == "6"){
 
