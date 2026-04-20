@@ -12,5 +12,13 @@ statuts :
 4 = prestataire vérifié
 5 = adhérent renouvellement mensuel
 6 = adhérent renouvellement annuel
-
 9 = admin
+
+
+
+les status pour les devis sont :
+
+0 = proposé
+1 = accepté mais pas payé
+2 = accepté et payé
+3 = refusé

@@ -130,6 +130,9 @@
                     <a class="nav-link active" aria-current="page" href="planning.php"><?php echo trad("Mon planning") ?></a>
                     </li>
                     <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="searchConsumer.php"><?php echo trad("Adhérants") ?></a>
+                    </li>
+                    <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="messaging.php"><?php echo trad("Communications") ?></a>
                     </li>
                     <li class="nav-item dropdown">
