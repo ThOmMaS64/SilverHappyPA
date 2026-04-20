@@ -36,11 +36,65 @@
             $statement = $bdd->prepare($q);
             $result = $statement->execute(['id_service_slot' => $_GET['id_service_slot']]); 
 
+            $q = 'SELECT SERVICE_SLOT.start_time, SERVICE_SLOT.end_time, SERVICE_SLOT.ID_SERVICE, SERVICE.is_at_consumer_home, SERVICE.ID_WORK_ADDRESS, SERVICE.cost FROM SERVICE_SLOT JOIN SERVICE ON SERVICE_SLOT.ID_SERVICE = SERVICE.ID_SERVICE WHERE SERVICE_SLOT.ID_SERVICE_SLOT = :id_slot';
+            $req = $bdd->prepare($q);
+            $req->execute(['id_slot' => $_GET['id_service_slot']]);
+            $slotInfos = $req->fetch(PDO::FETCH_ASSOC);
+
+            $q = 'INSERT INTO INTERVENTION(cost, status, start_date, end_date, is_at_consumer_home, ID_WORK_ADDRESS, ID_SERVICE) VALUES (:cost, 1, :start, :end, :at_home, :id_address, :id_service)';
+            $req = $bdd->prepare($q);
+            $req->execute([
+                'cost'       => $slotInfos['cost'],
+                'start'      => $slotInfos['start_time'],
+                'end'        => $slotInfos['end_time'],
+                'at_home'    => $slotInfos['is_at_consumer_home'],
+                'id_address' => $slotInfos['ID_WORK_ADDRESS'],
+                'id_service' => $slotInfos['ID_SERVICE']
+            ]);
+            $idIntervention = $bdd->lastInsertId();
+
+            $q = 'SELECT SERVICE_PROVIDER.ID_SERVICE_PROVIDER FROM OFFER JOIN SERVICE_PROVIDER ON OFFER.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER WHERE OFFER.ID_SERVICE = :id_service';
+            $req = $bdd->prepare($q);
+            $req->execute(['id_service' => $slotInfos['ID_SERVICE']]);
+            $provider = $req->fetch(PDO::FETCH_ASSOC);
+
+            $bdd->prepare('INSERT INTO DO(ID_SERVICE_PROVIDER, ID_INTERVENTION) VALUES (?, ?)')
+                ->execute([$provider['ID_SERVICE_PROVIDER'], $idIntervention]);
+
+            $bdd->prepare('INSERT INTO CALL_(ID_CONSUMER, ID_INTERVENTION) VALUES (?, ?)')
+                ->execute([$infos['ID_CONSUMER'], $idIntervention]);
+
         }else{
 
             $q = 'INSERT INTO SERVICE_BOOKING(ID_CONSUMER, booked_at) VALUES (?, ?)';
             $statement = $bdd->prepare($q);
-            $result = $statement->execute([$infos['ID_CONSUMER'], date('Y-m-d H:i:s')]); 
+            $result = $statement->execute([$infos['ID_CONSUMER'], date('Y-m-d H:i:s')]);
+
+            $qService = 'SELECT cost, is_at_consumer_home, ID_WORK_ADDRESS FROM SERVICE WHERE ID_SERVICE = :id_service';
+            $reqS = $bdd->prepare($qService);
+            $reqS->execute(['id_service' => $_GET['id_service']]);
+            $serviceData = $reqS->fetch(PDO::FETCH_ASSOC);
+
+            $qIntervention = 'INSERT INTO INTERVENTION(cost, status, is_at_consumer_home, ID_WORK_ADDRESS, ID_SERVICE) VALUES (:cost, 1, :at_home, :id_address, :id_service)';
+            $reqI = $bdd->prepare($qIntervention);
+            $reqI->execute([
+                'cost'       => $serviceData['cost'],
+                'at_home'    => $serviceData['is_at_consumer_home'],
+                'id_address' => $serviceData['ID_WORK_ADDRESS'],
+                'id_service' => $_GET['id_service']
+            ]);
+            $idIntervention = $bdd->lastInsertId();
+
+            $qProvider = 'SELECT SERVICE_PROVIDER.ID_SERVICE_PROVIDER FROM OFFER JOIN SERVICE_PROVIDER ON OFFER.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER WHERE OFFER.ID_SERVICE = :id_service';
+            $reqP = $bdd->prepare($qProvider);
+            $reqP->execute(['id_service' => $_GET['id_service']]);
+            $provider = $reqP->fetch(PDO::FETCH_ASSOC);
+
+            $bdd->prepare('INSERT INTO DO(ID_SERVICE_PROVIDER, ID_INTERVENTION) VALUES (?, ?)')
+                ->execute([$provider['ID_SERVICE_PROVIDER'], $idIntervention]);
+
+            $bdd->prepare('INSERT INTO CALL_(ID_CONSUMER, ID_INTERVENTION) VALUES (?, ?)')
+                ->execute([$infos['ID_CONSUMER'], $idIntervention]);
 
         }
 

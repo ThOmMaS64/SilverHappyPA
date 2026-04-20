@@ -39,15 +39,49 @@
         foreach ($quotesToPay as $quote) {
             $quotesId[] = $quote['ID_QUOTE'];
 
+            $reqQuoteDetails = $bdd->prepare('SELECT amount, date_start_or_unique, date_end, ID_SERVICE_PROVIDER FROM QUOTE WHERE ID_QUOTE = :id');
+            $reqQuoteDetails->execute(['id' => $quote['ID_QUOTE']]);
+            $quoteDetails = $reqQuoteDetails->fetch(PDO::FETCH_ASSOC);
+
+            $reqService = $bdd->prepare('SELECT is_at_consumer_home, ID_WORK_ADDRESS FROM SERVICE WHERE ID_SERVICE = :id');
+            $reqService->execute(['id' => $quote['ID_SERVICE']]);
+            $serviceInfos = $reqService->fetch(PDO::FETCH_ASSOC);
+
+            $reqIntervention = $bdd->prepare('INSERT INTO INTERVENTION(cost, status, start_date, end_date, is_at_consumer_home, ID_WORK_ADDRESS, ID_SERVICE) VALUES (:cost, 1, :start, :end, :at_home, :id_address, :id_service)');
+            $reqIntervention->execute([
+                'cost'       => $quoteDetails['amount'],
+                'start'      => $quoteDetails['date_start_or_unique'],
+                'end'        => $quoteDetails['date_end'],
+                'at_home'    => $serviceInfos['is_at_consumer_home'],
+                'id_address' => $serviceInfos['ID_WORK_ADDRESS'],
+                'id_service' => $quote['ID_SERVICE']
+            ]);
+            $idIntervention = $bdd->lastInsertId();
+
+            $bdd->prepare('INSERT INTO PROVIDE(ID_INTERVENTION, ID_QUOTE) VALUES (?, ?)')
+                ->execute([$idIntervention, $quote['ID_QUOTE']]);
+
+            $reqProvider = $bdd->prepare('SELECT ID_SERVICE_PROVIDER FROM QUOTE WHERE ID_QUOTE = :id');
+            $reqProvider->execute(['id' => $quote['ID_QUOTE']]);
+            $provider = $reqProvider->fetch(PDO::FETCH_ASSOC);
+
+            $bdd->prepare('INSERT INTO DO(ID_SERVICE_PROVIDER, ID_INTERVENTION) VALUES (?, ?)')
+                ->execute([$provider['ID_SERVICE_PROVIDER'], $idIntervention]);
+
+            $bdd->prepare('INSERT INTO CALL_(ID_CONSUMER, ID_INTERVENTION) VALUES (?, ?)')
+                ->execute([$idConsumer, $idIntervention]);
+
             $reqDisc = $bdd->prepare('SELECT ID_DISCUSSION FROM DISCUSSION WHERE ID_SERVICE = :id_service AND ((user1_id = :u1 AND user2_id = :u2) OR (user1_id = :u2 AND user2_id = :u1)) LIMIT 1');
             $reqDisc->execute(['id_service' => $quote['ID_SERVICE'], 'u1' => $_SESSION['id'], 'u2' => $quote['provider_id']]);
             
             if ($idDisc = $reqDisc->fetchColumn()) {
+
                 $bdd->prepare('INSERT INTO MESSAGE (content, date, sender_id, ID_DISCUSSION) VALUES (:msg, NOW(), :sender, :id_disc)')->execute([
                     'msg' => trad("Bonjour, je viens de régler le devis pour la prestation."),
                     'sender' => $_SESSION['id'],
                     'id_disc' => $idDisc
                 ]);
+
             }
         }
 

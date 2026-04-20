@@ -72,6 +72,8 @@ func main() {
 	http.HandleFunc("/refuseQuote", handlersFront.RefuseQuote(database))
 	http.HandleFunc("/generateQuoteServiceInvoice", handlersFront.GenerateQuoteServiceInvoice(database))
 	http.HandleFunc("/showRegisteredServicesCalendar", handlersFront.ShowRegisteredServicesCalendar(database))
+	http.HandleFunc("/showServiceProviderSlotsPlanning", handlersFront.ShowServiceProviderSlotsPlanning(database))
+	http.HandleFunc("/showServiceProviderQuotesPlanning", handlersFront.ShowServiceProviderQuotesPlanning(database))
 
 	http.HandleFunc("/showInvoicesDefaultData", handlersBack.ShowInvoicesDefaultData(database))
 	http.HandleFunc("/showInvoicesPersonalizedData", handlersBack.ShowInvoicesPersonalizedData(database))
