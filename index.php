@@ -190,7 +190,15 @@
             include('includes/audioLink.php'); 
 
         ?>
-        <audio id="audio" src="audios/index.m4a"></audio>
+        <?php if(isset($_SESSION['status']) && $_SESSION['status'] == 4){ ?>
+
+            <audio id="audio" src="audios/indexServiceProvider.m4a"></audio>
+
+        <?php }else{ ?>
+
+            <audio id="audio" src="audios/index.m4a"></audio>
+
+        <?php } ?>
 
         <script src="jsFunctions/hideShowHeader.js"></script>
 

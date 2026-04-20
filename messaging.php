@@ -177,7 +177,15 @@
         include('includes/magnifyingLink.php');
         include('includes/audioLink.php'); ?>
 
-        <audio id="audio" src="audios/messaging.m4a"></audio>
+        <?php if(isset($_SESSION['status']) && $_SESSION['status'] == 4){ ?>
+
+            <audio id="audio" src="audios/messagingServiceProvider.m4a"></audio>
+
+        <?php }else{ ?>
+
+            <audio id="audio" src="audios/messaging.m4a"></audio>
+
+        <?php } ?>
 
         <script>
             document.addEventListener("DOMContentLoaded", function() {
