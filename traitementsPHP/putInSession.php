@@ -44,11 +44,13 @@
 
                 $_SESSION['tuto_seen'] = $response['tutoSeen'];
                 $_SESSION['birth_date'] = $response['birth_date'];
+                $_SESSION['id_consumer'] = $response['idConsumer'];
 
             }else if(isset($response['profession']) && $response['profession'] != ""){
 
                 $_SESSION['profession'] = $response['profession'];
-
+                $_SESSION['id_service_provider'] = $response['idServiceProvider'];
+                
             }
 
             if($_SESSION['banned'] == 1){

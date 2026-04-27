@@ -35,6 +35,8 @@ type userDataResponse struct {
 	Banned string `json:"banned"`
 	ShowZoom string `json:"showZoom"`
 	ShowAudio string `json:"showAudio"`
+	IdConsumer string `json:"idConsumer"`
+	IdServiceProvider string `json:"idServiceProvider"`
 	Error string `json:"error"`
 
 
@@ -151,44 +153,39 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		if(status == "1" || status == "2" || status == "5" || status == "6"){
 
 			var tuto_seen string
+			var id_consumer string
 
-			rowUser := database.QueryRow("SELECT birth_date, tuto_seen FROM CONSUMER WHERE ID_USER = ?", id)
-		
-			errUser := rowUser.Scan(&birth_date, &tuto_seen)
+			rowUser := database.QueryRow("SELECT ID_CONSUMER, birth_date, tuto_seen FROM CONSUMER WHERE ID_USER = ?", id)
+			errUser := rowUser.Scan(&id_consumer, &birth_date, &tuto_seen)
 
 			if errUser != nil {
-
 				response.Error = "Erreur lors du chargement de vos informations."
 				json.NewEncoder(w).Encode(response)
 				return	
-
 			}
 
+			response.IdConsumer = id_consumer
 			response.BirthDate = birth_date
 			response.TutoSeen = tuto_seen
 
 		}else if(status == "3" || status == "4"){
-		
-			var profession string
-
-			rowUser := database.QueryRow("SELECT profession FROM SERVICE_PROVIDER WHERE ID_USER = ?", id)
 			
-			errUser := rowUser.Scan(&profession)
+			var profession string
+			var id_service_provider string
+
+			rowUser := database.QueryRow("SELECT ID_SERVICE_PROVIDER, profession FROM SERVICE_PROVIDER WHERE ID_USER = ?", id)
+			errUser := rowUser.Scan(&id_service_provider, &profession)
 
 			if errUser != nil {
-
 				response.Error = "Erreur lors du chargement de vos informations."
 				json.NewEncoder(w).Encode(response)
 				return
-
 			}
 
+			response.IdServiceProvider = id_service_provider
 			response.Profession = profession
-
 		}
 
 		json.NewEncoder(w).Encode(response)
-		 
 	}
-
 }

@@ -15,6 +15,7 @@ type searchedConsumer struct {
 	KeyWord1 string `json:"key_word1"`
 	KeyWord2 string `json:"key_word2"`
 	KeyWord3 string `json:"key_word3"`
+	IdConsumer int `json:"id_consumer"`
 
 }
 
@@ -39,7 +40,7 @@ func ShowSearchedConsumers(database *sql.DB) http.HandlerFunc {
 
 		var args []any
 		 
-		basicQuery := "SELECT USER_.name, USER_.surname, USER_.username, USER_.description, USER_.keyWord1, USER_.keyWord2, USER_.keyWord3 FROM USER_ WHERE 1=1"
+		basicQuery := "SELECT USER_.name, USER_.surname, USER_.username, USER_.description, USER_.keyWord1, USER_.keyWord2, USER_.keyWord3, CONSUMER.ID_CONSUMER FROM USER_ INNER JOIN CONSUMER ON USER_.ID_USER = CONSUMER.ID_USER WHERE USER_.status IN (1, 2, 5, 6)"
 
 		if research != ""{
 
@@ -64,7 +65,7 @@ func ShowSearchedConsumers(database *sql.DB) http.HandlerFunc {
 
 			var consumer searchedConsumer
 
-			err := rowSelectAdvices.Scan(&consumer.Name, &consumer.Surname, &consumer.Username, &consumer.Description, &consumer.KeyWord1, &consumer.KeyWord2, &consumer.KeyWord3)
+			err := rowSelectAdvices.Scan(&consumer.Name, &consumer.Surname, &consumer.Username, &consumer.Description, &consumer.KeyWord1, &consumer.KeyWord2, &consumer.KeyWord3, &consumer.IdConsumer)
 
 			if err == nil{
 

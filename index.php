@@ -21,6 +21,28 @@
 
     }
 
+    if(!isset($_SESSION['id'])){
+
+        $dataJson = file_get_contents("http://localhost:8081/advertisementIndexOffline");
+
+        if($dataJson){
+
+            $advertisement = json_decode($dataJson, true);
+
+        }
+
+    }else{
+
+        $dataJson = file_get_contents("http://localhost:8081/advertisementIndexOnline");
+
+        if($dataJson){
+
+            $advertisement = json_decode($dataJson, true);
+
+        }
+
+    }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -85,6 +107,22 @@
             $errorMessage = trad("Paiement du devis échoué.");
 
         }
+        
+        if($notif == "advertisement_success"){
+
+            $successMessage = trad("Paiement réussi, votre profil profite maintenant de la publicité.");
+
+        }
+
+        $errorMessages = [
+
+            "mail_paiement_error" => trad("Erreur lors de l'envoie du mail de confirmation, votre paiement à en revanche bien été pris en compte. Votre profil profitera donc bien de la publicité."),
+
+        ];
+
+        $errorKey = $_GET["error"] ?? null;
+
+        $errorMessage = $errorMessages[$errorKey] ?? null;
     ?>
 
     <body style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#1A1412;color:white;<?php endif;endif; ?>">
@@ -157,6 +195,44 @@
                 <div class="line mt-1 mb-1"></div>
                 <p><?php echo trad("Chez Silver Happy, nous accompagnons les seniors pour leur permettre de vivre pleinement et sereinement après 60 ans.<br><br>Notre mission est de proposer des services personnalisés, humains et de qualité, pensés pour simplifier le quotidien, favoriser le bien-être et créer du lien. Nous sélectionnons avec soin des prestataires engagés afin de garantir un accompagnement fiable, bienveillant et adapté à chaque situation.<br><br><strong>Parce que bien vieillir, c’est avant tout se sentir écouté, entouré et en confiance.</strong>") ?></p>
             </div>
+
+            <?php if(!isset($_SESSION['id']) || $_SESSION['status'] == 1 || $_SESSION['status'] == 2 || $_SESSION['status'] == 5 || $_SESSION['status'] == 6){ ?>
+                <div class="container">
+                    <div class="row mt-5 ms-5 pt-3">
+                        <h2><?php echo trad("Mise en avant d'un prestataire") ?></h2>
+                        <div class="line ms-3"></div>
+                    </div>
+                    <a class="linkToVisitProfile" style="text-decoration:none;" href="profileVisit.php?visitedId=<?php echo $advertisement['id_service_provider'] ?>">
+                        <?php if(isset($advertisement) && (!isset($advertisement['error']) || $advertisement['error'] == "")){ ?>
+                            <div class="showEvent" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;<?php endif;endif; ?>;">
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-auto">
+                                        <?php if(!empty($advertisement['profile_picture'])){ ?>
+                                            <img src="data/profils/<?php echo htmlspecialchars($advertisement['profile_picture']); ?>" alt="Photo de profil" class="profilePagePicture" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                                        <?php }else{ ?>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+                                            </svg>
+                                        <?php } ?>
+                                    </div>
+                                    <div class="col">
+                                        <h5 class="mb-0"><?php echo htmlspecialchars($advertisement['name'] . " " . $advertisement['surname']); ?></h5>
+                                        <small class="text-muted"><?php echo trad("Publicité proposée par Silver Happy"); ?></small>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h5><?php echo htmlspecialchars(tradByAPI($advertisement['title'])); ?></h5>
+                                        <div class="line mb-2"></div>
+                                        <p><?php echo htmlspecialchars(tradByAPI($advertisement['description'])); ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </a>
+                </div>
+            <?php } ?>
 
             <div class="part3">
                 <div class="container">

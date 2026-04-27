@@ -75,6 +75,12 @@ func main() {
 	http.HandleFunc("/showServiceProviderSlotsPlanning", handlersFront.ShowServiceProviderSlotsPlanning(database))
 	http.HandleFunc("/showServiceProviderQuotesPlanning", handlersFront.ShowServiceProviderQuotesPlanning(database))
 	http.HandleFunc("/showSearchedConsumers", handlersFront.ShowSearchedConsumers(database))
+	http.HandleFunc("/showServices", handlersFront.ShowServices(database))
+	http.HandleFunc("/showNeededDocuments", handlersFront.ShowNeededDocuments(database))
+	http.HandleFunc("/advertisementIndexOffline", handlersFront.AdvertisementIndexOffline(database))
+	http.HandleFunc("/advertisementIndexOnline", handlersFront.AdvertisementIndexOnline(database))
+	http.HandleFunc("/advertisementProfile", handlersFront.AdvertisementProfile(database))
+	http.HandleFunc("/openOrCreateDiscussionFromProfile", handlersFront.OpenOrCreateDiscussionFromProfile(database))
 
 	http.HandleFunc("/showInvoicesDefaultData", handlersBack.ShowInvoicesDefaultData(database))
 	http.HandleFunc("/showInvoicesPersonalizedData", handlersBack.ShowInvoicesPersonalizedData(database))

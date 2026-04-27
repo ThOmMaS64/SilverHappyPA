@@ -152,6 +152,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="profile.php"><?php echo trad("Mon profil") ?></a></li>
+                        <li><a class="dropdown-item" href="advertisement.php"><?php echo trad("Ma publicité") ?></a></li>
                         <li><a class="dropdown-item" href="contacts.php"><?php echo trad("Contacts") ?></a></li>
                         <li><a class="dropdown-item" href="parameters.php"><?php echo trad("Paramètres") ?></a></li>
                         <li>

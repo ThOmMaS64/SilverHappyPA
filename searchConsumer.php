@@ -76,20 +76,22 @@
                     <?php if(!empty($consumerList)){ ?>
                         <?php foreach($consumerList as $consumer){ ?>
 
-                            <div class="showAdvice" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;<?php endif;endif; ?>;">
+                            <a class="linkToVisitProfile" style="text-decoration:none;" href="profileVisit.php?type=consumer&visitedId=<?php echo $consumer['id_consumer'] ?>">
+                                <div class="showAdvice" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;<?php endif;endif; ?>;">
 
-                                <div class="row">
-                                    <div class="col-10">
-                                        <h5><?php echo htmlspecialchars(tradByAPI($consumer['name'])) ?><?= " " ?><?php echo htmlspecialchars(tradByAPI($consumer['surname'])) ?><?= " - " ?><?php echo htmlspecialchars(tradByAPI($consumer['username'])) ?></h5>
-                                        <div class="line"></div>
-                                        <p><?php echo htmlspecialchars(trad($consumer['description'])) ?></p>
-                                        <?php if(!empty($consumer['key_word1']) || !empty($consumer['key_word2']) || !empty($consumer['key_word3'])){ ?>
-                                            <p><?php echo htmlspecialchars(trad($consumer['key_word1'])) ?><?= " - " ?><?php echo htmlspecialchars(trad($consumer['key_word2'])) ?><?= " - " ?><?php echo htmlspecialchars(trad($consumer['key_word3'])) ?></p>
-                                        <?php } ?>
+                                    <div class="row">
+                                        <div class="col-10">
+                                            <h5><?php echo htmlspecialchars(tradByAPI($consumer['name'])) ?><?= " " ?><?php echo htmlspecialchars(tradByAPI($consumer['surname'])) ?><?= " - " ?><?php echo htmlspecialchars(tradByAPI($consumer['username'])) ?></h5>
+                                            <div class="line"></div>
+                                            <p><?php echo htmlspecialchars(trad($consumer['description'])) ?></p>
+                                            <?php if(!empty($consumer['key_word1']) || !empty($consumer['key_word2']) || !empty($consumer['key_word3'])){ ?>
+                                                <p><?php echo htmlspecialchars(trad($consumer['key_word1'])) ?><?= " - " ?><?php echo htmlspecialchars(trad($consumer['key_word2'])) ?><?= " - " ?><?php echo htmlspecialchars(trad($consumer['key_word3'])) ?></p>
+                                            <?php } ?>
+                                        </div>
                                     </div>
-                                </div>
 
-                            </div>
+                                </div>
+                            </a>
 
                         <?php } ?>
                     <?php }else{ ?>
