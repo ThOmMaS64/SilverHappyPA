@@ -247,48 +247,42 @@
                                     <p><small><?php echo trad("Prix sur devis") ?></small></p>
                                 <?php } ?>
 
-                            <?php if($service['requires_date'] && !empty($service['slots'])){ ?>
-                                <p class="mt-5"><strong><?php echo trad("Choisissez un créneau :") ?></strong></p>
-                                
-                                <?php if($service['pricing_type'] == 'fixed'){ ?>
-                                    <form method="GET" action="traitementsPHP/checkoutServices.php">
-                                <?php }else{ ?>
-                                    <form method="GET" action="http://localhost:8081/openOrCreateDiscussion">
-                                        <input type="hidden" name="id" value="<?php echo isset($_SESSION['id']) ? htmlspecialchars($_SESSION['id']) : ''; ?>">
-                                <?php } ?>
-                                    <?php foreach($service['slots'] as $slot){ ?>
-                                        <div class="d-flex align-items-center gap-2 mb-2">
-                                            <input type="radio" name="slot" value="<?php echo $slot['id_service_slot']; ?>" id="slot_<?php echo $slot['id_service_slot']; ?>" required>
-                                            <label for="slot_<?php echo $slot['id_service_slot']; ?>">
-                                                <?php echo date('d/m/Y H:i', strtotime($slot['start_time'])) ?> - <?php echo date('H:i', strtotime($slot['end_time'])) ?>
-                                            </label>
-                                        </div>
-                                    <?php } ?>
-                                    
-                                    <input type="hidden" name="id_service" value="<?php echo $service['ID_SERVICE']; ?>">
-
-                                    <button type="submit" class="btn btn-primary mt-3" style="width:80%;color:black;" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'; return false;" <?php } ?>>
-                                        <?php echo ($service['pricing_type'] == 'fixed') ? trad("Réserver le créneau sélectionné") : trad("Demander un devis"); ?>
-                                    </button>
-                                </form>
-                            <?php }elseif($service['requires_date'] && empty($service['slots'])){ ?>
-
-                                <p><?= trad("Aucun créneau disponible"); ?></p>
-
-                            <?php }elseif(!$service['requires_date']){ ?>
-                                <?php if($service['pricing_type'] == 'fixed'){ ?>
-                                <a href="traitementsPHP/checkoutServices.php?id_service=<?php echo $service['ID_SERVICE'] ?>" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'; return false;" <?php } ?>>
-                                    <button class="btn" style="width:100%;color:black;" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'" <?php } ?>>
-                                        <?php echo trad("Réserver") ?>
-                                    </button>
-                                </a>
-                                <?php }else{ ?>
+                            <?php if($service['pricing_type'] == 'quote'){ ?>
+    
                                 <a href="http://localhost:8081/openOrCreateDiscussion?id=<?php echo isset($_SESSION['id']) ? htmlspecialchars($_SESSION['id']) : ''; ?>&id_service=<?php echo htmlspecialchars($service['ID_SERVICE']) ?>" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'; return false;" <?php } ?>>
-                                    <button class="btn" style="width:100%;color:black;" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'; return false;" <?php } ?>>
+                                    <button class="btn mt-3" style="width:100%;color:black;">
                                         <?php echo trad("Demander un devis") ?>
                                     </button>
                                 </a>
+
+                            <?php } else { ?>
+
+                                <?php if($service['requires_date'] && !empty($service['slots'])){ ?>
+                                    <p class="mt-5"><strong><?php echo trad("Choisissez un créneau :") ?></strong></p>
+                                    <form method="GET" action="traitementsPHP/checkoutServices.php">
+                                        <?php foreach($service['slots'] as $slot){ ?>
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                <input type="radio" name="slot" value="<?php echo $slot['id_service_slot']; ?>" id="slot_<?php echo $slot['id_service_slot']; ?>" required>
+                                                <label for="slot_<?php echo $slot['id_service_slot']; ?>">
+                                                    <?php echo date('d/m/Y H:i', strtotime($slot['start_time'])) ?> - <?php echo date('H:i', strtotime($slot['end_time'])) ?>
+                                                </label>
+                                            </div>
+                                        <?php } ?>
+                                        <input type="hidden" name="id_service" value="<?php echo $service['ID_SERVICE']; ?>">
+                                        <button type="submit" class="btn btn-primary mt-3" style="width:80%;color:black;" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'; return false;" <?php } ?>>
+                                            <?php echo trad("Réserver le créneau sélectionné"); ?>
+                                        </button>
+                                    </form>
+                                <?php }elseif($service['requires_date'] && empty($service['slots'])){ ?>
+                                    <p class="mt-3"><?= trad("Aucun créneau disponible"); ?></p>
+                                <?php }elseif(!$service['requires_date']){ ?>
+                                    <a href="traitementsPHP/checkoutServices.php?id_service=<?php echo $service['ID_SERVICE'] ?>" <?php if(!isset($_SESSION['id'])) { ?> onclick="window.location.href='connexion.php?notif=need_connexion'; return false;" <?php } ?>>
+                                        <button class="btn mt-3" style="width:100%;color:black;">
+                                            <?php echo trad("Réserver") ?>
+                                        </button>
+                                    </a>
                                 <?php } ?>
+
                             <?php } ?>
                             </div>
 
