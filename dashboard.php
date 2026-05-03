@@ -103,6 +103,11 @@
 
         $successMessage = $notif[$notifKey] ?? null;
 
+
+        $providerMensualAmountJson = file_get_contents("http://localhost:8081/getServiceProviderMensualAmount?id_service_provider=" .  $_SESSION['id_service_provider']);
+        $data = json_decode($providerMensualAmountJson, true);
+        $providerMensualAmount = $data['amount'];
+        $providerMensualServicesNb = $data['nb_services_provided'];
     ?>
 
     <body>
@@ -123,6 +128,10 @@
                                 <?php echo htmlspecialchars($successMessage); ?>
                             </div>
                         <?php endif; ?>
+
+                        <p class="mt-5"><strong>Revenus du mois en cours :</strong></p>
+
+                        <?= $providerMensualAmount ?><?= " € en " ?><?= $providerMensualServicesNb ?><?php if($providerMensualServicesNb > 1){ echo " prestations."; }else{ echo " prestation."; } ?>
                     </div>
                 </div>
                 <div class="lateralAffichage col-9" style="background-color:#f2f6fa;padding-top:140px; padding-bottom:90px;<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#1A1412;color:white;<?php endif;endif; ?>;">
@@ -135,7 +144,7 @@
                         <input type="hidden" name="id_service_provider" value="<?= $_SESSION['id_service_provider'] ?? '' ?>">
                         <input type="hidden" name="service_type" value="<?= htmlspecialchars($_GET['chosenService'] ?? '') ?>">
 
-                        <div class="col-4">
+                        <div class="col-6">
                             <div class="row mb-5">
                                 <div class="input-group">
                                     <label class="mb-1">Choisissez un service parmi cette sélection :</label>
@@ -181,7 +190,7 @@
                     <h5 class="mt-5"><?php echo trad("Ajouter une disponibilité"); ?></h5>
                         <div class="line mb-4"></div>
 
-                        <form action="" method="POST" class="col-6">
+                        <form action="" method="POST" class="col-8">
                             <input type="hidden" name="action" value="add_slot">
 
                             <div class="mb-3">
