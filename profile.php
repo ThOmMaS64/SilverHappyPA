@@ -275,6 +275,7 @@
                                         <p><?php echo trad("Date de naissance :") ?> <?php echo date("d/m/Y", strtotime($_SESSION['birth_date'])) ?></p>
                                     <?php } ?>
                                     <p><?php echo trad("Inscrit depuis le :") ?> <?php echo date("d/m/Y", strtotime($_SESSION['date_inscription'])); ?></p>
+                                    <p><?php echo trad("Dernière connexion : ") ?> <?php echo date("d/m/Y", strtotime($_SESSION['last_connection'])); ?>
                                     <p><?php echo trad("Adresse email") ?> : <?php echo $_SESSION['email']; ?></p>
                                 </div>
 
@@ -297,20 +298,75 @@
 
                                         <input type="hidden" name="id" value="<?php echo $_SESSION['id']; ?>">
 
-                                        <label><?php echo trad("Personalisez vos mots clés (des mots représentant ce qui vous importe et ce que vous êtes venus chercher sur Silver Happy, exemple : sport, alimentation, sommeil...)") ?> :</label>
+                                        <label><?php echo trad("Personalisez vos mots clés (ce qui vous représente, ce que vous cherchez chez Silver Happy") ?> :</label>
                                         <div class="row">
                                             <div class="col-4">
-                                                <input class="form-control" type="text" name="keyWord1" value="<?php echo tradByAPI($_SESSION['keyWord1']) ?>">
+                                                <select class="form-control" name="keyWord1"> 
+                                                    <option class="smalltext" value="Alimentation" <?= htmlspecialchars($_SESSION['keyWord1'] ?? 0) == "Alimentation" ? 'selected' : '' ?>>Alimentation</option>
+                                                    <option class="smalltext" value="Bien-être" <?= htmlspecialchars($_SESSION['keyWord1'] ?? 0) == "Bien-être" ? 'selected' : '' ?>>Bien-être</option>
+                                                    <option class="smalltext" value="Sommeil" <?= htmlspecialchars($_SESSION['keyWord1'] ?? 0) == "Sommeil" ? 'selected' : '' ?>>Sommeil</option>
+                                                    <option class="smalltext" value="Sport" <?= htmlspecialchars($_SESSION['keyWord1'] ?? 0) == "Sport" ? 'selected' : '' ?>>Sport</option>
+                                                    <option class="smalltext" value="Intéractions sociales" <?= htmlspecialchars($_SESSION['keyWord1'] ?? 0) == "Intéractions sociales" ? 'selected' : '' ?>>Intéractions sociales</option>
+                                                    <option class="smalltext" value="Partage" <?= htmlspecialchars($_SESSION['keyWord1'] ?? 0) == "Partage" ? 'selected' : '' ?>>Partage</option>
+                                                    <option class="smalltext" value="Suivi médical" <?= htmlspecialchars($_SESSION['keyWord1'] ?? 0) == "Suivi médical" ? 'selected' : '' ?>>Suivi médical</option>
+                                                    <option class="smalltext" value="Famille" <?= htmlspecialchars($_SESSION['keyWord1'] ?? 0) == "Famille" ? 'selected' : '' ?>>Famille</option>
+                                                    <option class="smalltext" value="Activités" <?= htmlspecialchars($_SESSION['keyWord1'] ?? 0) == "Activités" ? 'selected' : '' ?>>Activités</option>
+                                                </select>
                                             </div>
                                             <div class="col-4">
-                                                <input class="form-control" type="text" name="keyWord2" value="<?php echo tradByAPI($_SESSION['keyWord2']) ?>">
+                                                <select class="form-control" name="keyWord2"> 
+                                                    <option class="smalltext" value="Alimentation" <?= htmlspecialchars($_SESSION['keyWord2'] ?? 0) == "Alimentation" ? 'selected' : '' ?>>Alimentation</option>
+                                                    <option class="smalltext" value="Bien-être" <?= htmlspecialchars($_SESSION['keyWord2'] ?? 0) == "Bien-être" ? 'selected' : '' ?>>Bien-être</option>
+                                                    <option class="smalltext" value="Sommeil" <?= htmlspecialchars($_SESSION['keyWord2'] ?? 0) == "Sommeil" ? 'selected' : '' ?>>Sommeil</option>
+                                                    <option class="smalltext" value="Sport" <?= htmlspecialchars($_SESSION['keyWord2'] ?? 0) == "Sport" ? 'selected' : '' ?>>Sport</option>
+                                                    <option class="smalltext" value="Intéractions sociales" <?= htmlspecialchars($_SESSION['keyWord2'] ?? 0) == "Intéractions sociales" ? 'selected' : '' ?>>Intéractions sociales</option>
+                                                    <option class="smalltext" value="Partage" <?= htmlspecialchars($_SESSION['keyWord2'] ?? 0) == "Partage" ? 'selected' : '' ?>>Partage</option>
+                                                    <option class="smalltext" value="Suivi médical" <?= htmlspecialchars($_SESSION['keyWord2'] ?? 0) == "Suivi médical" ? 'selected' : '' ?>>Suivi médical</option>
+                                                    <option class="smalltext" value="Famille" <?= htmlspecialchars($_SESSION['keyWord2'] ?? 0) == "Famille" ? 'selected' : '' ?>>Famille</option>
+                                                    <option class="smalltext" value="Activités" <?= htmlspecialchars($_SESSION['keyWord2'] ?? 0) == "Activités" ? 'selected' : '' ?>>Activités</option>
+                                                </select>
                                             </div>
                                             <div class="col-4">
-                                                <input class="form-control" type="text" name="keyWord3" value="<?php echo tradByAPI($_SESSION['keyWord3']) ?>">
+                                                <select class="form-control" name="keyWord3"> 
+                                                    <option class="smalltext" value="Alimentation" <?= htmlspecialchars($_SESSION['keyWord3'] ?? 0) == "Alimentation" ? 'selected' : '' ?>>Alimentation</option>
+                                                    <option class="smalltext" value="Bien-être" <?= htmlspecialchars($_SESSION['keyWord3'] ?? 0) == "Bien-être" ? 'selected' : '' ?>>Bien-être</option>
+                                                    <option class="smalltext" value="Sommeil" <?= htmlspecialchars($_SESSION['keyWord3'] ?? 0) == "Sommeil" ? 'selected' : '' ?>>Sommeil</option>
+                                                    <option class="smalltext" value="Sport" <?= htmlspecialchars($_SESSION['keyWord3'] ?? 0) == "Sport" ? 'selected' : '' ?>>Sport</option>
+                                                    <option class="smalltext" value="Intéractions sociales" <?= htmlspecialchars($_SESSION['keyWord3'] ?? 0) == "Intéractions sociales" ? 'selected' : '' ?>>Intéractions sociales</option>
+                                                    <option class="smalltext" value="Partage" <?= htmlspecialchars($_SESSION['keyWord3'] ?? 0) == "Partage" ? 'selected' : '' ?>>Partage</option>
+                                                    <option class="smalltext" value="Suivi médical" <?= htmlspecialchars($_SESSION['keyWord3'] ?? 0) == "Suivi médical" ? 'selected' : '' ?>>Suivi médical</option>
+                                                    <option class="smalltext" value="Famille" <?= htmlspecialchars($_SESSION['keyWord3'] ?? 0) == "Famille" ? 'selected' : '' ?>>Famille</option>
+                                                    <option class="smalltext" value="Activités" <?= htmlspecialchars($_SESSION['keyWord3'] ?? 0) == "Activités" ? 'selected' : '' ?>>Activités</option>
+                                                </select>
                                             </div>
                                         </div>
                                     <?php }elseif($_SESSION['personalizeInputs'] == 0){ ?>
                                     <?php if($_SESSION["keyWord1"] != ""){ ?> <p> Mots clés : <strong> <?php echo $_SESSION["keyWord1"]; } if($_SESSION["keyWord2"] != ""){ ?> </strong> - <strong> <?php echo $_SESSION["keyWord2"]; } if($_SESSION["keyWord3"] != ""){ ?> </strong> - <strong> <?php echo $_SESSION["keyWord3"]; } ?> </strong></p>
+                                    <?php } ?>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <?php if($_SESSION['personalizeInputs'] == 1){ ?>
+
+                                        <input type="hidden" name="id" value="<?php echo $_SESSION['id']; ?>">
+
+                                        <label><?php echo trad("Changez votre lieu de résidence") ?> :</label>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <input class="form-control" type="text" name="nb_street" value="<?php echo $_SESSION['nb_street'] ?>">
+                                            </div>
+                                            <div class="col-4">
+                                                <input class="form-control" type="text" name="street" value="<?php echo $_SESSION['street'] ?>">
+                                            </div>
+                                            <div class="col-4">
+                                                <input class="form-control" type="text" name="city" value="<?php echo $_SESSION['city'] ?>">
+                                            </div>
+                                            <div class="col-4">
+                                                <input class="form-control" type="text" name="postal_code" value="<?php echo $_SESSION['postal_code'] ?>">
+                                            </div>
+                                        </div>
+                                    <?php }elseif($_SESSION['personalizeInputs'] == 0){ ?>
+                                    <?php if($_SESSION["city"] != ""){ ?> <p> Lieu de résidence : <strong> <?php echo $_SESSION["nb_street"]; } if($_SESSION["street"] != ""){ ?> </strong>  <strong> <?php echo $_SESSION["street"]; } if($_SESSION["city"] != ""){ ?> </strong> - <strong> <?php echo $_SESSION["city"]; } if($_SESSION["postal_code"] != ""){ ?> </strong> - <strong> <?php echo $_SESSION["postal_code"]; }?> </strong></p>
                                     <?php } ?>
                                 </div>
 

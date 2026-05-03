@@ -32,6 +32,7 @@
             $_SESSION['language'] = $response['language'];
             $_SESSION['profilePicture'] = $response['profilePicture'];
             $_SESSION['date_inscription'] = $response['dateInscription'];
+            $_SESSION['last_connection'] = $response['last_connection'];
             $_SESSION['description'] = $response['description'];
             $_SESSION['keyWord1'] = $response['keyWord1'];
             $_SESSION['keyWord2'] = $response['keyWord2'];
@@ -39,6 +40,10 @@
             $_SESSION['banned'] = $response['banned'];
             $_SESSION['showZoom'] = $response['showZoom'];
             $_SESSION['showAudio'] = $response['showAudio'];
+            $_SESSION['city'] = $response['city'];
+            $_SESSION['street'] = $response['street'];
+            $_SESSION['nb_street'] = $response['streetNumber'];
+            $_SESSION['postal_code'] = $response['postalCode'];
 
             if(isset($response['tutoSeen']) && $response['tutoSeen'] != ""){
 

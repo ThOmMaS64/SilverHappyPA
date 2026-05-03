@@ -223,7 +223,6 @@ if($response){
                 'street' => $event['street'],
                 'nb_street' => $event['nb_street'],
                 'postal_code' => $event['postal_code'],
-                'username' => $event['username'],
                 'ID_WORK_ADDRESS' => $event['ID_WORK_ADDRESS']
             ];
         }
@@ -318,7 +317,6 @@ if($response){
                 'ID_SERVICE' => $service['ID_SERVICE'],
                 'type' => $service['type'],
                 'description' => $service['description'],
-                'place' => $service['place'],
                 'cost' => $service['cost'],
                 'is_medical_confidential' => $service['is_medical_confidential'],
                 'nb' => $service['nb']
@@ -731,7 +729,21 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                             <td><input class="form-control" form="<?= $idForm ?>" name="nb_street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['nb_street'] ?? '') ?>"></td>
                                             <td><input class="form-control" form="<?= $idForm ?>" name="postal_code" class="mediumtext" type="text" value="<?= htmlspecialchars($user['postal_code'] ?? '') ?>"></td>
 
-                                            <td><input class="form-control" form="<?= $idForm ?>" name="status" class="mediumtext" type="text" value="<?= htmlspecialchars($user['status'] ?? '') ?>"></td>
+                                            <td>
+                                                <select class="form-control" form="<?= $idForm ?>" name="status"> 
+                                                    <option class="smalltext" value="-1" <?= htmlspecialchars($user['status'] ?? 0) == -1 ? 'selected' : '' ?>>Adhérent en cours d'inscription</option>
+                                                    <option class="smalltext" value="-2" <?= htmlspecialchars($user['status'] ?? 0) == -2 ? 'selected' : '' ?>>Prestataire en cours d'inscription</option>
+                                                    <option class="smalltext" value="1" <?= htmlspecialchars($user['status'] ?? 0) == 1 ? 'selected' : '' ?>>Adhérent paiement mensuel</option>
+                                                    <option class="smalltext" value="2" <?= htmlspecialchars($user['status'] ?? 0) == 2 ? 'selected' : '' ?>>Adhérent paiement annuel</option>
+                                                    <option class="smalltext" value="3" <?= htmlspecialchars($user['status'] ?? 0) == 3 ? 'selected' : '' ?>>Prestataire non vérifié</option>
+                                                    <option class="smalltext" value="4" <?= htmlspecialchars($user['status'] ?? 0) == 4 ? 'selected' : '' ?>>Prestataire vérifié</option>
+                                                    <option class="smalltext" value="5" <?= htmlspecialchars($user['status'] ?? 0) == 5 ? 'selected' : '' ?>>Adhérent renouvellement mensuel</option>
+                                                    <option class="smalltext" value="6" <?= htmlspecialchars($user['status'] ?? 0) == 6 ? 'selected' : '' ?>>Adhérent renouvellement annuel</option>
+                                                    <option class="smalltext" value="9" <?= htmlspecialchars($user['status'] ?? 0) == 9 ? 'selected' : '' ?>>Admin</option>
+                                                </select>
+                                            </td>
+
+
                                             <td><input class="form-control" form="<?= $idForm ?>" name="date_inscription" class="mediumtext" type="date" value="<?= htmlspecialchars($user['date_inscription'] ?? '0') ?>"></td>
                                             <td><?php if($user['connected'] == 1){echo "en cours";}else{echo date("d/m/Y", strtotime($user['last_connection']));} ?></td>
                                             <td><?= htmlspecialchars($user['banned'] ?? '') ?></td>
@@ -960,7 +972,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <th scope="col">#</th>
                         <th scope="col">Type</th>
                         <th scope="col">Description</th>
-                        <th scope="col">Place</th>
                         <th scope="col">Coût</th>
                         <th scope="col">Confidentiel ?</th>
                         <th scope="col">Nombre de prestataires</th>
@@ -981,8 +992,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                     <td><input class="form-control" form="<?= $idFormService ?>" name="type" class="mediumtext" type="text" value="<?= htmlspecialchars($service['type'] ?? '') ?>"></td>
 
                                     <td><input class="form-control" form="<?= $idFormService ?>" name="description" class="bigtext" type="text" value="<?= htmlspecialchars($service['description'] ?? '') ?>"></td>
-
-                                    <td><input class="form-control" form="<?= $idFormService ?>" name="place" class="bigtext" type="text" value="<?= htmlspecialchars($service['place'] ?? '') ?>"></td>
 
                                     <td><input class="form-control" form="<?= $idFormService ?>" name="cost" class="smalltext" type="text" value="<?= htmlspecialchars($service['cost'] ?? '') ?>"></td>
 
@@ -1092,7 +1101,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                             <tr>
                             <th scope="col">Type</th>
                             <th scope="col">Description</th>
-                            <th scope="col">Place</th>
                             <th scope="col">Coût</th>
                             <th scope="col">Confidentiel ?</th>
                             <th scope="col"></th>
@@ -1103,8 +1111,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                 <td><input class="form-control mediumtext" type="text" name="type"></td>
 
                                 <td><input class="form-control bigtext" type="text" name="description"></td>
-
-                                <td><input class="form-control bigtext" type="text" name="place"></td>
 
                                 <td><input class="form-control smalltext" type="number" name="cost"></td>
 
@@ -1385,7 +1391,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <th scope="col">Rue</th>
                         <th scope="col">Numéro de rue</th>
                         <th scope="col">Code postal</th>
-                        <th scope="col">Organisateur</th>
                         <th scope="col">Sélectionner</th>
                         <th scope="col">Modifier</th>
                         <th scope="col">Supprimer</th>
@@ -1423,8 +1428,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                     <td><input class="form-control" form="<?= $idFormEvent ?>" name="nb_street" class="mediumtext" type="text" value="<?= htmlspecialchars($event['nb_street'] ?? '') ?>"></td>
                                     
                                     <td><input class="form-control" form="<?= $idFormEvent ?>" name="postal_code" class="mediumtext" type="text" value="<?= htmlspecialchars($event['postal_code'] ?? '') ?>"></td>
-
-                                    <td><?= htmlspecialchars($event['username'] ?? '') ?></td>
                                         
                                     <td>
                                          <div class="form-check">

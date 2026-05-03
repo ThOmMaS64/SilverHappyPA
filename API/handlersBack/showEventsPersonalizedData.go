@@ -58,7 +58,7 @@ func ShowEventsPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 		var args []any
 		 
-		basicQuery := "SELECT EVENT.ID_EVENT, EVENT.type, EVENT.name, EVENT.date_start, EVENT.date_end, EVENT.description, EVENT.price, EVENT.capacity, EVENT.nb_inscription, EVENT.ID_WORK_ADDRESS, WORK_ADDRESS.city, WORK_ADDRESS.street, WORK_ADDRESS.nb_street, WORK_ADDRESS.postal_code, USER_.username FROM EVENT LEFT JOIN WORK_ADDRESS on EVENT.ID_WORK_ADDRESS = WORK_ADDRESS.ID_WORK_ADDRESS LEFT JOIN CONDUCT ON EVENT.ID_EVENT = CONDUCT.ID_EVENT LEFT JOIN SERVICE_PROVIDER ON CONDUCT.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER LEFT JOIN USER_ ON SERVICE_PROVIDER.ID_USER = USER_.ID_USER WHERE 1=1"
+		basicQuery := "SELECT EVENT.ID_EVENT, EVENT.type, EVENT.name, EVENT.date_start, EVENT.date_end, EVENT.description, EVENT.price, EVENT.capacity, EVENT.nb_inscription, EVENT.ID_WORK_ADDRESS, WORK_ADDRESS.city, WORK_ADDRESS.street, WORK_ADDRESS.nb_street, WORK_ADDRESS.postal_code FROM EVENT LEFT JOIN WORK_ADDRESS on EVENT.ID_WORK_ADDRESS = WORK_ADDRESS.ID_WORK_ADDRESS LEFT JOIN CONDUCT ON EVENT.ID_EVENT = CONDUCT.ID_EVENT LEFT JOIN SERVICE_PROVIDER ON CONDUCT.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER LEFT JOIN USER_ ON SERVICE_PROVIDER.ID_USER = USER_.ID_USER WHERE 1=1"
 
 		if research != ""{
 
@@ -125,7 +125,7 @@ func ShowEventsPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 			var event Event
 
-			err := rowSelectEvent.Scan(&event.ID_EVENT, &event.Type, &event.Name, &dateStart, &dateEnd, &description, &price, &capacity, &nb_inscription, &event.ID_WORK_ADDRESS, &city, &street, &nbStreet, &postalCode, &event.Username)
+			err := rowSelectEvent.Scan(&event.ID_EVENT, &event.Type, &event.Name, &dateStart, &dateEnd, &description, &price, &capacity, &nb_inscription, &event.ID_WORK_ADDRESS, &city, &street, &nbStreet, &postalCode)
 
 			if err == nil{
 

@@ -23,6 +23,7 @@ type userDataResponse struct {
 	KeyWord2 string `json:"keyWord2"`
 	KeyWord3 string `json:"keyWord3"`
 	DateInscription string `json:"dateInscription"`
+	LastConnection string `json:"last_connection"`
 	DarkMode string `json:"darkMode"`
 	LevelFont string `json:"levelFont"`
 	FontChange string `json:"fontChange"`
@@ -60,6 +61,7 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		var keyWord2 string
 		var keyWord3 string
 		var dateInscription string
+		var lastConnection string
 		var darkMode string
 		var levelFont string
 		var fontChange string
@@ -113,9 +115,9 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		rowUser := database.QueryRow("SELECT name, surname, username, city, street, nb_street, postal_code, status, email, description, keyword1, keyword2, keyword3, date_inscription, darkMode, levelFont, fontChange, cursorType, language, profilePicture, banned, showZoom, showAudio FROM user_ WHERE ID_USER = ?", id)
+		rowUser := database.QueryRow("SELECT name, surname, username, city, street, nb_street, postal_code, status, email, description, keyword1, keyword2, keyword3, date_inscription, last_connection, darkMode, levelFont, fontChange, cursorType, language, profilePicture, banned, showZoom, showAudio FROM user_ WHERE ID_USER = ?", id)
 		
-		errUser := rowUser.Scan(&name, &surname, &username, &city, &street, &streetNumber, &postalCode, &status, &email, &description, &keyWord1, &keyWord2, &keyWord3, &dateInscription, &darkMode, &levelFont, &fontChange, &cursorType, &language, &profilePicture, &banned, &showZoom, &showAudio)
+		errUser := rowUser.Scan(&name, &surname, &username, &city, &street, &streetNumber, &postalCode, &status, &email, &description, &keyWord1, &keyWord2, &keyWord3, &dateInscription, &lastConnection, &darkMode, &levelFont, &fontChange, &cursorType, &language, &profilePicture, &banned, &showZoom, &showAudio)
 
 		if errUser != nil {
 
@@ -140,6 +142,7 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		response.KeyWord2 = keyWord2
 		response.KeyWord3 = keyWord3
 		response.DateInscription = dateInscription
+		response.LastConnection = lastConnection
 		response.DarkMode = darkMode
 		response.LevelFont = levelFont
 		response.FontChange = fontChange

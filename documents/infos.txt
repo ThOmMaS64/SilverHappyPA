@@ -2,7 +2,7 @@ silverhappyoff@gmail.com
 silverHappy123!
 
 
-statuts :
+status :
 
 -1 = adhérent en cours d'inscription
 -2 = prestataire en cours d'inscription

@@ -19,6 +19,10 @@ type KeywordDescriptionResponse struct{
 	KeyWord2 string `json:"keyWord2"`
 	KeyWord3 string `json:"keyWord3"`
 	Description string `json:"description"`
+	City string `json:"city"`
+	Street string `json:"street"`
+	NbStreet int `json:"nb_street"`
+	PostalCode string `json:"postal_code"`
 	Error string `json:"error"`
 
 }
@@ -68,12 +72,16 @@ func ShowUpdatedData(database *sql.DB) http.HandlerFunc {
 			var keyword1 string
 			var keyword2 string
 			var keyword3 string
+			var city string
+			var street string
+			var nbStreet int
+			var postalCode string
 
 			var response KeywordDescriptionResponse
 
-			rowUser := database.QueryRow("SELECT description, keyWord1, keyWord2, keyWord3 FROM user_ WHERE ID_USER = ?", userId)
+			rowUser := database.QueryRow("SELECT description, keyWord1, keyWord2, keyWord3, city, street, nb_street, postal_code FROM user_ WHERE ID_USER = ?", userId)
 		
-			errUser := rowUser.Scan(&description, &keyword1, &keyword2, &keyword3)
+			errUser := rowUser.Scan(&description, &keyword1, &keyword2, &keyword3, &city, &street, &nbStreet, &postalCode)
 
 			if errUser != nil {
 
@@ -87,6 +95,10 @@ func ShowUpdatedData(database *sql.DB) http.HandlerFunc {
 			response.KeyWord1 = keyword1
 			response.KeyWord2 = keyword2
 			response.KeyWord3 = keyword3
+			response.City = city
+			response.Street = street
+			response.NbStreet = nbStreet
+			response.PostalCode = postalCode
 
 			json.NewEncoder(w).Encode(response)
 
