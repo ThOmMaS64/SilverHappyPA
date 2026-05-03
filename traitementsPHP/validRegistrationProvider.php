@@ -57,6 +57,26 @@
 
         }
 
+        $qId = 'SELECT ID_USER FROM USER_ WHERE email = :email';
+        $reqId = $bdd->prepare($qId);
+        $reqId->execute(['email' => $_GET['email']]);
+        $userId = $reqId->fetchColumn();
+
+        $q = 'INSERT INTO DISCUSSION(user1_id, user2_id, created_at) VALUES (:id, 1, NOW())';
+        $statement = $bdd->prepare($q);
+        $result = $statement->execute([
+            'id' => $userId
+        ]);
+
+        $idDiscussion = $bdd->lastInsertId();
+
+        $q = 'INSERT INTO MESSAGE(content, date, sender_id, ID_DISCUSSION) VALUES (:content, NOW(), 1, :idDiscussion)';
+        $statement = $bdd->prepare($q);
+        $result = $statement->execute([
+            'content' => trad("Bienvenue sur Silver Happy, vous êtes ici dans votre messagerie personnelle. Je suis votre assistant officiel, n'hésitez pas à me contacter pour tout besoin."),
+            'idDiscussion' => $idDiscussion
+        ]);
+
         header("location:../connexion.php?state=3");
         exit();
 
