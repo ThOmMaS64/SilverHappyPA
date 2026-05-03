@@ -74,6 +74,7 @@
                         <li><a class="dropdown-item" href="profile.php"><?php echo trad("Mon profil") ?></a></li>
                         <li><a class="dropdown-item" href="calendar.php"><?php echo trad("Mon planning") ?></a></li>
                         <li><a class="dropdown-item" href="cart.php"><?php echo trad("Mon panier") ?></a></li>
+                        <li><a class="dropdown-item" href="opinion.php"><?php echo trad("Partager un avis") ?></a></li>
                         <li><a class="dropdown-item" href="contacts.php"><?php echo trad("Contacts") ?></a></li>
                         <li><a class="dropdown-item" href="parameters.php"><?php echo trad("Paramètres<") ?>/a></li>
                         <li>
@@ -153,6 +154,7 @@
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="profile.php"><?php echo trad("Mon profil") ?></a></li>
                         <li><a class="dropdown-item" href="advertisement.php"><?php echo trad("Ma publicité") ?></a></li>
+                        <li><a class="dropdown-item" href="opinionsIGot.php"><?php echo trad("Avis reçus") ?></a></li>
                         <li><a class="dropdown-item" href="contacts.php"><?php echo trad("Contacts") ?></a></li>
                         <li><a class="dropdown-item" href="parameters.php"><?php echo trad("Paramètres") ?></a></li>
                         <li>

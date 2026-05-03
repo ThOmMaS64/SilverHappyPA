@@ -86,6 +86,10 @@ func main() {
 	http.HandleFunc("/showProviderServices", handlersFront.ShowProviderServices(database))
 	http.HandleFunc("/deleteServiceSlot", handlersFront.DeleteServiceSlot(database))
 	http.HandleFunc("/getServiceProviderSlots", handlersFront.GetServiceProviderSlots(database))
+	http.HandleFunc("/showDoneAndNotGradedServices", handlersFront.ShowDoneAndNotGradedServices(database))
+	http.HandleFunc("/addGrade", handlersFront.AddGrade(database))
+	http.HandleFunc("/showDefaultGradesIGot", handlersFront.ShowDefaultGradesIGot(database))
+	http.HandleFunc("/showPersonalizedGradesIGot", handlersFront.ShowPersonalizedGradesIGot(database))
 
 	http.HandleFunc("/showInvoicesDefaultData", handlersBack.ShowInvoicesDefaultData(database))
 	http.HandleFunc("/showInvoicesPersonalizedData", handlersBack.ShowInvoicesPersonalizedData(database))
