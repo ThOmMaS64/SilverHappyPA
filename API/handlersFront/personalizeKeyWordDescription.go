@@ -26,8 +26,9 @@ func PersonalizeKeyWordDescription(database *sql.DB) http.HandlerFunc {
 		street := r.FormValue("street")
 		streetNb := r.FormValue("nb_street")
 		postalCode := r.FormValue("postal_code")
+		email := r.FormValue("email")
 
-		updateStatement, updateError := database.Prepare("UPDATE USER_ SET description = ?, keyWord1 = ?, keyWord2 = ?, keyWord3 = ?, city = ?, street = ?, nb_street = ?, postal_code = ? WHERE ID_USER = ?")
+		updateStatement, updateError := database.Prepare("UPDATE USER_ SET description = ?, keyWord1 = ?, keyWord2 = ?, keyWord3 = ?, city = ?, street = ?, nb_street = ?, postal_code = ?, email = ? WHERE ID_USER = ?")
 
 		if updateError != nil{
 
@@ -37,7 +38,7 @@ func PersonalizeKeyWordDescription(database *sql.DB) http.HandlerFunc {
 		}
 		defer updateStatement.Close()
 
-		_, updateStatementExecError := updateStatement.Exec(description, keyWord1, keyWord2, keyWord3, city, street, streetNb, postalCode, id)
+		_, updateStatementExecError := updateStatement.Exec(description, keyWord1, keyWord2, keyWord3, city, street, streetNb, postalCode, email, id)
 
 		if updateStatementExecError != nil{
 

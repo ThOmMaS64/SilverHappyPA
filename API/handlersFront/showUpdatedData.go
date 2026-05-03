@@ -23,6 +23,7 @@ type KeywordDescriptionResponse struct{
 	Street string `json:"street"`
 	NbStreet int `json:"nb_street"`
 	PostalCode string `json:"postal_code"`
+	Email string `json:"email"`
 	Error string `json:"error"`
 
 }
@@ -76,12 +77,13 @@ func ShowUpdatedData(database *sql.DB) http.HandlerFunc {
 			var street string
 			var nbStreet int
 			var postalCode string
+			var email string
 
 			var response KeywordDescriptionResponse
 
-			rowUser := database.QueryRow("SELECT description, keyWord1, keyWord2, keyWord3, city, street, nb_street, postal_code FROM user_ WHERE ID_USER = ?", userId)
+			rowUser := database.QueryRow("SELECT description, keyWord1, keyWord2, keyWord3, city, street, nb_street, postal_code, email FROM user_ WHERE ID_USER = ?", userId)
 		
-			errUser := rowUser.Scan(&description, &keyword1, &keyword2, &keyword3, &city, &street, &nbStreet, &postalCode)
+			errUser := rowUser.Scan(&description, &keyword1, &keyword2, &keyword3, &city, &street, &nbStreet, &postalCode, &email)
 
 			if errUser != nil {
 
@@ -99,6 +101,7 @@ func ShowUpdatedData(database *sql.DB) http.HandlerFunc {
 			response.Street = street
 			response.NbStreet = nbStreet
 			response.PostalCode = postalCode
+			response.Email = email
 
 			json.NewEncoder(w).Encode(response)
 

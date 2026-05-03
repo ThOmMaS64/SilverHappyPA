@@ -51,6 +51,11 @@
                 $_SESSION['keyWord1'] = $response['keyWord1'];
                 $_SESSION['keyWord2'] = $response['keyWord2'];
                 $_SESSION['keyWord3'] = $response['keyWord3'];
+                $_SESSION['city'] = $response['city'];
+                $_SESSION['street'] = $response['street'];
+                $_SESSION['nb_street'] = $response['nb_street'];
+                $_SESSION['postal_code'] = $response['postal_code'];
+                $_SESSION['email'] = $response['email'];
 
             }
         }
@@ -276,7 +281,9 @@
                                     <?php } ?>
                                     <p><?php echo trad("Inscrit depuis le :") ?> <?php echo date("d/m/Y", strtotime($_SESSION['date_inscription'])); ?></p>
                                     <p><?php echo trad("Dernière connexion : ") ?> <?php echo date("d/m/Y", strtotime($_SESSION['last_connection'])); ?>
-                                    <p><?php echo trad("Adresse email") ?> : <?php echo $_SESSION['email']; ?></p>
+                                    <?php if($_SESSION['personalizeInputs'] == 0){ ?>
+                                        <p><?php echo trad("Adresse email") ?> : <?php echo $_SESSION['email']; ?></p>
+                                    <?php } ?>
                                 </div>
 
                                 <div class="col-1" style="margin-left:95%;">
@@ -350,23 +357,36 @@
 
                                         <input type="hidden" name="id" value="<?php echo $_SESSION['id']; ?>">
 
+                                        <div class="row mb-3">
+                                            <?php if($_SESSION['personalizeInputs'] == 1){ ?>
+                                                <label><?php echo trad("Modifiez votre adresse email") ?> :</label>
+                                                <div class="col-6">
+                                                    <input class="form-control" type="email" name="email" value="<?php echo $_SESSION['email'] ?>">
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+
                                         <label><?php echo trad("Changez votre lieu de résidence") ?> :</label>
                                         <div class="row">
-                                            <div class="col-4">
+                                            <div class="col-2">
+                                                <label>Numéro de rue</label>
                                                 <input class="form-control" type="text" name="nb_street" value="<?php echo $_SESSION['nb_street'] ?>">
                                             </div>
                                             <div class="col-4">
+                                                <label>Rue</label>
                                                 <input class="form-control" type="text" name="street" value="<?php echo $_SESSION['street'] ?>">
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-3">
+                                                <label>Ville</label>
                                                 <input class="form-control" type="text" name="city" value="<?php echo $_SESSION['city'] ?>">
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-3">
+                                                <label>Code postal</label>
                                                 <input class="form-control" type="text" name="postal_code" value="<?php echo $_SESSION['postal_code'] ?>">
                                             </div>
                                         </div>
                                     <?php }elseif($_SESSION['personalizeInputs'] == 0){ ?>
-                                    <?php if($_SESSION["city"] != ""){ ?> <p> Lieu de résidence : <strong> <?php echo $_SESSION["nb_street"]; } if($_SESSION["street"] != ""){ ?> </strong>  <strong> <?php echo $_SESSION["street"]; } if($_SESSION["city"] != ""){ ?> </strong> - <strong> <?php echo $_SESSION["city"]; } if($_SESSION["postal_code"] != ""){ ?> </strong> - <strong> <?php echo $_SESSION["postal_code"]; }?> </strong></p>
+                                    <?php if($_SESSION["city"] != ""){ ?> <p> Lieu de résidence : <?php echo $_SESSION["nb_street"]; } if($_SESSION["street"] != ""){ ?> <?php echo $_SESSION["street"]; } if($_SESSION["city"] != ""){ ?>, <?php echo $_SESSION["city"]; } if($_SESSION["postal_code"] != ""){ ?>, <?php echo $_SESSION["postal_code"]; }?></p>
                                     <?php } ?>
                                 </div>
 
