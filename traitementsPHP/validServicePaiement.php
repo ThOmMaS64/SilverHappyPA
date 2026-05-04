@@ -36,7 +36,7 @@
             $statement = $bdd->prepare($q);
             $result = $statement->execute(['id_service_slot' => $_GET['id_service_slot']]); 
 
-            $q = 'SELECT SERVICE_SLOT.start_time, SERVICE_SLOT.end_time, SERVICE_SLOT.ID_SERVICE, SERVICE.is_at_consumer_home, SERVICE.ID_WORK_ADDRESS, SERVICE.cost FROM SERVICE_SLOT JOIN SERVICE ON SERVICE_SLOT.ID_SERVICE = SERVICE.ID_SERVICE WHERE SERVICE_SLOT.ID_SERVICE_SLOT = :id_slot';
+            $q = 'SELECT SERVICE_SLOT.start_time, SERVICE_SLOT.end_time, SERVICE_SLOT.ID_SERVICE, SERVICE_SLOT.ID_SERVICE_PROVIDER, SERVICE.is_at_consumer_home, SERVICE.ID_WORK_ADDRESS, OFFER.cost FROM SERVICE_SLOT JOIN SERVICE ON SERVICE_SLOT.ID_SERVICE = SERVICE.ID_SERVICE JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE WHERE SERVICE_SLOT.ID_SERVICE_SLOT = :id_slot AND OFFER.ID_SERVICE_PROVIDER = SERVICE_SLOT.ID_SERVICE_PROVIDER';
             $req = $bdd->prepare($q);
             $req->execute(['id_slot' => $_GET['id_service_slot']]);
             $slotInfos = $req->fetch(PDO::FETCH_ASSOC);
@@ -53,13 +53,8 @@
             ]);
             $idIntervention = $bdd->lastInsertId();
 
-            $q = 'SELECT SERVICE_PROVIDER.ID_SERVICE_PROVIDER FROM OFFER JOIN SERVICE_PROVIDER ON OFFER.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER WHERE OFFER.ID_SERVICE = :id_service';
-            $req = $bdd->prepare($q);
-            $req->execute(['id_service' => $slotInfos['ID_SERVICE']]);
-            $provider = $req->fetch(PDO::FETCH_ASSOC);
-
             $bdd->prepare('INSERT INTO DO(ID_SERVICE_PROVIDER, ID_INTERVENTION) VALUES (?, ?)')
-                ->execute([$provider['ID_SERVICE_PROVIDER'], $idIntervention]);
+                ->execute([$slotInfos['ID_SERVICE_PROVIDER'], $idIntervention]);
 
             $bdd->prepare('INSERT INTO CALL_(ID_CONSUMER, ID_INTERVENTION) VALUES (?, ?)')
                 ->execute([$infos['ID_CONSUMER'], $idIntervention]);
@@ -70,9 +65,9 @@
             $statement = $bdd->prepare($q);
             $result = $statement->execute([$infos['ID_CONSUMER'], date('Y-m-d H:i:s')]);
 
-            $qService = 'SELECT cost, is_at_consumer_home, ID_WORK_ADDRESS FROM SERVICE WHERE ID_SERVICE = :id_service';
+            $qService = 'SELECT OFFER.cost, SERVICE.is_at_consumer_home, SERVICE.ID_WORK_ADDRESS FROM SERVICE JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE WHERE SERVICE.ID_SERVICE = :id_service AND OFFER.ID_SERVICE_PROVIDER = :id_provider';
             $reqS = $bdd->prepare($qService);
-            $reqS->execute(['id_service' => $_GET['id_service']]);
+            $reqS->execute(['id_service' => $_GET['id_service'], 'id_provider' => $_GET['id_provider']]);
             $serviceData = $reqS->fetch(PDO::FETCH_ASSOC);
 
             $qIntervention = 'INSERT INTO INTERVENTION(cost, status, is_at_consumer_home, ID_WORK_ADDRESS, ID_SERVICE) VALUES (:cost, 1, :at_home, :id_address, :id_service)';
@@ -85,13 +80,8 @@
             ]);
             $idIntervention = $bdd->lastInsertId();
 
-            $qProvider = 'SELECT SERVICE_PROVIDER.ID_SERVICE_PROVIDER FROM OFFER JOIN SERVICE_PROVIDER ON OFFER.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER WHERE OFFER.ID_SERVICE = :id_service';
-            $reqP = $bdd->prepare($qProvider);
-            $reqP->execute(['id_service' => $_GET['id_service']]);
-            $provider = $reqP->fetch(PDO::FETCH_ASSOC);
-
             $bdd->prepare('INSERT INTO DO(ID_SERVICE_PROVIDER, ID_INTERVENTION) VALUES (?, ?)')
-                ->execute([$provider['ID_SERVICE_PROVIDER'], $idIntervention]);
+                ->execute([$_GET['id_provider'], $idIntervention]);
 
             $bdd->prepare('INSERT INTO CALL_(ID_CONSUMER, ID_INTERVENTION) VALUES (?, ?)')
                 ->execute([$infos['ID_CONSUMER'], $idIntervention]);
@@ -136,7 +126,7 @@
 
         }
 
-        header("location:http://localhost:8081/generateServiceInvoice?id_service=" . $_GET['id_service'] . "&id_consumer=" . $infos['ID_CONSUMER']);
+        header("location:http://localhost:8081/generateServiceInvoice?id_service=" . $_GET['id_service'] . "&id_consumer=" . $infos['ID_CONSUMER'] . "&id_provider=" . (isset($slotInfos) ? $slotInfos['ID_SERVICE_PROVIDER'] : $_GET['id_provider']));
         exit();
 
     }

@@ -19,13 +19,15 @@ func ShowServices(database *sql.DB) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 
+		idProvider := r.FormValue("id_provider")
+
 		response := ResponseSingleServices{
 
 			Services: []string{},
 
 		}
 
-		rowSelectTheme, errSelectTheme := database.Query("SELECT DISTINCT type FROM SERVICE ORDER BY type ASC")
+		rowSelectTheme, errSelectTheme := database.Query("SELECT DISTINCT type FROM SERVICE WHERE ID_SERVICE NOT IN (SELECT ID_SERVICE FROM OFFER WHERE ID_SERVICE_PROVIDER = ?) ORDER BY type ASC", idProvider)
 	
 		if errSelectTheme != nil {
 

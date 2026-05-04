@@ -122,7 +122,7 @@
                                     <input type="hidden" name="id_service" value="<?php echo htmlspecialchars($_GET['id_service'] ?? '');?>">
                                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($_SESSION['id']);?>">
                                     <div class="col-10">
-                                        <input type="text" class="form-control" name="content"></input>
+                                        <input type="text" class="form-control" name="content" <?php if(isset($_GET['info']) && $_GET['info'] == "from_services"){ ?> value="Bonjour, je suis intéréssé par la réalisation d'un devis pour l'une de vos prestations." <?php }elseif(isset($_GET['notif']) && $_GET['notif'] == "quote_sent"){ ?> value="Un devis viens de vous être envoyé, retrouvez le sur votre profil et revenez vers moi pour toute demande." <?php } ?>></input>
                                     </div>
                                     <div class="col-1">
                                         <button class="btn" type="submit">

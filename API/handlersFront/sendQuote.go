@@ -174,8 +174,7 @@ func SendQuote(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		rowService := database.QueryRow("SELECT USER_.name, USER_.surname, SERVICE_PROVIDER.profession, SERVICE_PROVIDER.commission, USER_.city, USER_.street, USER_.nb_street, USER_.postal_code, USER_.email FROM SERVICE INNER JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE INNER JOIN SERVICE_PROVIDER ON OFFER.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER INNER JOIN USER_ ON SERVICE_PROVIDER.ID_USER = USER_.ID_USER WHERE SERVICE.ID_SERVICE = ?", idService)
-
+		rowService := database.QueryRow("SELECT USER_.name, USER_.surname, SERVICE_PROVIDER.profession, SERVICE_PROVIDER.commission, USER_.city, USER_.street, USER_.nb_street, USER_.postal_code, USER_.email FROM SERVICE INNER JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE INNER JOIN SERVICE_PROVIDER ON OFFER.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER INNER JOIN USER_ ON SERVICE_PROVIDER.ID_USER = USER_.ID_USER WHERE SERVICE.ID_SERVICE = ? AND SERVICE_PROVIDER.ID_SERVICE_PROVIDER = ?", idService, idServiceProvider)
         errService := rowService.Scan(&name2, &surname2, &profession, &commission, &city2, &street2, &nbStreet2, &postalCode2, &email2)
 
         if errService != nil {

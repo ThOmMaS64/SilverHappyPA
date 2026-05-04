@@ -19,8 +19,7 @@ func ShowSavedService(database *sql.DB) http.HandlerFunc {
 
 		id := r.FormValue("id")
 
-		rowSelectServices, errSelectServices := database.Query("SELECT SERVICE.ID_SERVICE, SERVICE.type, SERVICE.description, SERVICE.cost, SERVICE.is_medical_confidential FROM SERVICE JOIN USER_INTERACTION_SERVICE ON SERVICE.ID_SERVICE = USER_INTERACTION_SERVICE.ID_SERVICE WHERE USER_INTERACTION_SERVICE.ID_USER = ?", id)
-	
+		rowSelectServices, errSelectServices := database.Query("SELECT SERVICE.ID_SERVICE, SERVICE.type, SERVICE.description, COALESCE(MIN(OFFER.cost), 0), SERVICE.is_medical_confidential FROM SERVICE JOIN USER_INTERACTION_SERVICE ON SERVICE.ID_SERVICE = USER_INTERACTION_SERVICE.ID_SERVICE LEFT JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE WHERE USER_INTERACTION_SERVICE.ID_USER = ? GROUP BY SERVICE.ID_SERVICE, SERVICE.type, SERVICE.description, SERVICE.is_medical_confidential", id)	
 		if errSelectServices != nil{
 
 			w.WriteHeader(500)

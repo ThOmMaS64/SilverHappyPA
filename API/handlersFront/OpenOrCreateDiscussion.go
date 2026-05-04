@@ -12,11 +12,12 @@ func OpenOrCreateDiscussion(database *sql.DB) http.HandlerFunc {
 
 		id := r.FormValue("id")
 		idService := r.FormValue("id_service")
+		idProvider := r.FormValue("id_provider")
 
 		var idServiceProvider int
 		var idUserServiceProvider int
 
-		row := database.QueryRow("SELECT SERVICE_PROVIDER.ID_SERVICE_PROVIDER, SERVICE_PROVIDER.ID_USER FROM OFFER INNER JOIN SERVICE_PROVIDER ON SERVICE_PROVIDER.ID_SERVICE_PROVIDER = OFFER.ID_SERVICE_PROVIDER WHERE OFFER.ID_SERVICE = ?", idService)
+		row := database.QueryRow("SELECT ID_SERVICE_PROVIDER, ID_USER FROM SERVICE_PROVIDER WHERE ID_SERVICE_PROVIDER = ?", idProvider)
 
 		err := row.Scan(&idServiceProvider, &idUserServiceProvider)
 

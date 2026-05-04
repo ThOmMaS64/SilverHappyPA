@@ -9,6 +9,7 @@ import (
 type ServiceInfo struct {
 	ID int `json:"id"`
 	Type string `json:"type"`
+	PricingType string `json:"pricing_type"`
 }
 
 type ResponseProviderServices struct {
@@ -30,7 +31,7 @@ func ShowProviderServices(database *sql.DB) http.HandlerFunc {
 
 		idProvider := r.FormValue("id_provider")
 
-		rows, err := database.Query("SELECT SERVICE.ID_SERVICE, SERVICE.type FROM SERVICE JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE WHERE OFFER.ID_SERVICE_PROVIDER = ? AND SERVICE.pricing_type = 'fixed' ORDER BY SERVICE.type ASC", idProvider)
+		rows, err := database.Query("SELECT SERVICE.ID_SERVICE, SERVICE.type, OFFER.pricing_type FROM SERVICE JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE WHERE OFFER.ID_SERVICE_PROVIDER = ? AND OFFER.pricing_type = 'fixed' AND OFFER.status = 1 ORDER BY SERVICE.type ASC", idProvider)
 		
 		if err != nil {
 
@@ -45,7 +46,7 @@ func ShowProviderServices(database *sql.DB) http.HandlerFunc {
 
 			var service ServiceInfo
 
-			err := rows.Scan(&service.ID, &service.Type)
+			err := rows.Scan(&service.ID, &service.Type, &service.PricingType)
 
 			if err == nil {
 

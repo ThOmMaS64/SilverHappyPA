@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -14,21 +15,68 @@ func AddServiceProviderDocuments(database *sql.DB) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		err := r.ParseMultipartForm(20 << 20)
+		documentOrNo := r.FormValue("documentOrNo")
+		pricingType := r.FormValue("pricing_type")
 
-		if err != nil {
+		cost := r.FormValue("cost")
+		var finalCost sql.NullFloat64
+		if cost != "" {
+			val, _ := strconv.ParseFloat(cost, 64)
+			finalCost = sql.NullFloat64{Float64: val, Valid: true}
+		}
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?error=add_error", 303)
-			return
+		status := 0
+		if documentOrNo == "0"{
+
+			status = 1
 
 		}
 
 		idServiceProvider := r.FormValue("id_service_provider")
 		serviceType := r.FormValue("service_type")
 
-		if idServiceProvider == "" || serviceType == "" {
+		var idService int
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?error=missing_field", 303)
+		row := database.QueryRow("SELECT ID_SERVICE FROM SERVICE WHERE type = ?", serviceType)
+		errService := row.Scan(&idService)
+
+		if errService != nil {
+
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?error=system1", 303)
+			return
+
+		}
+
+		insertStatement, insertError := database.Prepare("INSERT INTO OFFER(ID_SERVICE_PROVIDER, ID_SERVICE, pricing_type, cost, status) VALUES(?, ?, ?, ?, ?)")
+
+		if insertError != nil {
+
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?error=system2", 303)
+			return
+
+		}
+
+		_, insertExecError := insertStatement.Exec(idServiceProvider, idService, pricingType, finalCost, status)
+
+		if insertExecError != nil {
+
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?error=system2", 303)
+			return
+
+		}
+
+		if documentOrNo == "0" {
+
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?notif=new_service", 303)
+			return
+
+		}
+
+		err := r.ParseMultipartForm(20 << 20)
+
+		if err != nil {
+
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?error=add_error", 303)
 			return
 
 		}
@@ -147,7 +195,7 @@ func AddServiceProviderDocuments(database *sql.DB) http.HandlerFunc {
 			}
 		}
 
-		http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?success=documents_sent", 303)
+		http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?notif=documents_sent", 303)
 
 	}
 

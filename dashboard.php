@@ -15,7 +15,7 @@
 
         if(isset($_SESSION['id'])){
 
-            $dataJson = file_get_contents("http://localhost:8081/showServices");
+            $dataJson = file_get_contents("http://localhost:8081/showServices?id_provider=" . $_SESSION['id_service_provider']);
 
             $data = json_decode($dataJson, true);
             $distinctServices = $data['services'];
@@ -51,7 +51,7 @@
             $isRecurring = isset($_POST['is_recurring']);
             
             $payload = [
-                'id_service_provider' => $_SESSION['id_service_provider'],
+                'id_service_provider' => (int)$_SESSION['id_service_provider'],
                 'slots' => [
                     [
                         'id_service' => (int)$_POST['id_service'],
@@ -95,7 +95,7 @@
         $notif = [
 
             "documents_sent" => trad("Demande envoyée, vos documents seront prochainement étudiés par nos équipes !"),
-            "slot_deleted" => trad("Créneau supprimé avec succès"),
+            "new_service" => trad("Service ajouté à votre liste de prestations."),
 
         ];
 
@@ -139,7 +139,19 @@
                     <h5 class="mt-3">Proposez un nouveau service</h5>
                     <div class="line mb-4"></div>
 
-                    <form action="http://localhost:8081/addServiceProviderDocuments" method="POST" enctype="multipart/form-data">
+                    <?php 
+                    
+                    $documentOrNo = 1;
+                    
+                    if(isset($_GET['chosenService']) && empty($neededDocuments)) {
+
+                        $documentOrNo = 0;
+
+                    }
+                    
+                    ?>
+                    
+                    <form action="http://localhost:8081/addServiceProviderDocuments?documentOrNo=<?= $documentOrNo ?>" method="POST" enctype="multipart/form-data">
 
                         <input type="hidden" name="id_service_provider" value="<?= $_SESSION['id_service_provider'] ?? '' ?>">
                         <input type="hidden" name="service_type" value="<?= htmlspecialchars($_GET['chosenService'] ?? '') ?>">
@@ -181,6 +193,18 @@
 
                             <?php } ?>
 
+                            <div class="mb-3">
+                                <label>Choisissez le type de la tarification :</label>
+                                <select name="pricing_type" id="pricing_type" class="form-control" onchange="document.getElementById('cost_div').style.display = this.value === 'fixed' ? 'block' : 'none';">
+                                    <option value="fixed">Prix fixe prédéfinis</option>
+                                    <option value="quote">Prix sur devis</option>
+                                </select>
+                            </div>
+                            <div class="mb-3" id="cost_div">
+                                <label>Prix (en €) :</label>
+                                <input type="number" step="0.01" name="cost" class="form-control">
+                            </div>
+
                             <?php if(isset($neededDocuments)): ?>
                                 <button type="submit" class="btn mt-4">Demander à réaliser ce service</button>
                             <?php endif; ?>
@@ -198,9 +222,15 @@
                                 <select name="id_service" class="selectFilter w-100" required>
                                     <option value="" disabled selected><?php echo trad("Choisissez un service") ?></option>
                                     <?php foreach($providerServices as $provService): ?>
-                                        <option value="<?= htmlspecialchars($provService['id']) ?>">
-                                            <?= htmlspecialchars(trad($provService['type'])) ?>
-                                        </option>
+
+                                        <?php if($provService['pricing_type'] == 'fixed'){ ?>
+
+                                            <option value="<?= htmlspecialchars($provService['id']) ?>">
+                                                <?= htmlspecialchars(trad($provService['type'])) ?>
+                                            </option>
+
+                                        <?php } ?>
+
                                     <?php endforeach; ?>
                                 </select>
                             </div>
