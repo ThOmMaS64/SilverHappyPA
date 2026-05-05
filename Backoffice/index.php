@@ -487,6 +487,17 @@ if($response){
     }
 }
 
+$dataCaptchas = @file_get_contents("http://localhost:8081/getCaptchas");
+
+$captchas = [];
+
+if($dataCaptchas){
+
+    $decodedCaptchas = json_decode($dataCaptchas, true);
+    $captchas = $decodedCaptchas['captchas'] ?? [];
+
+}
+
 $notifUsers = [
 
     "update_success" => "Mise à jour des informations réussie.",
@@ -579,6 +590,10 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                 </form>
                 <li><a href="#pagerequests" onclick="hideWelcome(); document.getElementById('requestsForm').submit(); return false;">Contrôle des requêtes</a></li>
 
+                <form id="captchaForm" method="POST" action="traitements.php">
+                    <input type="hidden" name="action" value="captcha">
+                </form>
+                <li><a href="#pagecaptcha" onclick="hideWelcome(); document.getElementById('captchaForm').submit(); return false;">Gestion des captchas</a></li>
 
                 <li><a href="deconnexion.php">Se déconnecter</a></li>
             </ul>
@@ -2167,6 +2182,79 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
 
                 </form>
                 <?php endif; ?>
+            </section>
+
+            <section id="pagecaptcha" class="mt-5">
+                <h1>Gestion des captchas</h1>
+
+                <div class="col-4">
+                    <?php if (isset($errorUsersMessage)): ?>
+                        <div class="alert alert-danger">
+                            <?php echo htmlspecialchars($errorUsersMessage); ?>
+                        </div>
+                    <?php elseif(isset($successUsersMessage)): ?>
+                        <div class="alert alert-success">
+                            <?php echo htmlspecialchars($successUsersMessage); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <h5 class="pt-3">Ajouter un captcha</h5>
+
+                <form method="POST" action="http://localhost:8081/addCaptcha" class="col-6">
+                    <div class="mb-3">
+                        <label>Question :</label>
+                        <input type="text" name="question" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Réponse :</label>
+                        <input type="text" name="answer" class="form-control" required>
+                    </div>
+                    <button type="submit" class="mb-5">Ajouter</button>
+                </form>
+
+                <h5 class="pt-3">Modifier un captcha</h5>
+
+                <form method="POST" action="http://localhost:8081/updateCaptcha" class="col-6">
+                    <div class="mb-3">
+                        <label>Choisissez un captcha :</label>
+                        <select name="id" class="form-control" required>
+                            <option disabled selected>Choisissez un captcha</option>
+                            <?php foreach($captchas as $captcha): ?>
+                                <option value="<?= htmlspecialchars($captcha['id']) ?>">
+                                    <?= htmlspecialchars($captcha['question']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Nouvelle question :</label>
+                        <input type="text" name="question" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Nouvelle réponse :</label>
+                        <input type="text" name="answer" class="form-control" required>
+                    </div>
+                    <button type="submit" class="mb-5">Modifier</button>
+                </form>
+
+                <h5 class="pt-3">Supprimer un captcha</h5>
+
+                <form method="POST" action="http://localhost:8081/deleteCaptcha" class="col-6">
+                    <div class="mb-3">
+                        <label>Choisissez un captcha :</label>
+                        <select name="id" class="form-control" required>
+                            <option disabled selected>Choisissez un captcha</option>
+                            <?php foreach($captchas as $captcha): ?>
+                                <option value="<?= htmlspecialchars($captcha['id']) ?>">
+                                    <?= htmlspecialchars($captcha['question']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <button type="submit" class="mb-5">Supprimer</button>
+                </form>
+
             </section>
         </div>
     </main> 

@@ -135,6 +135,10 @@ func main() {
 	http.HandleFunc("/showServiceProvidersDefaultData", handlersBack.ShowServiceProvidersDefaultData(database))
 	http.HandleFunc("/showServiceProvidersPersonalizedData", handlersBack.ShowServiceProvidersPersonalizedData(database))
 	http.HandleFunc("/loginBack", handlersBack.LoginBack(database))
+	http.HandleFunc("/getCaptchas", handlersBack.GetCaptchas(database))
+	http.HandleFunc("/deleteCaptcha", handlersBack.DeleteCaptcha(database))
+	http.HandleFunc("/updateCaptcha", handlersBack.UpdateCaptcha(database))
+	http.HandleFunc("/addCaptcha", handlersBack.AddCaptcha(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 

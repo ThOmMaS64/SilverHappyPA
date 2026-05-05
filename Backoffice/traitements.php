@@ -50,6 +50,12 @@
             header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagerequests');
             exit();
             break;
+
+        case 'captcha':
+            header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagecaptcha');
+            exit();
+            break;
+            
     }
 
     header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagewelcome');
