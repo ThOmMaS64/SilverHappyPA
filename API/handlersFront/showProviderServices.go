@@ -31,7 +31,7 @@ func ShowProviderServices(database *sql.DB) http.HandlerFunc {
 
 		idProvider := r.FormValue("id_provider")
 
-		rows, err := database.Query("SELECT SERVICE.ID_SERVICE, SERVICE.type, OFFER.pricing_type FROM SERVICE JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE WHERE OFFER.ID_SERVICE_PROVIDER = ? AND OFFER.pricing_type = 'fixed' AND OFFER.status = 1 ORDER BY SERVICE.type ASC", idProvider)
+		rows, err := database.Query("SELECT SERVICE.ID_SERVICE, SERVICE.type, OFFER.pricing_type FROM SERVICE JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE WHERE OFFER.ID_SERVICE_PROVIDER = ? AND OFFER.status = 1 ORDER BY SERVICE.type ASC", idProvider)
 		
 		if err != nil {
 

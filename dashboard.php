@@ -83,6 +83,9 @@
 
             "add_error" => trad("Erreur lors de l'ajout du services à votre profil, veuillez réessayer."),
             "delete_error" => trad("Erreur lors de la suppression du créneau, veuillez vous assurer qu'il n'est pas déjà réservé avant de réessayer."),
+            "delete_service_error" => trad("Erreur lors de la suppression du service, veuillez réessayer."),
+            "update_service_error" => trad("Erreur lors de la modification du service, veuillez réessayer."),
+            "add_error" => trad("L'ajout du créneau a échoué."),
 
         ];
 
@@ -96,6 +99,9 @@
 
             "documents_sent" => trad("Demande envoyée, vos documents seront prochainement étudiés par nos équipes !"),
             "new_service" => trad("Service ajouté à votre liste de prestations."),
+            "service_deleted" => trad("Service supprimé de vos prestations."),
+            "service_updated" => trad("Service mis à jour avec succès."),
+            "slot_added" => trad("Créneau ajouté avec succès."),
 
         ];
 
@@ -215,7 +221,7 @@
                         <div class="line mb-4"></div>
 
                         <form action="" method="POST" class="col-8">
-                            <input type="hidden" name="action" value="add_slot">
+                            <input type="hidden" name="id_service_provider" value="<?= $_SESSION['id_service_provider'] ?>">
 
                             <div class="mb-3">
                                 <label class="form-label">Service concerné :</label>
@@ -302,6 +308,66 @@
                             </button>
                         </form>
 
+                        <h5 class="mt-5"><?php echo trad("Supprimer un service de vos prestations proposées"); ?></h5>
+                        <div class="line mb-4"></div>
+
+                        <form action="http://localhost:8081/deleteServiceFromOffers" method="POST" class="col-8">
+                            <input type="hidden" name="id_service_provider" value="<?= $_SESSION['id_service_provider'] ?>">
+
+                            <div class="mb-3">
+                                <label class="form-label">Service concerné :</label>
+                                <select name="id_service" class="selectFilter w-100" required>
+                                    <option value="" disabled selected><?php echo trad("Choisissez un service") ?></option>
+                                    <?php foreach($providerServices as $provService): ?>
+
+                                            <option value="<?= htmlspecialchars($provService['id']) ?>">
+                                                <?= htmlspecialchars(trad($provService['type'])) ?>
+                                            </option>
+
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="background-color: rgb(62, 134, 189); border:none;">
+                                Supprimer
+                            </button>
+                        </form>
+
+                        <h5 class="mt-5"><?php echo trad("Modifier le prix ou le type de tarification d'un service"); ?></h5>
+                        <div class="line mb-4"></div>
+
+                        <form action="http://localhost:8081/updateServiceOffer" method="POST" class="col-8">
+                            <input type="hidden" name="id_service_provider" value="<?= $_SESSION['id_service_provider'] ?>">
+
+                            <div class="mb-3">
+                                <label class="form-label">Service concerné :</label>
+                                <select name="id_service" class="selectFilter w-100" required>
+                                    <option value="" disabled selected><?php echo trad("Choisissez un service") ?></option>
+                                    <?php foreach($providerServices as $provService): ?>
+                                        <option value="<?= htmlspecialchars($provService['id']) ?>">
+                                            <?= htmlspecialchars(trad($provService['type'])) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Type de tarification :</label>
+                                <select name="pricing_type" class="form-control" onchange="document.getElementById('cost_div_update').style.display = this.value === 'fixed' ? 'block' : 'none';">
+                                    <option value="fixed">Prix fixe prédéfinis</option>
+                                    <option value="quote">Prix sur devis</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3" id="cost_div_update">
+                                <label>Nouveau prix (en €) :</label>
+                                <input type="number" step="0.01" name="cost" class="form-control">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="background-color: rgb(62, 134, 189); border:none;">
+                                Modifier
+                            </button>
+                        </form>
                 </div>
             </div>
         </main>
