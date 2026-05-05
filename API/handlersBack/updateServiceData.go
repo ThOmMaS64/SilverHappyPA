@@ -12,12 +12,9 @@ func UpdateServiceData(database *sql.DB) http.HandlerFunc {
 		id := r.FormValue("id")
 		serviceType:= r.FormValue("type")
 		description:= r.FormValue("description")
-		formation := r.FormValue("formation")
-		place := r.FormValue("place")
-		cost := r.FormValue("cost")
 		isMedicalConfidential := r.FormValue("is_medical_confidential")
 
-		updateStatement, updateError := database.Prepare("UPDATE SERVICE SET type = ?, description = ?, formation = ?, place = ?, cost = ?, is_medical_confidential = ? WHERE ID_SERVICE = ?")
+		updateStatement, updateError := database.Prepare("UPDATE SERVICE SET type = ?, description = ?, is_medical_confidential = ? WHERE ID_SERVICE = ?")
 
 		if updateError != nil{
 
@@ -27,7 +24,7 @@ func UpdateServiceData(database *sql.DB) http.HandlerFunc {
 		}
 		defer updateStatement.Close()
 
-		_, updateStatementExecError := updateStatement.Exec(serviceType, description, formation, place, cost, isMedicalConfidential, id)
+		_, updateStatementExecError := updateStatement.Exec(serviceType, description, isMedicalConfidential, id)
 
 		if updateStatementExecError != nil{
 

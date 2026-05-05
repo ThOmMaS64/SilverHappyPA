@@ -317,7 +317,6 @@ if($response){
                 'ID_SERVICE' => $service['ID_SERVICE'],
                 'type' => $service['type'],
                 'description' => $service['description'],
-                'cost' => $service['cost'],
                 'is_medical_confidential' => $service['is_medical_confidential'],
                 'nb' => $service['nb']
             ];
@@ -957,8 +956,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <div class="col-2">
                             <select name="sortServices" class="selectSort" onchange="this.form.submit()">
                                 <option disabled <?php if(!isset($_GET['sortServices']) || $_GET['sortServices'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
-                                <option value="1" <?php if(isset($_GET['sortServices']) && $_GET['sortServices'] == "1"){echo 'selected';} ?>>Coût croissant</option>
-                                <option value="2" <?php if(isset($_GET['sortServices']) && $_GET['sortServices'] == "2"){echo 'selected';} ?>>Coût décroissant</option>
                                 <option value="3" <?php if(isset($_GET['sortServices']) && $_GET['sortServices'] == "3"){echo 'selected';} ?>>Nombre prestatires croissant</option>
                                 <option value="4" <?php if(isset($_GET['sortServices']) && $_GET['sortServices'] == "4"){echo 'selected';} ?>>Nombre prestatires décroissant</option>
                             </select>
@@ -972,7 +969,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                         <th scope="col">#</th>
                         <th scope="col">Type</th>
                         <th scope="col">Description</th>
-                        <th scope="col">Coût</th>
                         <th scope="col">Confidentiel ?</th>
                         <th scope="col">Nombre de prestataires</th>
                         <th scope="col">Sélectionner</th>
@@ -992,8 +988,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                     <td><input class="form-control" form="<?= $idFormService ?>" name="type" class="mediumtext" type="text" value="<?= htmlspecialchars($service['type'] ?? '') ?>"></td>
 
                                     <td><input class="form-control" form="<?= $idFormService ?>" name="description" class="bigtext" type="text" value="<?= htmlspecialchars($service['description'] ?? '') ?>"></td>
-
-                                    <td><input class="form-control" form="<?= $idFormService ?>" name="cost" class="smalltext" type="text" value="<?= htmlspecialchars($service['cost'] ?? '') ?>"></td>
 
                                     <td>
                                         <select class="form-control" form="<?= $idFormService ?>" name="is_medical_confidential"> 

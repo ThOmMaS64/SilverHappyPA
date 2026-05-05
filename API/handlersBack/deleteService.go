@@ -125,6 +125,9 @@ func DeleteService(database *sql.DB) http.HandlerFunc {
 
 		}
 
+		database.Exec("DELETE FROM SERVICE_BOOKING WHERE ID_SERVICE_SLOT IN (SELECT ID_SERVICE_SLOT FROM SERVICE_SLOT WHERE ID_SERVICE = ?)", id)
+		database.Exec("DELETE FROM SERVICE_SLOT WHERE ID_SERVICE = ?", id)
+
 		deleteStatement3, deleteError3 := database.Prepare("DELETE FROM INTERVENTION WHERE ID_SERVICE = ?")
 
 		if deleteError3 != nil{

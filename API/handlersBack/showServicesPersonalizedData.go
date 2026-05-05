@@ -58,11 +58,11 @@ func ShowServicesPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 		var args []any
 		 
-		basicQuery := "SELECT SERVICE.ID_SERVICE, type, description, cost, is_medical_confidential, COUNT(OFFER.ID_SERVICE) AS nb FROM SERVICE LEFT JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE WHERE 1=1"
+		basicQuery := "SELECT SERVICE.ID_SERVICE, type, description, is_medical_confidential, COUNT(OFFER.ID_SERVICE) AS nb FROM SERVICE LEFT JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE WHERE 1=1"
 
 		if research != ""{
 
-			basicQuery += " AND (type LIKE CONCAT('%', ?, '%') OR place LIKE CONCAT('%', ?, '%'))"
+			basicQuery += " AND (type LIKE CONCAT('%', ?, '%') OR description LIKE CONCAT('%', ?, '%'))"
 			args = append(args, research, research)
 
 		}
@@ -78,15 +78,7 @@ func ShowServicesPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 		if sort != ""{
 
-			if sort == "1"{
-
-				basicQuery += " ORDER BY cost ASC"
-
-			}else if sort == "2"{
-
-				basicQuery += " ORDER BY cost DESC"
-
-			}else if sort == "3"{
+			if sort == "3"{
 
 				basicQuery += " ORDER BY COUNT(OFFER.ID_SERVICE) ASC"
 
@@ -113,7 +105,7 @@ func ShowServicesPersonalizedData(database *sql.DB) http.HandlerFunc {
 
 			var service Service
 
-			err := rowsServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.Cost, &service.IsMedicalConfidential, &service.Nb)
+			err := rowsServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.IsMedicalConfidential, &service.Nb)
 			if err != nil {
 				continue
 			}
