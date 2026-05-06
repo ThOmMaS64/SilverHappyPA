@@ -142,6 +142,14 @@ if($dataUsers){
     }
 }
 
+$dataServiceProviderRequests = file_get_contents("http://localhost:8081/getServiceProviderRequests");
+$serviceProviderRequests = [];
+
+if($dataServiceProviderRequests){
+    $decoded = json_decode($dataServiceProviderRequests, true);
+    $serviceProviderRequests = $decoded['requests'] ?? [];
+}
+
 $researchAdvices = isset($_GET['researchAdvices']) ? urlencode($_GET['researchAdvices']) : "";
 $filterAdvices = isset($_GET['filterAdvices']) ? urlencode($_GET['filterAdvices']) : "";
 $sortAdvices = isset($_GET['sortAdvices']) ? urlencode($_GET['sortAdvices']) : "";
@@ -919,6 +927,64 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                 <?php endif; ?>
 
 
+                <h5 class="pt-5">Demandes de réalisation de services</h5>
+
+                <?php if(empty($serviceProviderRequests)): ?>
+
+                    <p>Aucune demande en attente.</p>
+
+                <?php else: ?>
+
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Prestataire</th>
+                                <th>Service demandé</th>
+                                <th>Document requis</th>
+                                <th>Date dépôt</th>
+                                <th>Statut document</th>
+                                <th>Voir le document</th>
+                                <th>Valider le document</th>
+                                <th>Refuser le service</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($serviceProviderRequests as $req): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($req['username']) ?></td>
+                                    <td><?= htmlspecialchars($req['service_type']) ?></td>
+                                    <td><?= htmlspecialchars($req['doc_type']) ?></td>
+                                    <td><?= htmlspecialchars($req['upload_date']) ?></td>
+                                    <td><?= $req['doc_status'] == 1 ? 'Validé' : 'En attente' ?></td>
+                                    <td>
+                                        <a href="../data/documents/<?= htmlspecialchars(basename($req['doc_path'])) ?>" target="_blank">
+                                            <button type="button">Ouvrir</button>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <?php if($req['doc_status'] == 0): ?>
+                                        <form method="POST" action="http://localhost:8081/validateServiceProviderDocument">
+                                            <input type="hidden" name="id_document" value="<?= $req['id_document'] ?>">
+                                            <input type="hidden" name="id_service_provider" value="<?= $req['id_service_provider'] ?>">
+                                            <input type="hidden" name="id_service" value="<?= $req['id_service'] ?>">
+                                            <button type="submit">Valider</button>
+                                        </form>
+                                        <?php else: ?>
+                                            —
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="http://localhost:8081/refuseServiceProviderDocument">
+                                            <input type="hidden" name="id_service_provider" value="<?= $req['id_service_provider'] ?>">
+                                            <input type="hidden" name="id_service" value="<?= $req['id_service'] ?>">
+                                            <button type="submit">Refuser</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
 
                 <h5 class="pt-5">Contacter les emails sélectionnés</h5>
 

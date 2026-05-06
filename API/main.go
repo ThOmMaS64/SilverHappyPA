@@ -140,6 +140,10 @@ func main() {
 	http.HandleFunc("/showConsumerInvoicesDefaultData", handlersBack.ShowConsumerInvoicesDefaultData(database))
 	http.HandleFunc("/showServiceProviderInvoicesDefaultData", handlersBack.ShowServiceProviderInvoicesDefaultData(database))
 	http.HandleFunc("/getTotalDueToProviders", handlersBack.GetTotalDueToProviders(database))
+	http.HandleFunc("/refuseServiceProviderDocument", handlersBack.RefuseServiceProviderDocument(database))
+	http.HandleFunc("/validateServiceProviderDocument", handlersBack.ValidateServiceProviderDocument(database))
+	http.HandleFunc("/getServiceProviderRequests", handlersBack.GetServiceProviderRequests(database))
+	
 
 	listenError := http.ListenAndServe(":8081", nil)
 
