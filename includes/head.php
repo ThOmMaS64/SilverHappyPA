@@ -20,10 +20,13 @@
         window.OneSignalDeferred = window.OneSignalDeferred || [];
         OneSignalDeferred.push(async function(OneSignal) {
             await OneSignal.init({
-            appId: "6654cc79-5bf4-4442-8145-3bba1d8cea32",
+                appId: "6654cc79-5bf4-4442-8145-3bba1d8cea32",
+                serviceWorkerPath: 'ProjetAnnuel/OneSignalSDKWorker.js',
+                serviceWorkerParam: { scope: '/ProjetAnnuel/' },
+                allowLocalhostAsSecureOrigin: true
             });
 
-            OneSignal.Slidedown.promptPush();
+            await OneSignal.Slidedown.promptPush();
 
             <?php if(isset($_SESSION['id'])){ ?>
                 OneSignal.login("<?= $_SESSION['id'] ?>");
