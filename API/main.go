@@ -143,7 +143,8 @@ func main() {
 	http.HandleFunc("/refuseServiceProviderDocument", handlersBack.RefuseServiceProviderDocument(database))
 	http.HandleFunc("/validateServiceProviderDocument", handlersBack.ValidateServiceProviderDocument(database))
 	http.HandleFunc("/getServiceProviderRequests", handlersBack.GetServiceProviderRequests(database))
-	
+
+	go startSendingNotifications(database)	
 
 	listenError := http.ListenAndServe(":8081", nil)
 

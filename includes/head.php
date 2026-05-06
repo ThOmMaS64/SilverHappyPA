@@ -15,6 +15,22 @@
 
     <?php require_once "db.php"; ?>
 
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.init({
+            appId: "6654cc79-5bf4-4442-8145-3bba1d8cea32",
+            });
+
+            OneSignal.Slidedown.promptPush();
+
+            <?php if(isset($_SESSION['id'])){ ?>
+                OneSignal.login("<?= $_SESSION['id'] ?>");
+            <?php } ?>
+        });
+    </script>
+
     <?php if(isset($_SESSION['levelFont'])){ ?>
 
         <?php if($_SESSION['levelFont'] == 1){ ?>
