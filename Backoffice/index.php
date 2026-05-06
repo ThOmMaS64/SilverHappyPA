@@ -452,42 +452,47 @@ if($response){
 
 }
 
-$researchInvoices = isset($_GET['researchInvoices']) ? urlencode($_GET['researchInvoices']) : "";
-$sortInvoices = isset($_GET['sortInvoices']) ? urlencode($_GET['sortInvoices']) : "";
+$offsetConsumerInvoices = $_SESSION['offsetConsumerInvoices'] ?? 0;
+$offsetProviderInvoices = $_SESSION['offsetProviderInvoices'] ?? 0;
 
-$offsetInvoices = $_SESSION['offsetInvoices'];
+$filterInvoices = isset($_GET['filterInvoices']) ? urlencode($_GET['filterInvoices']) : "";
+$sortInvoices = isset($_GET['sortInvoices'])   ? urlencode($_GET['sortInvoices'])   : "";
+$sortProviderInvoices = isset($_GET['sortProviderInvoices']) ? urlencode($_GET['sortProviderInvoices']) : "";
 
-if(isset($_GET['researchInvoices']) || isset($_GET['filterInvoices']) || isset($_GET['sortInvoices'])){
+$dataConsumerInvoices = file_get_contents("http://localhost:8081/showConsumerInvoicesDefaultData?offset=$offsetConsumerInvoices&filter=$filterInvoices&sort=$sortInvoices");
+$dataProviderInvoices = file_get_contents("http://localhost:8081/showServiceProviderInvoicesDefaultData?offset=$offsetProviderInvoices&sort=$sortProviderInvoices");
+$dataTotalDue = file_get_contents("http://localhost:8081/getTotalDueToProviders");
 
-    // $response = file_get_contents("http://localhost:8081/showInvoicesPersonalizedData?research=$researchInvoices&sort=$sortInvoices&offset=$offsetInvoices");
+$consumerInvoices = [];
+$providerInvoices = [];
+$totalDue = null;
+$distinctTypesInvoices = [];
 
-}else{
+if($dataConsumerInvoices){
 
-    // $response = file_get_contents("http://localhost:8081/showInvoicesDefaultData?offset=$offsetInvoices");
+    $decoded = json_decode($dataConsumerInvoices, true);
+    $consumerInvoices = $decoded['invoices'] ?? [];
+    $distinctTypesInvoices = $decoded['types'] ?? [];
 
 }
 
-if($response){
+if($dataProviderInvoices){
 
-    $decodedResponse = json_decode($response, true);
-    $_SESSION['listInvoices'] = array();
+    $decoded = json_decode($dataProviderInvoices, true);
+    $providerInvoices = $decoded['invoices'] ?? [];
 
-    if(isset($decodedResponse['invoices']) && is_array($decodedResponse['invoices'])){
-        foreach($decodedResponse['invoices'] as $invoice){
-            $_SESSION['listInvoices'][] = [
-                'ID_INVOICE' => $invoice['ID_INVOICE'],
-                'amount' => $invoice['amount'],
-                'nb_services_provided' => $invoice['nb_services_provided'],
-                'month_billed' => $invoice['month_billed'],
-                'year_billed' => $invoice['year_billed'],
-                'pdf_path' => $invoice['pdf_path'],
-                'service_provider' => $invoice['service_provider']
-            ];
-        }
-    }
 }
 
-$dataCaptchas = @file_get_contents("http://localhost:8081/getCaptchas");
+if($dataTotalDue){
+
+    $decoded = json_decode($dataTotalDue, true);
+    $totalDue = $decoded ?? null;
+
+}
+
+
+
+$dataCaptchas = file_get_contents("http://localhost:8081/getCaptchas");
 
 $captchas = [];
 
@@ -1542,43 +1547,33 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
             </section>
 
             <section id="pagemoney" class="mt-5">
-                <?php if(isset($_SESSION['listInvoices'])): ?>
                 <h1>Gestion Financière</h1>
-                <br>
-                <h1>Gestion des factures</h1>
 
                 <div class="col-4">
                     <?php if (isset($errorUsersMessage)): ?>
-                        <div class="alert alert-danger">
-                            <?php echo htmlspecialchars($errorUsersMessage); ?>
-                        </div>
+                        <div class="alert alert-danger"><?php echo htmlspecialchars($errorUsersMessage); ?></div>
                     <?php elseif(isset($successUsersMessage)): ?>
-                        <div class="alert alert-success">
-                            <?php echo htmlspecialchars($successUsersMessage); ?>
-                        </div>
+                        <div class="alert alert-success"><?php echo htmlspecialchars($successUsersMessage); ?></div>
                     <?php endif; ?>
                 </div>
+
+                <h3 class="pt-3">Factures adhérents</h3>
 
                 <form method="GET" action="index.php#pagemoney">
                     <div class="row mb-3">
                         <div class="col-2">
-                            <div class="input-group">
-                                <input value="<?php if(isset($_GET['researchInvoices'])){ echo htmlspecialchars($_GET['researchInvoices']); }else{ echo ""; } ?>" class="form-control" name="researchInvoices" placeholder="<?php if(isset($_GET['researchInvoices']) && $_GET['researchInvoices'] != ""){ echo $_GET['researchInvoices']; }else{ ?><?php echo "Tapez votre recherche"; ?> <?php } ?>" aria-label="Search">
-                                <button class="searchButton" type="submit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                                    </svg>
-                                </button>
-                            </div>
+                            <select name="filterInvoices" class="selectFilter" onchange="this.form.submit()">
+                                <option disabled selected>Choisissez un type</option>
+                                <?php foreach($distinctTypesInvoices as $type): ?>
+                                    <option value="<?= htmlspecialchars($type) ?>" <?php if(isset($_GET['filterInvoices']) && $_GET['filterInvoices'] == $type){ echo 'selected'; } ?>><?= htmlspecialchars($type) ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
-
                         <div class="col-2">
                             <select name="sortInvoices" class="selectSort" onchange="this.form.submit()">
-                                <option disabled <?php if(!isset($_GET['sortInvoices']) || $_GET['sortInvoices'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
-                                <option value="1" <?php if(isset($_GET['sortInvoices']) && $_GET['sortInvoices'] == "1"){echo 'selected';} ?>>Plus anciens en premier</option>
-                                <option value="2" <?php if(isset($_GET['sortInvoices']) && $_GET['sortInvoices'] == "2"){echo 'selected';} ?>>Plus récents en premier</option>
-                                <option value="3" <?php if(isset($_GET['sortInvoices']) && $_GET['sortInvoices'] == "3"){echo 'selected';} ?>>Montant croissant</option>
-                                <option value="4" <?php if(isset($_GET['sortInvoices']) && $_GET['sortInvoices'] == "4"){echo 'selected';} ?>>Montant décroissant</option>
+                                <option disabled <?php if(!isset($_GET['sortInvoices'])){echo 'selected';} ?>>Choisissez un tri</option>
+                                <option value="1" <?php if(isset($_GET['sortInvoices']) && $_GET['sortInvoices'] == "1"){echo 'selected';} ?>>Date croissante</option>
+                                <option value="2" <?php if(isset($_GET['sortInvoices']) && $_GET['sortInvoices'] == "2"){echo 'selected';} ?>>Date décroissante</option>
                             </select>
                         </div>
                     </div>
@@ -1587,71 +1582,103 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                 <table class="table table-striped">
                     <thead class="thead-dark">
                         <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Montant</th>
-                        <th scope="col">Nombre de services réalisés</th>
-                        <th scope="col">Mois payé</th>
-                        <th scope="col">Année payée</th>
-                        <th scope="col">Lien PDF</th>
-                        <th scope="col">Prestataire</th>
-                        <th scope="col">Sélectionner</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Identifiant</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Date d'émission</th>
+                            <th scope="col">Montant</th>
+                            <th scope="col">Adhérent</th>
+                            <th scope="col">PDF</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                            foreach($_SESSION['listInvoices'] as $product){
-
-                                $idFormInvoice = "form_invoice_" . $invoice['ID_INVOICE'];
-                        ?>
-                                <tr>
-                                    <th scope="row"> <?= htmlspecialchars($invoice['ID_INVOICE']) ?></th>
-
-                                    <td><?= htmlspecialchars($invoice['amount'] ?? '') ?></td>
-
-                                    <td><?= htmlspecialchars($invoice['nb_services_provided'] ?? '') ?></td>
-
-                                    <td><?= htmlspecialchars($invoice['month_billed'] ?? '') ?></td>
-
-                                    <td><?= htmlspecialchars($invoice['year_billed'] ?? '') ?></td>
-
-                                    <td><?= htmlspecialchars($invoice['pdf_path'] ?? '') ?></td>
-
-                                    <td><?= htmlspecialchars($invoice['service_provider'] ?? '') ?></td>
-
-                                    <td>
-                                        <div class="form-check">
-                                            <input form="selectedInvoice" name="selectedInvoice" class="form-check-input" type="radio" value="<?php echo htmlspecialchars($invoice['ID_INVOICE']); ?>">
-                                        </div>
-                                    </td>
-                                </tr>
-
-                            <?php } ?>
+                        <?php foreach($consumerInvoices as $invoice): ?>
+                            <tr>
+                                <th scope="row"><?= htmlspecialchars($invoice['ID_CONSUMER_INVOICE']) ?></th>
+                                <td><?= htmlspecialchars($invoice['identifier'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($invoice['type'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($invoice['date_emission'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($invoice['amount'] ?? '') ?> €</td>
+                                <td><?= htmlspecialchars($invoice['username'] ?? '') ?></td>
+                                <td>
+                                    <?php if(!empty($invoice['pdf_path'])): ?>
+                                        <?php
+                                            $folder = 'invoices_events';
+                                            if($invoice['type'] == 'serviceByQuote') $folder = 'invoices_quotes';
+                                            elseif($invoice['type'] == 'service') $folder = 'invoices_services';
+                                            elseif($invoice['type'] == 'store') $folder = 'invoices_store';
+                                        ?>
+                                        <a href="../data/<?= $folder ?>/<?= htmlspecialchars($invoice['pdf_path']) ?>" target="_blank"><button type="button">Ouvrir</button></a>
+                                    <?php else: ?>
+                                        -
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
 
                 <form method="POST" action="traitement_offset.php">
-                    <button type="submit" name="pagemoney" value="moins">Précedent</button>
-                    <button type="submit" name="pagemoney" value="plus">Suivant</button>
-                    <button type="submit" name="pagemoney">Rafraîchir</button>
-
-                    <input type="hidden" name="researchInvoices" value="<?php if(isset($_GET['researchInvoices'])){ echo $_GET['researchInvoices']; } ?>">
+                    <button type="submit" name="pageConsumerInvoices" value="moins">Précédent</button>
+                    <button type="submit" name="pageConsumerInvoices" value="plus">Suivant</button>
+                    <button type="submit" name="pageConsumerInvoices">Rafraîchir</button>
+                    <input type="hidden" name="filterInvoices" value="<?php if(isset($_GET['filterInvoices'])){ echo $_GET['filterInvoices']; } ?>">
                     <input type="hidden" name="sortInvoices" value="<?php if(isset($_GET['sortInvoices'])){ echo $_GET['sortInvoices']; } ?>">
                 </form>
 
-                <h5 class="pt-5">Contacter par email le prestataire concerné par la facture sélectionnée</h5>
+                <h3 class="pt-5">Factures prestataires</h3>
 
-                <form id="selectedInvoice" method="POST" action="sendEmailSelectedInvoice.php">
-
-                    <label>Objet</label>
-                    <input type="text" name="subject" class="form-control mb-3" placeholder="Saisissez l'objet de l'email" required>
-
-                    <label>Corps de l'email</label>
-                    <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
-
-                    <button type="submit"class="mb-5">Envoyer</button>
-
+                <form method="GET" action="index.php#pagemoney">
+                    <div class="row mb-3">
+                        <div class="col-2">
+                            <select name="sortProviderInvoices" class="selectSort" onchange="this.form.submit()">
+                                <option disabled <?php if(!isset($_GET['sortProviderInvoices'])){echo 'selected';} ?>>Choisissez un tri</option>
+                                <option value="1" <?php if(isset($_GET['sortProviderInvoices']) && $_GET['sortProviderInvoices'] == "1"){echo 'selected';} ?>>Date croissante</option>
+                                <option value="2" <?php if(isset($_GET['sortProviderInvoices']) && $_GET['sortProviderInvoices'] == "2"){echo 'selected';} ?>>Date décroissante</option>
+                            </select>
+                        </div>
+                    </div>
                 </form>
+
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Prestataire</th>
+                            <th scope="col">Montant dû</th>
+                            <th scope="col">Nb services réalisés</th>
+                            <th scope="col">Mois</th>
+                            <th scope="col">Année</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($providerInvoices as $invoice): ?>
+                            <tr>
+                                <th scope="row"><?= htmlspecialchars($invoice['ID_SERVICE_PROVIDER_INVOICE']) ?></th>
+                                <td><?= htmlspecialchars($invoice['username'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($invoice['amount'] ?? '') ?> €</td>
+                                <td><?= htmlspecialchars($invoice['nb_services_provided'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($invoice['month_billed'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($invoice['year_billed'] ?? '') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <form method="POST" action="traitement_offset.php">
+                    <button type="submit" name="pageProviderInvoices" value="moins">Précédent</button>
+                    <button type="submit" name="pageProviderInvoices" value="plus">Suivant</button>
+                    <button type="submit" name="pageProviderInvoices">Rafraîchir</button>
+                    <input type="hidden" name="sortProviderInvoices" value="<?php if(isset($_GET['sortProviderInvoices'])){ echo $_GET['sortProviderInvoices']; } ?>">
+                </form>
+
+                <?php if($totalDue): ?>
+                <div class="mt-5 col-5">
+                    <h5>Total dû aux prestataires pour ce mois (<?= $totalDue['month'] ?>/<?= $totalDue['year'] ?>) :</h5>
+                    <p style="font-size: 1.5rem;"><strong><?= htmlspecialchars($totalDue['total']) ?></strong> €</p>
+                </div>
                 <?php endif; ?>
+
             </section>
             
             <section id="pagetips" class="mt-5">

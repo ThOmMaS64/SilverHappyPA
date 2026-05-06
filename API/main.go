@@ -94,8 +94,6 @@ func main() {
 	http.HandleFunc("/deleteServiceFromOffers", handlersFront.DeleteServiceFromOffers(database))
 	http.HandleFunc("/updateServiceOffer", handlersFront.UpdateServiceOffer(database))
 
-	http.HandleFunc("/showInvoicesDefaultData", handlersBack.ShowInvoicesDefaultData(database))
-	http.HandleFunc("/showInvoicesPersonalizedData", handlersBack.ShowInvoicesPersonalizedData(database))
 	http.HandleFunc("/showNotificationsDefaultData", handlersBack.ShowNotificationsDefaultData(database))
 	http.HandleFunc("/showNotificationsPersonalizedData", handlersBack.ShowNotificationsPersonalizedData(database))
 	http.HandleFunc("/showServicesDefaultData", handlersBack.ShowServicesDefaultData(database))
@@ -139,6 +137,9 @@ func main() {
 	http.HandleFunc("/deleteCaptcha", handlersBack.DeleteCaptcha(database))
 	http.HandleFunc("/updateCaptcha", handlersBack.UpdateCaptcha(database))
 	http.HandleFunc("/addCaptcha", handlersBack.AddCaptcha(database))
+	http.HandleFunc("/showConsumerInvoicesDefaultData", handlersBack.ShowConsumerInvoicesDefaultData(database))
+	http.HandleFunc("/showServiceProviderInvoicesDefaultData", handlersBack.ShowServiceProviderInvoicesDefaultData(database))
+	http.HandleFunc("/getTotalDueToProviders", handlersBack.GetTotalDueToProviders(database))
 
 	listenError := http.ListenAndServe(":8081", nil)
 
