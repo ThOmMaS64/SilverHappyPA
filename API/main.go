@@ -93,6 +93,9 @@ func main() {
 	http.HandleFunc("/getServiceProviderMensualAmount", handlersFront.GetServiceProviderMensualAmount(database))
 	http.HandleFunc("/deleteServiceFromOffers", handlersFront.DeleteServiceFromOffers(database))
 	http.HandleFunc("/updateServiceOffer", handlersFront.UpdateServiceOffer(database))
+	http.HandleFunc("/saveStripeAccountId", handlersFront.SaveStripeAccountId(database))
+	http.HandleFunc("/getStripeAccountId", handlersFront.GetStripeAccountId(database))
+
 
 	http.HandleFunc("/showNotificationsDefaultData", handlersBack.ShowNotificationsDefaultData(database))
 	http.HandleFunc("/showNotificationsPersonalizedData", handlersBack.ShowNotificationsPersonalizedData(database))
@@ -143,8 +146,9 @@ func main() {
 	http.HandleFunc("/refuseServiceProviderDocument", handlersBack.RefuseServiceProviderDocument(database))
 	http.HandleFunc("/validateServiceProviderDocument", handlersBack.ValidateServiceProviderDocument(database))
 	http.HandleFunc("/getServiceProviderRequests", handlersBack.GetServiceProviderRequests(database))
-
-	go startSendingNotifications(database)	
+	
+	go startSendingNotifications(database)
+	go monthlyPaiement(database)		
 
 	listenError := http.ListenAndServe(":8081", nil)
 
