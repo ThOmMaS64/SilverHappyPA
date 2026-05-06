@@ -1557,7 +1557,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     <?php endif; ?>
                 </div>
 
-                <h3 class="pt-3">Factures adhérents</h3>
+                <h3 class="pt-3">Archive des factures adhérents</h3>
 
                 <form method="GET" action="index.php#pagemoney">
                     <div class="row mb-3">
@@ -1626,7 +1626,7 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                     <input type="hidden" name="sortInvoices" value="<?php if(isset($_GET['sortInvoices'])){ echo $_GET['sortInvoices']; } ?>">
                 </form>
 
-                <h3 class="pt-5">Factures prestataires</h3>
+                <h3 class="pt-5">Archive des factures prestataires</h3>
 
                 <form method="GET" action="index.php#pagemoney">
                     <div class="row mb-3">

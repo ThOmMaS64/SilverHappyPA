@@ -44,40 +44,6 @@
 
     ?>
     <?php
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add_slot') {
-            
-            $startTime = $_POST['date'] . 'T' . $_POST['start_time'];
-            $endTime = $_POST['date'] . 'T' . $_POST['end_time'];
-            $isRecurring = isset($_POST['is_recurring']);
-            
-            $payload = [
-                'id_service_provider' => (int)$_SESSION['id_service_provider'],
-                'slots' => [
-                    [
-                        'id_service' => (int)$_POST['id_service'],
-                        'start_time' => $startTime,
-                        'end_time' => $endTime,
-                        'is_recurring' => $isRecurring
-                    ]
-                ]
-            ];
-
-            $options = [
-                'http' => [
-                    'header'  => "Content-type: application/json\r\n",
-                    'method'  => 'POST',
-                    'content' => json_encode($payload),
-                ]
-            ];
-            $context  = stream_context_create($options);
-            $result = @file_get_contents('http://localhost:8081/saveServiceSlots', false, $context);
-
-            if ($result !== FALSE) {
-                $successMessage = "Créneau ajouté avec succès !";
-            } else {
-                $errorMessage = "Erreur lors de l'ajout du créneau.";
-            }
-        }
 
         $errorMessages = [
 
@@ -220,7 +186,7 @@
                     <h5 class="mt-5"><?php echo trad("Ajouter une disponibilité"); ?></h5>
                         <div class="line mb-4"></div>
 
-                        <form action="" method="POST" class="col-8">
+                        <form action="http://localhost:8081/saveServiceSlots" method="POST" class="col-8">
                             <input type="hidden" name="id_service_provider" value="<?= $_SESSION['id_service_provider'] ?>">
 
                             <div class="mb-3">
