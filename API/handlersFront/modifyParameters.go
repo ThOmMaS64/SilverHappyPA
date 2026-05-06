@@ -75,53 +75,41 @@ func ModifyParameters(database *sql.DB) http.HandlerFunc {
 			http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?need=call_bdd_back&selectedParameter=1&notif=color_change_successful", 303)
 			return	
 
-		}else if paramChoice == "2" {
+		} else if paramChoice == "2" {
 
-			password := r.FormValue(("password"))
+			password := r.FormValue("password")
 			var dbPassword string
 
-			row := database.QueryRow("SELECT password FROM user_ WHERE ID_USER = ?", id)
-	
+			row := database.QueryRow("SELECT password FROM USER_ WHERE ID_USER = ?", id)
 			err := row.Scan(&dbPassword)
 
 			if err != nil {
-
 				http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system4", 303)
 				return
-
 			}
 
 			errorComparisonPassword := bcrypt.CompareHashAndPassword([]byte(dbPassword), []byte(password))
 
 			if errorComparisonPassword != nil {
-
 				http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=wrong_password", 303)
-				return 
-
+				return
 			}
 
 			var stripeSubId sql.NullString
-
 			rowStripe := database.QueryRow("SELECT stripe_subscription_id FROM CONSUMER WHERE ID_USER = ?", id)
 			errorStripe := rowStripe.Scan(&stripeSubId)
 
-			if errorStripe == nil && stripeSubId.Valid && stripeSubId.String != ""{
-
+			if errorStripe == nil && stripeSubId.Valid && stripeSubId.String != "" {
 				stripe.Key = "sk_test_51Szo1M2WiLfhQi4sPPN6NYJI4gecl8Au5rA0oxHK7grJ6H4u41IReSoXwXn0NqrtzqWW8yXOItSD7MvuuW0q0Sgt009dm7h1pa"
 				annulationParameter := &stripe.SubscriptionCancelParams{}
+				_, errorStripeCancel := subscription.Cancel(stripeSubId.String, annulationParameter)
 				
-				_, errorStripeCancel := subscription.Cancel(stripeSubId.String, annulationParameter)	
-
 				if errorStripeCancel != nil {
-
 					http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=stripeCancel", 303)
-						return 
-
+					return
 				}
-
 			}
 
-			
 			var idConsumer int
 			var idProvider int
 
@@ -132,43 +120,34 @@ func ModifyParameters(database *sql.DB) http.HandlerFunc {
 			_ = row2.Scan(&idProvider)
 
 			if idConsumer > 0 {
-
 				queries := []string{
-
+					"DELETE FROM ORDER_LINE WHERE ID_SHOP_ORDER IN (SELECT ID_SHOP_ORDER FROM SHOP_ORDER WHERE ID_CONSUMER = ?)",
+					"DELETE FROM SHOP_ORDER WHERE ID_CONSUMER = ?",
+					"DELETE FROM PROVIDE WHERE ID_QUOTE IN (SELECT ID_QUOTE FROM QUOTE WHERE ID_CONSUMER = ?)",
+					"DELETE FROM QUOTE WHERE ID_CONSUMER = ?",
 					"DELETE FROM CONTRACT WHERE ID_CONSUMER = ?",
 					"DELETE FROM NOTIFICATION WHERE ID_CONSUMER = ?",
 					"DELETE FROM GRADE WHERE ID_CONSUMER = ?",
 					"DELETE FROM PARTICIPATE WHERE ID_CONSUMER = ?",
 					"DELETE FROM CALL_ WHERE ID_CONSUMER = ?",
-					"DELETE FROM ORDER_LINE WHERE ID_SHOP_ORDER IN (SELECT ID_SHOP_ORDER FROM SHOP_ORDER WHERE ID_CONSUMER = ?)",
-					"DELETE FROM SHOP_ORDER WHERE ID_CONSUMER = ?",
-					"DELETE FROM PROVIDE WHERE ID_QUOTE IN (SELECT ID_QUOTE FROM QUOTE WHERE ID_CONSUMER = ?)",
-					"DELETE FROM QUOTE WHERE ID_CONSUMER = ?",
+					"DELETE FROM SERVICE_BOOKING WHERE ID_CONSUMER = ?",
+					"UPDATE INTERVENTION SET ID_CONSUMER_INVOICE = NULL WHERE ID_CONSUMER_INVOICE IN (SELECT ID_CONSUMER_INVOICE FROM CONSUMER_INVOICE WHERE ID_CONSUMER = ?)",
+					"DELETE FROM CONSUMER_INVOICE WHERE ID_CONSUMER = ?",
 					"DELETE FROM CONSUMER WHERE ID_CONSUMER = ?",
-
 				}
 
 				for _, query := range queries {
-
 					_, err := database.Exec(query, idConsumer)
-
 					if err != nil {
-
 						http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system5", 303)
-						return 
-
+						return
 					}
-
 				}
-
 			}
-			
+
 			if idProvider > 0 {
-
 				queries := []string{
-
 					"DELETE FROM ADVERTISEMENT WHERE ID_SERVICE_PROVIDER = ?",
-					"DELETE FROM INVOICE WHERE ID_SERVICE_PROVIDER = ?",
 					"DELETE FROM OFFER WHERE ID_SERVICE_PROVIDER = ?",
 					"DELETE FROM DO WHERE ID_SERVICE_PROVIDER = ?",
 					"DELETE FROM CONDUCT WHERE ID_SERVICE_PROVIDER = ?",
@@ -177,65 +156,52 @@ func ModifyParameters(database *sql.DB) http.HandlerFunc {
 					"DELETE FROM QUOTE WHERE ID_SERVICE_PROVIDER = ?",
 					"DELETE FROM USER_INTERACTION_ADVICE WHERE ID_ADVICE IN (SELECT ID_ADVICE FROM ADVICE WHERE ID_SERVICE_PROVIDER = ?)",
 					"DELETE FROM ADVICE WHERE ID_SERVICE_PROVIDER = ?",
+					"DELETE FROM SERVICE_BOOKING WHERE ID_SERVICE_SLOT IN (SELECT ID_SERVICE_SLOT FROM SERVICE_SLOT WHERE ID_SERVICE_PROVIDER = ?)",
+					"DELETE FROM SERVICE_SLOT WHERE ID_SERVICE_PROVIDER = ?",
+					"UPDATE INTERVENTION SET ID_SERVICE_PROVIDER_INVOICE = NULL WHERE ID_SERVICE_PROVIDER_INVOICE IN (SELECT ID_SERVICE_PROVIDER_INVOICE FROM SERVICE_PROVIDER_INVOICE WHERE ID_SERVICE_PROVIDER = ?)",
+					"DELETE FROM SERVICE_PROVIDER_INVOICE WHERE ID_SERVICE_PROVIDER = ?",
 					"DELETE FROM SERVICE_PROVIDER WHERE ID_SERVICE_PROVIDER = ?",
-
 				}
-				
+
 				for _, query := range queries {
-
 					_, err := database.Exec(query, idProvider)
-
 					if err != nil {
-
 						http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system6", 303)
-						return 
-
+						return
 					}
-
 				}
-
 			}
 
 			queriesUser := []string{
-
-				"DELETE FROM MESSAGE WHERE sender_id = ? OR receiver_id = ?",
+				"DELETE FROM MESSAGE WHERE ID_DISCUSSION IN (SELECT ID_DISCUSSION FROM DISCUSSION WHERE user1_id = ? OR user2_id = ?)",
+				"DELETE FROM DISCUSSION WHERE user1_id = ? OR user2_id = ?",
+				"DELETE FROM MESSAGE WHERE sender_id = ?",
 				"DELETE FROM TOKEN WHERE ID_USER = ?",
 				"DELETE FROM PLANNING WHERE ID_USER = ?",
 				"DELETE FROM USER_INTERACTION_ADVICE WHERE ID_USER = ?",
+				"DELETE FROM USER_INTERACTION_EVENT WHERE ID_USER = ?",
+				"DELETE FROM USER_INTERACTION_SERVICE WHERE ID_USER = ?",
 				"DELETE FROM USER_ WHERE ID_USER = ?",
-
 			}
-				
+
 			for _, query := range queriesUser {
-
-				if query == "DELETE FROM MESSAGE WHERE sender_id = ? OR receiver_id = ?" {
-
+				if query == "DELETE FROM MESSAGE WHERE ID_DISCUSSION IN (SELECT ID_DISCUSSION FROM DISCUSSION WHERE user1_id = ? OR user2_id = ?)" || query == "DELETE FROM DISCUSSION WHERE user1_id = ? OR user2_id = ?" {
 					_, err := database.Exec(query, id, id)
-
 					if err != nil {
-
-						http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system6", 303)
-					return 
-
-					}
-
-				}else{
-
-					_, err := database.Exec(query, id)
-
-					if err != nil {
-
 						http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system7", 303)
-						return 
-
+						return
 					}
-
+				} else {
+					_, err := database.Exec(query, id)
+					if err != nil {
+						http.Redirect(w, r, "http://localhost/ProjetAnnuel/parameters.php?error=system7", 303)
+						return
+					}
 				}
-
 			}
 
 			http.Redirect(w, r, "http://localhost/ProjetAnnuel/deconnexion.php?notif=account_suppression", 303)
-			return 
+			return
 
 		}else if paramChoice == "3" {
 
