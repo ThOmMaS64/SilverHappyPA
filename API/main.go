@@ -95,6 +95,7 @@ func main() {
 	http.HandleFunc("/updateServiceOffer", handlersFront.UpdateServiceOffer(database))
 	http.HandleFunc("/saveStripeAccountId", handlersFront.SaveStripeAccountId(database))
 	http.HandleFunc("/getStripeAccountId", handlersFront.GetStripeAccountId(database))
+	http.HandleFunc("/showProviderInvoicesForProfile", handlersFront.ShowProviderInvoicesForProfile(database))
 
 
 	http.HandleFunc("/showNotificationsDefaultData", handlersBack.ShowNotificationsDefaultData(database))

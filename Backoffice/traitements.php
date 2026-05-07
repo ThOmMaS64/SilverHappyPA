@@ -35,11 +35,6 @@
             header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagetips');
             exit();
             break;
-
-        case 'notifs':
-            header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagenotifs');
-            exit();
-            break;
         
         case 'messages':
             header('Location: http://localhost/ProjetAnnuel/Backoffice/#pagemessages');

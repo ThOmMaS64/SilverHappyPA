@@ -241,7 +241,7 @@
 
     if(isset($_SESSION['id_service_provider'])){
 
-        $dataProviderInvoices = @file_get_contents("http://localhost:8081/showProviderInvoicesForProfile?id_service_provider=" . $_SESSION['id_service_provider']);
+        $dataProviderInvoices = file_get_contents("http://localhost:8081/showProviderInvoicesForProfile?id_service_provider=" . $_SESSION['id_service_provider']);
 
         if($dataProviderInvoices){
             $decoded = json_decode($dataProviderInvoices, true);
@@ -424,39 +424,56 @@
                     </div>
                 </div>
 
-                <?php if(isset($_SESSION['id_service_provider']) && !empty($providerInvoices)): ?>
-                    <div class="mt-5">
-                        <h5>Mes factures de paiements</h5>
-                        <div class="line mb-4"></div>
-                        <div class="scrollZone">
-                            <?php foreach($providerInvoices as $invoice): ?>
-                                <div class="row mb-3 align-items-center">
-                                    <div class="col-4">
-                                        <p class="mb-0"><?= htmlspecialchars($invoice['month_billed']) ?>/<?= htmlspecialchars($invoice['year_billed']) ?></p>
-                                        <small><?= htmlspecialchars($invoice['nb_services_provided']) ?> prestation(s) — <?= htmlspecialchars($invoice['amount']) ?> €</small>
+                <div class="row justify-content-center" style="margin-top:50px;">
+                    <?php if(isset($_SESSION['id_service_provider']) && !empty($providerInvoices)): ?>
+                    <div class="col-5">
+                        <div class="backgroundForm" style="<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#2A1F1B;color:white;<?php endif;endif; ?>; margin-bottom:80px;">
+                            <h5><?php echo trad("Mes factures de paiements") ?></h5>
+                            <div class="line mb-2"></div>
+
+                            <div class="scrollZone">
+                                <?php $isFirstInvoice = true; ?>
+                                <?php foreach($providerInvoices as $invoice): ?>
+
+                                    <?php if($isFirstInvoice == false): ?>
+                                        <div class="line2 mt-2 mb-2"></div>
+                                    <?php endif; ?>
+
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <p><strong>Paiement <?= htmlspecialchars($invoice['month_billed']) ?>/<?= htmlspecialchars($invoice['year_billed']) ?></strong> - 
+                                                <small>
+                                                    <?php if($invoice['is_paid'] == 1): ?>
+                                                        <span><?= trad("payé") ?></span>
+                                                    <?php else: ?>
+                                                        <span><?= trad("en attente") ?></span>
+                                                    <?php endif; ?>
+                                                </small>
+                                            </p>
+                                            <p><small><?= htmlspecialchars($invoice['nb_services_provided']) ?> prestation(s) - <?= htmlspecialchars($invoice['amount']) ?> €</small></p>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <?php if(!empty($invoice['pdf_path'])): ?>
+                                                <a href="data/invoices_provider/<?= htmlspecialchars($invoice['pdf_path']) ?>" target="_blank" class="btn btn-sm">
+                                                    <svg class="me-1" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                                                        <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z"/>
+                                                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                                                    </svg>
+                                                    <?php echo trad("Ouvrir") ?>
+                                                </a>
+                                            <?php else: ?>
+                                                <small class="text-muted"><?= trad("Facture indisponible") ?></small>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
-                                    <div class="col-3">
-                                        <?php if($invoice['is_paid']): ?>
-                                            <span style="color: green;">Payé</span>
-                                        <?php else: ?>
-                                            <span style="color: orange;">En attente</span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="col-5">
-                                        <?php if(!empty($invoice['pdf_path'])): ?>
-                                            <a href="data/invoices_provider/<?= htmlspecialchars($invoice['pdf_path']) ?>" target="_blank">
-                                                Télécharger la facture
-                                            </a>
-                                        <?php else: ?>
-                                            <p>Pas de facture disponible</p>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                                <div class="line2 mb-3"></div>
-                            <?php endforeach; ?>
+
+                                    <?php $isFirstInvoice = false; ?>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
                     <?php endif; ?>
+                </div>
                 
                 <?php if($_SESSION['status'] == 1 || $_SESSION['status'] == 2 || $_SESSION['status'] == 5 || $_SESSION['status'] == 6){ ?>
                 <div class="container">

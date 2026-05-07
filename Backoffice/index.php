@@ -588,11 +588,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                 </form>
                 <li><a href="#pagetips" onclick="hideWelcome(); document.getElementById('tipsForm').submit(); return false;">Gestion des conseils</a></li>
 
-                <form id="notifsForm" method="POST" action="traitements.php">
-                    <input type="hidden" name="action" value="notifs">
-                </form>
-                <li><a href="#pagenotifs" onclick="hideWelcome(); document.getElementById('notifsForm').submit(); return false;">Gestion des notifications</a></li>
-
                 <form id="messagesForm" method="POST" action="traitements.php">
                     <input type="hidden" name="action" value="messages">
                 </form>
@@ -1704,6 +1699,14 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                 <form method="GET" action="index.php#pagemoney">
                     <div class="row mb-3">
                         <div class="col-2">
+                            <select name="filterPaid" class="selectFilter" onchange="this.form.submit()">
+                                <option disabled" <?php if(!isset($_GET['filterPaid'])){echo 'selected';} ?>>Choisissez un filtre</option>
+                                <option value="1" <?php if(isset($_GET['filterPaid']) && $_GET['filterPaid'] == "1"){echo 'selected';} ?>>Payés</option>
+                                <option value="0" <?php if(isset($_GET['filterPaid']) && $_GET['filterPaid'] == "0"){echo 'selected';} ?>>Non payés</option>
+                            </select>
+                        </div>
+
+                        <div class="col-2">
                             <select name="sortProviderInvoices" class="selectSort" onchange="this.form.submit()">
                                 <option disabled <?php if(!isset($_GET['sortProviderInvoices'])){echo 'selected';} ?>>Choisissez un tri</option>
                                 <option value="1" <?php if(isset($_GET['sortProviderInvoices']) && $_GET['sortProviderInvoices'] == "1"){echo 'selected';} ?>>Date croissante</option>
@@ -1919,158 +1922,6 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
 
                     <label>Corps de l'email</label>
                     <textarea type="text" name="mail" class="form-control mb-3" placeholder="Rédigez l'email" required></textarea>
-
-                    <button type="submit"class="mb-5">Envoyer</button>
-
-                </form>
-                <?php endif; ?>
-            </section>
-
-            <section id="pagenotifs" class="mt-5">
-                <?php if(isset($_SESSION['listNotifs'])): ?>
-                <h1>Gestion des notifications personnalisées</h1>
-
-                <div class="col-4">
-                    <?php if (isset($errorUsersMessage)): ?>
-                        <div class="alert alert-danger">
-                            <?php echo htmlspecialchars($errorUsersMessage); ?>
-                        </div>
-                    <?php elseif(isset($successUsersMessage)): ?>
-                        <div class="alert alert-success">
-                            <?php echo htmlspecialchars($successUsersMessage); ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-                <form method="GET" action="index.php#pagenotifs">
-                    <div class="row mb-3">
-                        <div class="col-2">
-                            <div class="input-group">
-                                <input value="<?php if(isset($_GET['researchNotifs'])){ echo htmlspecialchars($_GET['researchNotifs']); }else{ echo ""; } ?>" class="form-control" name="researchNotifs" placeholder="<?php if(isset($_GET['researchNotifs']) && $_GET['researchNotifs'] != ""){ echo $_GET['researchNotifs']; }else{ ?><?php echo "Tapez votre recherche"; ?> <?php } ?>" aria-label="Search">
-                                <button class="searchButton" type="submit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="col-2">
-                            <select name="filterNotifs" class="selectFilter" onchange="this.form.submit()">
-                                <option disabled selected><?php echo "Choisissez un type" ?></option>
-                                <?php foreach($distinctTypesNotifs as $type): ?>
-                                    <option value="<?= htmlspecialchars($type) ?>" <?php if(isset($_GET['filterNotifs']) && $_GET['filterNotifs'] == $type){ echo 'selected'; } ?> ><?= htmlspecialchars($type) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-
-                        <div class="col-2">
-                            <select name="sortNotifs" class="selectSort" onchange="this.form.submit()">
-                                <option disabled <?php if(!isset($_GET['sortNotifs']) || $_GET['sortNotifs'] == ""){echo 'selected';} ?>>Choisissez un tri</option>
-                            </select>
-                        </div>
-                    </div>
-                </form>
-
-                <table class="table table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Titre</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Pour l'adhérent</th>
-                        <th scope="col">Sélectionner</th>
-                        <th scope="col">Modifier</th>
-                        <th scope="col">Supprimer</th>
-                        <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                            foreach($_SESSION['listNotifs'] as $notif){
-
-                                $idFormNotif = "form_notif_" . $notif['ID_NOTIFICATION'];
-                        ?>
-                                <tr>
-                                    <th scope="row"> <?= htmlspecialchars($notif['ID_NOTIFICATION']) ?></th>
-
-                                    <td><input class="form-control" form="<?= $idFormNotif ?>" name="title" class="mediumtext" type="text" value="<?= htmlspecialchars($notif['title'] ?? '') ?>"></td>
-
-                                    <td><input class="form-control" form="<?= $idFormNotif ?>" name="description" class="mediumtext" type="text" value="<?= htmlspecialchars($notif['description'] ?? '') ?>"></td>
-
-                                    <td><input class="form-control" form="<?= $idFormNotif ?>" name="type" class="mediumtext" type="text" value="<?= htmlspecialchars($notif['type'] ?? '') ?>"></td>
-
-                                    <td><?= htmlspecialchars($notif['username'] ?? '') ?></td>
-
-                                    <td>
-                                         <div class="form-check">
-                                            <input form="selectedNotif" name="selectedNotif" class="form-check-input" type="radio" value="<?php echo htmlspecialchars($notif['ID_NOTIFICATION']); ?>">
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <form id="<?= $idFormNotif ?>" method="POST" action="http://localhost:8081/updateNotificationData">
-                                            <button type="submit" value="<?= $notif['ID_NOTIFICATION'] ?>">Modifier</button>
-                                            <input type="hidden" name="id" value="<?= $notif['ID_NOTIFICATION'] ?>">
-                                        </form>
-                                    </td>
-
-                                    <td>
-                                        <form method="POST" action="http://localhost:8081/deleteNotification">
-                                            <button type="submit" value="<?= $notif['ID_NOTIFICATION'] ?>">Supprimer</button>
-                                            <input type="hidden" name="id" value="<?= $notif['ID_NOTIFICATION'] ?>">
-                                        </form>
-                                    </td>
-
-                                </tr>
-
-                            <?php } ?>
-                    </tbody>
-                </table>
-
-                <form method="POST" action="traitement_offset.php">
-                    <button type="submit" name="pagenotifs" value="moins">Précedent</button>
-                    <button type="submit" name="pagenotifs" value="plus">Suivant</button>
-                    <button type="submit" name="pagenotifs">Rafraîchir</button>
-
-                    <input type="hidden" name="researchNotifs" value="<?php if(isset($_GET['researchNotifs'])){ echo $_GET['researchNotifs']; } ?>">
-                    <input type="hidden" name="filterNotifs" value="<?php if(isset($_GET['filterNotifs'])){ echo $_GET['filterNotifs']; } ?>">
-                    <input type="hidden" name="sortNotifs" value="<?php if(isset($_GET['sortNotifs'])){ echo $_GET['sortNotifs']; } ?>">
-                </form>
-
-                <h5 class="pt-5">Ajouter une notification</h5>
-
-                <form method="POST" action="http://localhost:8081/addNotification">
-                    <table class="table table-striped">
-                        <thead class="thead-dark">
-                            <tr>
-                            <th scope="col">Titre</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">ID de l'adhérent</th>
-                            <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><input class="form-control mediumtext" type="text" name="title"></td>
-
-                                <td><input class="form-control bigtext" type="text" name="description"></td>
-
-                                <td><input class="form-control mediumtext" type="text" name="type"></td>
-
-                                <td><input class="form-control smalltext" type="text" name="id"></td>
-                                        
-                                <td><button class="button" type="submit" name="addnotif">Ajouter</button></td>
-                            </tr>                   
-                        </tbody>
-                    </table>
-                </form>
-
-                <h5 class="pt-5">Envoyer la notification sélectionnée</h5>
-
-                <form id="selectedNotif" method="POST" action="sendEmailSelectedNotif.php">
 
                     <button type="submit"class="mb-5">Envoyer</button>
 

@@ -8,17 +8,17 @@ import (
 
 type ProviderInvoiceProfile struct {
 	ID_SERVICE_PROVIDER_INVOICE int `json:"ID_SERVICE_PROVIDER_INVOICE"`
-	Amount string `json:"amount"`
-	NbServicesProvided string `json:"nb_services_provided"`
-	MonthBilled string `json:"month_billed"`
-	YearBilled string `json:"year_billed"`
-	IsPaid bool `json:"is_paid"`
+	Amount float64 `json:"amount"`
+	NbServicesProvided int `json:"nb_services_provided"`
+	MonthBilled int `json:"month_billed"`
+	YearBilled int `json:"year_billed"`
+	IsPaid int `json:"is_paid"`
 	PdfPath string `json:"pdf_path"`
 }
 
 type ResponseProviderInvoicesProfile struct {
 	Invoices []ProviderInvoiceProfile `json:"invoices"`
-	Error    string                   `json:"error"`
+	Error string `json:"error"`
 }
 
 func ShowProviderInvoicesForProfile(database *sql.DB) http.HandlerFunc {
