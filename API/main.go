@@ -98,8 +98,6 @@ func main() {
 	http.HandleFunc("/showProviderInvoicesForProfile", handlersFront.ShowProviderInvoicesForProfile(database))
 
 
-	http.HandleFunc("/showNotificationsDefaultData", handlersBack.ShowNotificationsDefaultData(database))
-	http.HandleFunc("/showNotificationsPersonalizedData", handlersBack.ShowNotificationsPersonalizedData(database))
 	http.HandleFunc("/showServicesDefaultData", handlersBack.ShowServicesDefaultData(database))
 	http.HandleFunc("/showServicesPersonalizedData", handlersBack.ShowServicesPersonalizedData(database))
 	http.HandleFunc("/showProductsDefaultData", handlersBack.ShowProductsDefaultData(database))

@@ -82,12 +82,6 @@ if(!isset($_SESSION['offsetRequests'])){
 
 }
 
-if(!isset($_SESSION['offsetNotifs'])){
-
-    $_SESSION['offsetNotifs'] = 0;
-
-}
-
 if(!isset($_SESSION['offsetInvoices'])){
 
     $_SESSION['offsetInvoices'] = 0;
@@ -416,48 +410,6 @@ if($dataRequests){
             ];
         }
     }
-}
-
-$researchNotifs = isset($_GET['researchNotifs']) ? urlencode($_GET['researchNotifs']) : "";
-$filterNotifs = isset($_GET['filterNotifs']) ? urlencode($_GET['filterNotifs']) : "";
-$sortNotifs = isset($_GET['sortNotifs']) ? urlencode($_GET['sortNotifs']) : "";
-
-$offsetNotifs = $_SESSION['offsetNotifs'];
-
-if(isset($_GET['researchNotifs']) || isset($_GET['filterNotifs']) || isset($_GET['sortNotifs'])){
-
-    $response = file_get_contents("http://localhost:8081/showNotificationsPersonalizedData?research=$researchNotifs&filter=$filterNotifs&sort=$sortNotifs&offset=$offsetNotifs");
-
-}else{
-
-    $response = file_get_contents("http://localhost:8081/showNotificationsDefaultData?offset=$offsetNotifs");
-
-}
-
-$distinctTypesNotifs = [];
-
-if($response){
-
-    $decodedResponse = json_decode($response, true);
-    $_SESSION['listNotifs'] = array();
-
-    if(isset($decodedResponse['notifs']) && is_array($decodedResponse['notifs'])){
-        foreach($decodedResponse['notifs'] as $advice){
-            $_SESSION['listNotifs'][] = [
-                'ID_NOTIFICATION' => $advice['ID_NOTIFICATION'],
-                'title' => $advice['title'],
-                'description' => $advice['description'],
-                'type' => $advice['type'],
-                'username' => $advice['username'],
-                'ID_CONSUMER' => $advice['ID_CONSUMER']
-            ];
-        }
-    }
-
-    if(isset($decodedResponse['types']) && is_array($decodedResponse['types'])){
-        $distinctTypesNotifs = $decodedResponse['types'];
-    }
-
 }
 
 $offsetConsumerInvoices = $_SESSION['offsetConsumerInvoices'] ?? 0;
