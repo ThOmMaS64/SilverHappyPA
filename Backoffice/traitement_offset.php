@@ -420,12 +420,8 @@
     }
 
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pagemoney'])){
-        
-        if(!isset($_SESSION['offsetInvoices'])){
 
-            $_SESSION['offsetInvoices'] = 0;
-
-        }
+        if(!isset($_SESSION['offsetInvoices'])){ $_SESSION['offsetInvoices'] = 0; }
 
         if($_POST['pagemoney'] == "plus"){
 
@@ -437,28 +433,48 @@
 
         }
 
-        if($_SESSION['offsetInvoices'] < 0){
-
-            $_SESSION['offsetInvoices'] = 0;
-
-        }
+        if($_SESSION['offsetInvoices'] < 0){ $_SESSION['offsetInvoices'] = 0; }
 
         $url = "http://localhost/ProjetAnnuel/Backoffice/index.php?";
 
         if(isset($_POST['researchInvoices']) && !empty($_POST['researchInvoices'])){
 
-            $url = $url . "researchInvoices=" . urlencode($_POST['researchInvoices']);
+            $url .= "researchInvoices=" . urlencode($_POST['researchInvoices']);
 
         }
-
         if(isset($_POST['sortInvoices']) && !empty($_POST['sortInvoices'])){
 
-            $url = $url . "&sortInvoices=" . urlencode($_POST['sortInvoices']);
-
+            $url .= "&sortInvoices=" . urlencode($_POST['sortInvoices']);
+            
         }
 
-        $url = $url . "#pagemoney";
+        $url .= "#pagemoney";
+        header('Location:' . $url);
+        exit();
+    }
 
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pageProviderInvoices'])){
+
+        if(!isset($_SESSION['offsetProviderInvoices'])){ $_SESSION['offsetProviderInvoices'] = 0; }
+
+        if($_POST['pageProviderInvoices'] == "plus"){
+            $_SESSION['offsetProviderInvoices'] += 10;
+        }elseif($_POST['pageProviderInvoices'] == "moins"){
+            $_SESSION['offsetProviderInvoices'] -= 10;
+        }
+
+        if($_SESSION['offsetProviderInvoices'] < 0){ $_SESSION['offsetProviderInvoices'] = 0; }
+
+        $url = "http://localhost/ProjetAnnuel/Backoffice/index.php?";
+
+        if(isset($_POST['sortProviderInvoices']) && !empty($_POST['sortProviderInvoices'])){
+            $url .= "sortProviderInvoices=" . urlencode($_POST['sortProviderInvoices']);
+        }
+        if(isset($_POST['filterPaid']) && $_POST['filterPaid'] !== ''){
+            $url .= "&filterPaid=" . urlencode($_POST['filterPaid']);
+        }
+
+        $url .= "#pagemoney";
         header('Location:' . $url);
         exit();
     }

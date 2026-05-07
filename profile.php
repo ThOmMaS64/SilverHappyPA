@@ -236,6 +236,20 @@
         }
     }
 
+
+    $providerInvoices = [];
+
+    if(isset($_SESSION['id_service_provider'])){
+
+        $dataProviderInvoices = @file_get_contents("http://localhost:8081/showProviderInvoicesForProfile?id_service_provider=" . $_SESSION['id_service_provider']);
+
+        if($dataProviderInvoices){
+            $decoded = json_decode($dataProviderInvoices, true);
+            $providerInvoices = $decoded['invoices'] ?? [];
+        }
+
+    }
+
 ?>
 
 <body style="background-color:rgb(62, 134, 189);<?php if(isset($_SESSION['id'])):if($_SESSION['darkMode'] == 1):?>background-color:#1A1412;<?php endif;endif; ?>;">
@@ -409,6 +423,40 @@
                         </div>
                     </div>
                 </div>
+
+                <?php if(isset($_SESSION['id_service_provider']) && !empty($providerInvoices)): ?>
+                    <div class="mt-5">
+                        <h5>Mes factures de paiements</h5>
+                        <div class="line mb-4"></div>
+                        <div class="scrollZone">
+                            <?php foreach($providerInvoices as $invoice): ?>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-4">
+                                        <p class="mb-0"><?= htmlspecialchars($invoice['month_billed']) ?>/<?= htmlspecialchars($invoice['year_billed']) ?></p>
+                                        <small><?= htmlspecialchars($invoice['nb_services_provided']) ?> prestation(s) — <?= htmlspecialchars($invoice['amount']) ?> €</small>
+                                    </div>
+                                    <div class="col-3">
+                                        <?php if($invoice['is_paid']): ?>
+                                            <span style="color: green;">Payé</span>
+                                        <?php else: ?>
+                                            <span style="color: orange;">En attente</span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-5">
+                                        <?php if(!empty($invoice['pdf_path'])): ?>
+                                            <a href="data/invoices_provider/<?= htmlspecialchars($invoice['pdf_path']) ?>" target="_blank">
+                                                Télécharger la facture
+                                            </a>
+                                        <?php else: ?>
+                                            <p>Pas de facture disponible</p>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="line2 mb-3"></div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 
                 <?php if($_SESSION['status'] == 1 || $_SESSION['status'] == 2 || $_SESSION['status'] == 5 || $_SESSION['status'] == 6){ ?>
                 <div class="container">

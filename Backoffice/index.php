@@ -468,8 +468,8 @@ $sortInvoices = isset($_GET['sortInvoices'])   ? urlencode($_GET['sortInvoices']
 $sortProviderInvoices = isset($_GET['sortProviderInvoices']) ? urlencode($_GET['sortProviderInvoices']) : "";
 
 $dataConsumerInvoices = file_get_contents("http://localhost:8081/showConsumerInvoicesDefaultData?offset=$offsetConsumerInvoices&filter=$filterInvoices&sort=$sortInvoices");
-$dataProviderInvoices = file_get_contents("http://localhost:8081/showServiceProviderInvoicesDefaultData?offset=$offsetProviderInvoices&sort=$sortProviderInvoices");
-$dataTotalDue = file_get_contents("http://localhost:8081/getTotalDueToProviders");
+$filterPaid = isset($_GET['filterPaid']) ? urlencode($_GET['filterPaid']) : "";
+$dataProviderInvoices = @file_get_contents("http://localhost:8081/showServiceProviderInvoicesDefaultData?offset=$offsetProviderInvoices&sort=$sortProviderInvoices&filter_paid=$filterPaid");$dataTotalDue = file_get_contents("http://localhost:8081/getTotalDueToProviders");
 
 $consumerInvoices = [];
 $providerInvoices = [];
@@ -1634,6 +1634,13 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                     <option value="<?= htmlspecialchars($type) ?>" <?php if(isset($_GET['filterInvoices']) && $_GET['filterInvoices'] == $type){ echo 'selected'; } ?>><?= htmlspecialchars($type) ?></option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>                         
+                        <div class="col-2">
+                            <select name="filterPaid" class="selectFilter" onchange="this.form.submit()">
+                                <option disabled <?php if(!isset($_GET['filterPaid'])){echo 'selected';} ?>>Choisissez un filtre</option>
+                                <option value="1" <?php if(isset($_GET['filterPaid']) && $_GET['filterPaid'] == "1"){echo 'selected';} ?>>Payés</option>
+                                <option value="0" <?php if(isset($_GET['filterPaid']) && $_GET['filterPaid'] == "0"){echo 'selected';} ?>>Non payés</option>
+                            </select>
                         </div>
                         <div class="col-2">
                             <select name="sortInvoices" class="selectSort" onchange="this.form.submit()">
@@ -1715,6 +1722,8 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                             <th scope="col">Nb services réalisés</th>
                             <th scope="col">Mois</th>
                             <th scope="col">Année</th>
+                            <th scope="col">Statut</th>
+                            <th scope="col">Facture</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1726,6 +1735,14 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                 <td><?= htmlspecialchars($invoice['nb_services_provided'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($invoice['month_billed'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($invoice['year_billed'] ?? '') ?></td>
+                                <td><?= $invoice['is_paid'] ? 'Payé' : 'Non payé' ?></td>
+                                <td>
+                                    <?php if(!empty($invoice['pdf_path'])): ?>
+                                        <a href="../data/invoices_provider/<?= htmlspecialchars($invoice['pdf_path']) ?>" target="_blank"><button type="button">Ouvrir</button></a>
+                                    <?php else: ?>
+                                        Pas de facture
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
