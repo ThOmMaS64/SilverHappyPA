@@ -21,6 +21,12 @@
 
     }
 
+    if(isset($_GET['tuto']) && $_GET['tuto'] == 'see_again'){
+
+        $tuto = true;
+    
+    }
+
     if(!isset($_SESSION['id'])){
 
         $dataJson = file_get_contents("http://localhost:8081/advertisementIndexOffline");
