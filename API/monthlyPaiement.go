@@ -22,15 +22,20 @@ func monthlyPaiement(database *sql.DB) {
 		targetYear := time.Now().Year()
 
 		if targetMonth == 0 {
+
 			targetMonth = 12
 			targetYear -= 1
+
 		}
 
 		rows, err := database.Query("SELECT SERVICE_PROVIDER_INVOICE.ID_SERVICE_PROVIDER_INVOICE, SERVICE_PROVIDER_INVOICE.amount, SERVICE_PROVIDER.stripe_account_id FROM SERVICE_PROVIDER_INVOICE INNER JOIN SERVICE_PROVIDER ON SERVICE_PROVIDER_INVOICE.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER WHERE SERVICE_PROVIDER_INVOICE.month_billed = ? AND SERVICE_PROVIDER_INVOICE.year_billed = ? AND SERVICE_PROVIDER_INVOICE.is_paid = 0 AND SERVICE_PROVIDER.stripe_account_id IS NOT NULL", targetMonth, targetYear)
 
 		if err != nil {
+
 			continue
+
 		}
+		defer rows.Close()
 
 		for rows.Next() {
 
@@ -38,8 +43,12 @@ func monthlyPaiement(database *sql.DB) {
 			var amount float64
 			var stripeAccountId string
 
-			if rows.Scan(&idInvoice, &amount, &stripeAccountId) != nil {
+			err := rows.Scan(&idInvoice, &amount, &stripeAccountId)
+
+			if err != nil {
+
 				continue
+
 			}
 
 			payload := fmt.Sprintf("amount=%d&currency=eur&destination=%s", int(amount*100), stripeAccountId)
@@ -47,7 +56,9 @@ func monthlyPaiement(database *sql.DB) {
 			req, err := http.NewRequest("POST", "https://api.stripe.com/v1/transfers", bytes.NewBufferString(payload))
 
 			if err != nil {
+
 				continue
+
 			}
 
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -56,17 +67,21 @@ func monthlyPaiement(database *sql.DB) {
 			resp, err := (&http.Client{}).Do(req)
 
 			if err != nil {
+
 				continue
 			}
 
 			var result map[string]any
+
 			json.NewDecoder(resp.Body).Decode(&result)
 			resp.Body.Close()
 
 			if _, hasError := result["error"]; hasError {
 				continue
+
 			}
 
+			fmt.Printf("Virement envoyé. Mise à jour de la BDD pour la facture %d\n", idInvoice)
 			database.Exec("UPDATE SERVICE_PROVIDER_INVOICE SET is_paid = 1 WHERE ID_SERVICE_PROVIDER_INVOICE = ?", idInvoice)
 
 		}

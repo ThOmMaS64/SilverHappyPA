@@ -112,7 +112,7 @@
                                 <label class="form-label">Identifiant de compte Stripe (acct_...)</label>
                                 <input type="text" name="stripe_account_id" class="form-control" placeholder="acct_XXXXXXXXXXXXXXXX" required>
                             </div>
-                            <button type="submit" class="btn btn-primary" style="background-color: rgb(62, 134, 189); border:none;">
+                            <button type="submit" class="btn">
                                 Enregistrer
                             </button>
                         </form>
