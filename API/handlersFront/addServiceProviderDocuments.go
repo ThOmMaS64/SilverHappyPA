@@ -65,6 +65,38 @@ func AddServiceProviderDocuments(database *sql.DB) http.HandlerFunc {
 
 		}
 
+		city := r.FormValue("city")
+		street := r.FormValue("street")
+		nbStreet := r.FormValue("nb_street")
+		postalCode := r.FormValue("postal_code")
+
+		if city != "" && street != "" && nbStreet != "" && postalCode != "" {
+
+			var existingWorkAddressID int
+
+			rowCheck := database.QueryRow("SELECT ID_WORK_ADDRESS FROM WORK_ADDRESS WHERE city = ? AND street = ? AND nb_street = ? AND postal_code = ? AND ID_WORK_ADDRESS IN (SELECT ID_WORK_ADDRESS FROM OFFER WHERE ID_SERVICE_PROVIDER = ?)", city, street, nbStreet, postalCode, idServiceProvider)
+
+			errCheck := rowCheck.Scan(&existingWorkAddressID)
+
+			if errCheck == sql.ErrNoRows {
+
+				res, errInsertAddr := database.Exec("INSERT INTO WORK_ADDRESS (city, street, nb_street, postal_code) VALUES (?, ?, ?, ?)", city, street, nbStreet, postalCode)
+
+				if errInsertAddr == nil {
+
+					newID, _ := res.LastInsertId()
+					database.Exec("UPDATE OFFER SET ID_WORK_ADDRESS = ? WHERE ID_SERVICE_PROVIDER = ? AND ID_SERVICE = ?", newID, idServiceProvider, idService)
+
+				}
+
+			} else if errCheck == nil {
+
+				database.Exec("UPDATE OFFER SET ID_WORK_ADDRESS = ? WHERE ID_SERVICE_PROVIDER = ? AND ID_SERVICE = ?", existingWorkAddressID, idServiceProvider, idService)
+
+			}
+
+		}
+
 		if documentOrNo == "0" {
 
 			http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?notif=new_service", 303)

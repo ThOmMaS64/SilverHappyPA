@@ -65,7 +65,23 @@
 
         foreach($slots as $slot){
 
-            $address = $slot['is_at_consumer_home'] ? trad("Au domicile du client") : $slot['nb_street'] . " " . $slot['street'] . ", " . $slot['city'] . ", " . $slot['postal_code'];
+            if($slot['is_at_consumer_home']){
+
+                $address = trad("À domicile");
+
+            } elseif($slot['is_online']){
+
+                $address = trad("En distanciel");
+
+            } elseif(!empty($slot['city'])){
+
+                $address = $slot['nb_street'] . " " . $slot['street'] . ", " . $slot['city'] . ", " . $slot['postal_code'];
+
+            } else {
+
+                $address = trad("Adresse non renseignée");
+
+            }
 
             $providedServices[] = [
 

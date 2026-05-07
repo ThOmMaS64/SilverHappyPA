@@ -72,7 +72,23 @@
 
         foreach($servicesList as $service){
 
-            $address = $service['is_at_consumer_home'] ? trad("À votre domicile") : $service['nb_street'] . " " . $service['street'] . ", " . $service['city'] . ", " . $service['postal_code'];
+            if($service['is_at_consumer_home']){
+
+                $address = trad("À domicile");
+
+            } elseif($service['is_online']){
+
+                $address = trad("En distanciel");
+
+            } elseif(!empty($service['city'])){
+
+                $address = $service['nb_street'] . " " . $service['street'] . ", " . $service['city'] . ", " . $service['postal_code'];
+
+            } else {
+
+                $address = trad("Adresse non renseignée");
+
+            }
 
             $events[] = [
 

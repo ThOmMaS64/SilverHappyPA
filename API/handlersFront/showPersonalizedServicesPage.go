@@ -24,7 +24,8 @@ func ShowPersonalizedServicesPage(database *sql.DB) http.HandlerFunc {
 
 		var args []any
 		 
-		basicQuery := "SELECT SERVICE.ID_SERVICE, SERVICE.type, SERVICE.description, COALESCE(OFFER.cost, 0.0), SERVICE.is_medical_confidential, SERVICE.requires_date, OFFER.pricing_type, (USER_INTERACTION_SERVICE.ID_USER IS NOT NULL) AS is_saved, USER_.name, USER_.surname, SERVICE_PROVIDER.ID_SERVICE_PROVIDER, SERVICE.is_at_consumer_home, COALESCE(WORK_ADDRESS.city, ''), COALESCE(WORK_ADDRESS.street, ''), COALESCE(WORK_ADDRESS.nb_street, 0), COALESCE(WORK_ADDRESS.postal_code, '') FROM SERVICE INNER JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE INNER JOIN SERVICE_PROVIDER ON OFFER.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER INNER JOIN USER_ ON SERVICE_PROVIDER.ID_USER = USER_.ID_USER LEFT JOIN WORK_ADDRESS ON SERVICE.ID_WORK_ADDRESS = WORK_ADDRESS.ID_WORK_ADDRESS LEFT JOIN USER_INTERACTION_SERVICE ON SERVICE.ID_SERVICE = USER_INTERACTION_SERVICE.ID_SERVICE AND USER_INTERACTION_SERVICE.ID_USER = ? WHERE OFFER.status = 1"
+		basicQuery := "SELECT SERVICE.ID_SERVICE, SERVICE.type, SERVICE.description, COALESCE(OFFER.cost, 0.0), SERVICE.is_medical_confidential, SERVICE.requires_date, OFFER.pricing_type, (USER_INTERACTION_SERVICE.ID_USER IS NOT NULL) AS is_saved, USER_.name, USER_.surname, SERVICE_PROVIDER.ID_SERVICE_PROVIDER, SERVICE.is_at_consumer_home, SERVICE.is_online, COALESCE(WORK_ADDRESS.city, ''), COALESCE(WORK_ADDRESS.street, ''), COALESCE(WORK_ADDRESS.nb_street, 0), COALESCE(WORK_ADDRESS.postal_code, '') FROM SERVICE INNER JOIN OFFER ON SERVICE.ID_SERVICE = OFFER.ID_SERVICE INNER JOIN SERVICE_PROVIDER ON OFFER.ID_SERVICE_PROVIDER = SERVICE_PROVIDER.ID_SERVICE_PROVIDER INNER JOIN USER_ ON SERVICE_PROVIDER.ID_USER = USER_.ID_USER LEFT JOIN WORK_ADDRESS ON OFFER.ID_WORK_ADDRESS = WORK_ADDRESS.ID_WORK_ADDRESS LEFT JOIN USER_INTERACTION_SERVICE ON SERVICE.ID_SERVICE = USER_INTERACTION_SERVICE.ID_SERVICE AND USER_INTERACTION_SERVICE.ID_USER = ? WHERE OFFER.status = 1"
+
 		args = append(args, id)
 
 		if research != ""{
@@ -119,7 +120,7 @@ func ShowPersonalizedServicesPage(database *sql.DB) http.HandlerFunc {
 			var service Service
 			service.Slots = []ServiceSlots{}
 
-			err := rowSelectServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.Cost, &service.IsMedicalConfidential, &service.RequiresDate, &service.PricingType, &service.IsSaved, &service.ServiceProviderName, &service.ServiceProviderSurname, &service.IdServiceProvider, &service.IsAtConsumerHome, &service.City, &service.Street, &service.NbStreet, &service.PostalCode)
+			err := rowSelectServices.Scan(&service.ID_SERVICE, &service.Type, &service.Description, &service.Cost, &service.IsMedicalConfidential, &service.RequiresDate, &service.PricingType, &service.IsSaved, &service.ServiceProviderName, &service.ServiceProviderSurname, &service.IdServiceProvider, &service.IsAtConsumerHome, &service.IsOnline, &service.City, &service.Street, &service.NbStreet, &service.PostalCode)
 
 			if err != nil{
 

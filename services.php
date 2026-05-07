@@ -231,15 +231,23 @@
 
                                 <p><?php echo htmlspecialchars(tradByAPI($service['description'])) ?></p>
 
-                                <?php if($service['is_at_consumer_home']){ ?>
+                                <?php if($service['is_at_consumer_home']): ?>
 
-                                    <p>À domicile</p>
+                                    <p><?= trad("À domicile") ?></p>
 
-                                <?php }elseif(!empty($service['city']) && !empty($service['street']) && !empty($service['nb_street']) && !empty($service['postal_code'])){ ?>
+                                <?php elseif($service['is_online']): ?>
 
-                                    <p><small><?= $service['nb_street'] ?><?= " " ?><?= $service['street'] ?><?= ", " ?><?= $service['city'] ?><?= ", " ?><?= $service['postal_code'] ?></small></p>
+                                    <p><?= trad("En ligne") ?></p>
 
-                                <?php } ?>
+                                <?php elseif(!empty($service['city'])): ?>
+
+                                    <p><small><?= $service['nb_street'] ?> <?= $service['street'] ?>, <?= $service['city'] ?>, <?= $service['postal_code'] ?></small></p>
+                               
+                                <?php else: ?>
+
+                                    <p><small><?= trad("Adresse non renseignée") ?></small></p>
+                                    
+                                <?php endif; ?>
 
                                 <?php if($service['pricing_type'] == 'fixed'){ ?>
                                     <p><small><?php echo $service['cost'] ?> <?php echo "€" ?></small></p>

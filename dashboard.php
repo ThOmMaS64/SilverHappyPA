@@ -56,6 +56,11 @@
             $data = json_decode($dataJson, true);
             $neededDocuments = (is_array($data) && isset($data['documents'])) ? $data['documents'] : [];
 
+            $dataServiceInfo = file_get_contents("http://localhost:8081/showServiceInfo?service=" . $chosenService);
+            $serviceInfo = json_decode($dataServiceInfo, true);
+            $isOnline = $serviceInfo['is_online'] ?? false;
+            $isAtConsumerHome = $serviceInfo['is_at_consumer_home'] ?? false;
+
         }
 
     ?>
@@ -213,6 +218,26 @@
                                     <label>Prix (en €) :</label>
                                     <input type="number" step="0.01" name="cost" class="form-control">
                                 </div>
+
+                                <?php if(isset($_GET['chosenService']) && !$isOnline && !$isAtConsumerHome): ?>
+                                    <div class="mb-3" id="address_div">
+                                        <label class="mb-1">Adresse de réalisation du service :</label>
+                                        <div class="row">
+                                            <div class="col-3 mb-2">
+                                                <input type="number" name="nb_street" class="form-control" placeholder="Numéro de rue">
+                                            </div>
+                                            <div class="col-9 mb-2">
+                                                <input type="text" name="street" class="form-control" placeholder="Rue">
+                                            </div>
+                                            <div class="col-6 mb-2">
+                                                <input type="text" name="city" class="form-control" placeholder="Ville">
+                                            </div>
+                                            <div class="col-6 mb-2">
+                                                <input type="text" name="postal_code" class="form-control" placeholder="Code postal">
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
 
                                 <?php if(isset($neededDocuments)): ?>
                                     <button type="submit" class="btn mt-4">Demander à réaliser ce service</button>
