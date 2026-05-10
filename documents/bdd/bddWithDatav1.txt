@@ -1,0 +1,677 @@
+-- ============================================================
+-- IMPORTANT : AVANT D'EXÉCUTER CE SCRIPT
+-- ============================================================
+-- Créez manuellement un utilisateur prestataire via le site
+-- AVANT tout autre utilisateur.
+-- Cet utilisateur doit avoir :
+--   - ID_USER = 1
+--   - ID_SERVICE_PROVIDER = 1
+-- Sans cela, les INSERT dans ADVERTISEMENT et ADVICE
+-- échoueront à cause des contraintes de clé étrangère.
+-- ============================================================
+
+CREATE TABLE WORK_ADDRESS(
+   ID_WORK_ADDRESS INTEGER PRIMARY KEY AUTO_INCREMENT,
+   city VARCHAR(50) ,
+   street VARCHAR(100) ,
+   nb_street INT,
+   postal_code CHAR(5) ,
+   service_offered VARCHAR(150),
+   silver_happy_local BOOLEAN DEFAULT 0,
+   nb_boxes INT,
+   nb_conference_rooms INT,
+   nb_workshops INT
+);
+
+CREATE TABLE USER_(
+   ID_USER INT AUTO_INCREMENT,
+   username VARCHAR(50) UNIQUE,
+   password VARCHAR(255) ,
+   email VARCHAR(100) UNIQUE,
+   name VARCHAR(40) ,
+   surname VARCHAR(40) ,
+   city VARCHAR(50) ,
+   street VARCHAR(100) ,
+   nb_street INT,
+   postal_code CHAR(5) ,
+   description VARCHAR(255) NOT NULL DEFAULT '',
+   keyWord1 VARCHAR(50) NOT NULL DEFAULT '',
+   keyWord2 VARCHAR(50) NOT NULL DEFAULT '',
+   keyWord3 VARCHAR(50) NOT NULL DEFAULT '',
+   status INT,
+   date_inscription DATE,
+   last_connection DATETIME DEFAULT '2000-01-01 00:00:00',
+   darkMode INT DEFAULT 0,
+   levelFont INT DEFAULT 0,
+   fontChange INT DEFAULT 0,
+   cursorType INT DEFAULT 0,
+   showZoom BOOLEAN DEFAULT 1,
+   showAudio BOOLEAN DEFAULT 1,
+   language VARCHAR(5) DEFAULT 'fr',
+   profilePicture VARCHAR(255) DEFAULT '',
+   connected INT DEFAULT 0,
+   banned BOOLEAN DEFAULT 0,
+   PRIMARY KEY(ID_USER)
+);
+
+CREATE TABLE SUBSCRIPTION(
+   ID_SUBSCRIPTION INT AUTO_INCREMENT,
+   type VARCHAR(100),
+   price DECIMAL(4,2),
+   PRIMARY KEY(ID_SUBSCRIPTION)
+);
+
+CREATE TABLE SERVICE_PROVIDER(
+   ID_SERVICE_PROVIDER INT AUTO_INCREMENT,
+   profession VARCHAR(100) ,
+   commission DECIMAL (6,2) DEFAULT 1,
+   stripe_account_id VARCHAR(255) DEFAULT NULL,
+   ID_USER INT NOT NULL,
+   PRIMARY KEY(ID_SERVICE_PROVIDER),
+   UNIQUE(ID_USER),
+   FOREIGN KEY(ID_USER) REFERENCES USER_(ID_USER)
+);
+
+CREATE TABLE TOKEN(
+   ID_TOKEN INT AUTO_INCREMENT,
+   token VARCHAR(255) ,
+   token_date DATETIME,
+   ID_USER INT NOT NULL,
+   PRIMARY KEY(ID_TOKEN),
+   FOREIGN KEY(ID_USER) REFERENCES USER_(ID_USER)
+);
+
+CREATE TABLE ADVERTISEMENT(
+   ID_ADVERTISEMENT INT AUTO_INCREMENT,
+   ID_SERVICE_PROVIDER INT NOT NULL,
+   type INT DEFAULT 0,
+   stripe_subscription_id VARCHAR(255) DEFAULT NULL,
+   title VARCHAR(100),
+   date DATE,
+   description VARCHAR(255),
+   PRIMARY KEY(ID_ADVERTISEMENT),
+   FOREIGN KEY(ID_SERVICE_PROVIDER) REFERENCES SERVICE_PROVIDER(ID_SERVICE_PROVIDER)
+);
+
+CREATE TABLE EVENT(
+   ID_EVENT INT AUTO_INCREMENT,
+   type VARCHAR(100) ,
+   name VARCHAR(100),
+   date_start DATETIME,
+   date_end DATETIME,
+   description VARCHAR(200),
+   price DECIMAL(8,2) DEFAULT 0,
+   capacity INT DEFAULT 0,
+   nb_inscription INT DEFAULT 0,
+   ID_WORK_ADDRESS INT NOT NULL,
+   PRIMARY KEY(ID_EVENT),
+   FOREIGN KEY(ID_WORK_ADDRESS) REFERENCES WORK_ADDRESS(ID_WORK_ADDRESS)
+);
+
+CREATE TABLE CONSUMER(
+   ID_CONSUMER INTEGER PRIMARY KEY AUTO_INCREMENT,
+   birth_date DATE,
+   tuto_seen BOOLEAN,
+   ID_USER INT NOT NULL,
+   ID_SUBSCRIPTION INT,
+   stripe_subscription_id VARCHAR(255) DEFAULT NULL,
+   UNIQUE(ID_USER),
+   FOREIGN KEY(ID_USER) REFERENCES USER_(ID_USER),
+   FOREIGN KEY(ID_SUBSCRIPTION) REFERENCES SUBSCRIPTION(ID_SUBSCRIPTION)
+);
+
+CREATE TABLE PRODUCT(
+   ID_PRODUCT INT AUTO_INCREMENT,
+   name VARCHAR(100),
+   description VARCHAR(255),
+   type VARCHAR(50) ,
+   price DECIMAL(8,2),
+   stock INT,
+   date_added DATE,
+   PRIMARY KEY(ID_PRODUCT)
+);
+
+CREATE TABLE CONTRACT(
+   ID_CONTRACT INT AUTO_INCREMENT,
+   type VARCHAR(50) ,
+   ID_CONSUMER INT,
+   document_path VARCHAR(255),
+   PRIMARY KEY(ID_CONTRACT),
+   FOREIGN KEY(ID_CONSUMER) REFERENCES CONSUMER(ID_CONSUMER)
+);
+
+CREATE TABLE SERVICE(
+   ID_SERVICE INT AUTO_INCREMENT,
+   type VARCHAR(150) ,
+   description VARCHAR(255),
+   is_at_consumer_home BOOLEAN DEFAULT 0,
+   is_medical_confidential BOOLEAN DEFAULT 0,
+   requires_date BOOLEAN DEFAULT 1,
+   is_online BOOLEAN DEFAULT 0,
+   ID_WORK_ADDRESS INT DEFAULT NULL,
+   PRIMARY KEY(ID_SERVICE),
+   FOREIGN KEY(ID_WORK_ADDRESS) REFERENCES WORK_ADDRESS(ID_WORK_ADDRESS)
+);
+
+CREATE TABLE DISCUSSION(
+   ID_DISCUSSION INT AUTO_INCREMENT PRIMARY KEY,
+   user1_id INT NOT NULL,
+   user2_id INT NOT NULL,
+   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+   ID_SERVICE INT DEFAULT NULL,
+   FOREIGN KEY(user1_id) REFERENCES USER_(ID_USER),
+   FOREIGN KEY(user2_id) REFERENCES USER_(ID_USER),
+   FOREIGN KEY(ID_SERVICE) REFERENCES SERVICE(ID_SERVICE)
+);
+
+CREATE TABLE QUOTE(
+   ID_QUOTE INT AUTO_INCREMENT,
+   ID_SERVICE_PROVIDER INT NOT NULL,
+   ID_CONSUMER INT NOT NULL,
+   ID_SERVICE INT NOT NULL,
+   prestation VARCHAR(150),
+   amount DECIMAL(8,2),
+   content VARCHAR(255) DEFAULT NULL,
+   date_start_or_unique DATE,
+   date_end DATE,
+   date_personalized VARCHAR(100),
+   status INT DEFAULT 0,
+   pdf_path VARCHAR(255),
+   PRIMARY KEY(ID_QUOTE),
+   FOREIGN KEY (ID_SERVICE_PROVIDER) REFERENCES SERVICE_PROVIDER(ID_SERVICE_PROVIDER),
+   FOREIGN KEY (ID_CONSUMER) REFERENCES CONSUMER(ID_CONSUMER),
+   FOREIGN KEY (ID_SERVICE) REFERENCES SERVICE(ID_SERVICE)
+);
+
+CREATE TABLE ADVICE(
+   ID_ADVICE INT AUTO_INCREMENT,
+   title VARCHAR(100),
+   theme VARCHAR(50) ,
+   description TEXT,
+   date_publication DATE,
+   ID_SERVICE_PROVIDER INT NOT NULL,
+   PRIMARY KEY(ID_ADVICE),
+   FOREIGN KEY (ID_SERVICE_PROVIDER) REFERENCES SERVICE_PROVIDER(ID_SERVICE_PROVIDER)
+);
+
+CREATE TABLE MESSAGE(
+   ID_MESSAGE INT AUTO_INCREMENT,
+   content TEXT,
+   date DATETIME,
+   sender_id INT NOT NULL,
+   ID_DISCUSSION INT NOT NULL,
+   read_at DATETIME DEFAULT NULL,
+   suspected_status INT DEFAULT 0,
+   PRIMARY KEY(ID_MESSAGE),
+   FOREIGN KEY(sender_id) REFERENCES USER_(ID_USER),
+   FOREIGN KEY(ID_DISCUSSION) REFERENCES DISCUSSION(ID_DISCUSSION)
+);
+
+CREATE TABLE PLANNING(
+   ID_PLANNING INT PRIMARY KEY AUTO_INCREMENT,
+   ID_USER INT NOT NULL,
+   start_time DATETIME,
+   end_time DATETIME,
+   is_available BOOLEAN DEFAULT 1,
+   FOREIGN KEY(ID_USER) REFERENCES USER_(ID_USER)
+);
+
+CREATE TABLE SERVICE_PROVIDER_INVOICE(
+   ID_SERVICE_PROVIDER_INVOICE INT AUTO_INCREMENT,
+   amount DECIMAL(8,2)  ,
+   nb_services_provided INT,
+   month_billed TINYINT,
+   year_billed INT,
+   pdf_path VARCHAR(255),
+   is_paid BOOLEAN DEFAULT 0,
+   ID_SERVICE_PROVIDER INT NOT NULL,
+   PRIMARY KEY(ID_SERVICE_PROVIDER_INVOICE),
+   FOREIGN KEY(ID_SERVICE_PROVIDER) REFERENCES SERVICE_PROVIDER(ID_SERVICE_PROVIDER)
+);
+
+CREATE TABLE CONSUMER_INVOICE(
+   ID_CONSUMER_INVOICE INT PRIMARY KEY AUTO_INCREMENT,
+   ID_CONSUMER INT NOT NULL,
+   identifier VARCHAR(50) UNIQUE,
+   type VARCHAR(80),
+   date_emission DATE,
+   amount DECIMAL(8,2),
+   pdf_path VARCHAR(255),
+   FOREIGN KEY(ID_CONSUMER) REFERENCES CONSUMER(ID_CONSUMER)
+);
+
+CREATE TABLE INTERVENTION(
+   ID_INTERVENTION INT AUTO_INCREMENT,
+   cost DECIMAL(8,2)  ,
+   status TINYINT,
+   start_date DATETIME,
+   end_date DATETIME,
+   is_at_consumer_home BOOLEAN DEFAULT 0,
+   transaction_id VARCHAR(255) DEFAULT NULL,
+   ID_WORK_ADDRESS INT,
+   ID_SERVICE INT NOT NULL,
+   ID_SERVICE_PROVIDER_INVOICE INT DEFAULT NULL,
+   ID_CONSUMER_INVOICE INT DEFAULT NULL,
+   PRIMARY KEY(ID_INTERVENTION),
+   FOREIGN KEY(ID_WORK_ADDRESS) REFERENCES WORK_ADDRESS(ID_WORK_ADDRESS),
+   FOREIGN KEY(ID_SERVICE) REFERENCES SERVICE(ID_SERVICE),
+   FOREIGN KEY(ID_SERVICE_PROVIDER_INVOICE) REFERENCES SERVICE_PROVIDER_INVOICE(ID_SERVICE_PROVIDER_INVOICE),
+   FOREIGN KEY(ID_CONSUMER_INVOICE) REFERENCES CONSUMER_INVOICE(ID_CONSUMER_INVOICE)
+);
+
+CREATE TABLE GRADE(
+   ID_GRADE INT AUTO_INCREMENT,
+   grade FLOAT,
+   description VARCHAR(255) ,
+   date DATETIME DEFAULT NULL,
+   ID_INTERVENTION INT NOT NULL,
+   ID_CONSUMER INT NOT NULL,
+   PRIMARY KEY(ID_GRADE),
+   FOREIGN KEY(ID_INTERVENTION) REFERENCES INTERVENTION(ID_INTERVENTION),
+   FOREIGN KEY(ID_CONSUMER) REFERENCES CONSUMER(ID_CONSUMER)
+);
+
+CREATE TABLE PARTICIPATE(
+   ID_EVENT INT,
+   ID_CONSUMER INT,
+   ID_CONSUMER_INVOICE INT,
+   PRIMARY KEY(ID_EVENT, ID_CONSUMER),
+   FOREIGN KEY(ID_EVENT) REFERENCES EVENT(ID_EVENT),
+   FOREIGN KEY(ID_CONSUMER) REFERENCES CONSUMER(ID_CONSUMER),
+   FOREIGN KEY(ID_CONSUMER_INVOICE) REFERENCES CONSUMER_INVOICE(ID_CONSUMER_INVOICE)
+);
+
+CREATE TABLE CALL_(
+   ID_CONSUMER INT,
+   ID_INTERVENTION INT,
+   PRIMARY KEY(ID_CONSUMER, ID_INTERVENTION),
+   FOREIGN KEY(ID_CONSUMER) REFERENCES CONSUMER(ID_CONSUMER),
+   FOREIGN KEY(ID_INTERVENTION) REFERENCES INTERVENTION(ID_INTERVENTION)
+);
+
+CREATE TABLE OFFER(
+   ID_SERVICE_PROVIDER INT,
+   ID_SERVICE INT,
+   cost DECIMAL(8,2),
+   pricing_type ENUM('fixed', 'quote') DEFAULT 'fixed',
+   status INT DEFAULT 0,
+   ID_WORK_ADDRESS INT DEFAULT NULL,
+   PRIMARY KEY(ID_SERVICE_PROVIDER, ID_SERVICE),
+   FOREIGN KEY(ID_SERVICE_PROVIDER) REFERENCES SERVICE_PROVIDER(ID_SERVICE_PROVIDER),
+   FOREIGN KEY(ID_SERVICE) REFERENCES SERVICE(ID_SERVICE),
+   FOREIGN KEY (ID_WORK_ADDRESS) REFERENCES WORK_ADDRESS(ID_WORK_ADDRESS)
+);
+
+CREATE TABLE PROVIDE(
+   ID_INTERVENTION INT,
+   ID_QUOTE INT,
+   PRIMARY KEY(ID_INTERVENTION, ID_QUOTE),
+   FOREIGN KEY(ID_INTERVENTION) REFERENCES INTERVENTION(ID_INTERVENTION),
+   FOREIGN KEY(ID_QUOTE) REFERENCES QUOTE(ID_QUOTE)
+);
+
+CREATE TABLE DO(
+   ID_SERVICE_PROVIDER INT,
+   ID_INTERVENTION INT,
+   PRIMARY KEY(ID_SERVICE_PROVIDER, ID_INTERVENTION),
+   FOREIGN KEY(ID_SERVICE_PROVIDER) REFERENCES SERVICE_PROVIDER(ID_SERVICE_PROVIDER),
+   FOREIGN KEY(ID_INTERVENTION) REFERENCES INTERVENTION(ID_INTERVENTION)
+);
+
+CREATE TABLE CONDUCT(
+   ID_SERVICE_PROVIDER INT,
+   ID_EVENT INT,
+   PRIMARY KEY(ID_SERVICE_PROVIDER, ID_EVENT),
+   FOREIGN KEY(ID_SERVICE_PROVIDER) REFERENCES SERVICE_PROVIDER(ID_SERVICE_PROVIDER),
+   FOREIGN KEY(ID_EVENT) REFERENCES EVENT(ID_EVENT)
+);
+
+CREATE TABLE CAPTCHA(
+   ID_CAPTCHA INT AUTO_INCREMENT,
+   question VARCHAR(255) NOT NULL,
+   answer VARCHAR(255) NOT NULL,
+   PRIMARY KEY(ID_CAPTCHA)
+);
+
+CREATE TABLE TRANSLATIONS(
+   id INT AUTO_INCREMENT PRIMARY KEY,
+   original_text TEXT NOT NULL,
+   translated_text TEXT NOT NULL,
+   target_language VARCHAR(5) NOT NULL
+);
+
+CREATE TABLE CONTACTS(
+   id INT AUTO_INCREMENT PRIMARY KEY,
+   date DATE,
+   subject VARCHAR(100),
+   email VARCHAR(80),
+   message VARCHAR(200)
+);
+
+CREATE TABLE USER_INTERACTION_ADVICE (
+    ID_USER INT,
+    ID_ADVICE INT,
+    PRIMARY KEY (ID_USER, ID_ADVICE),
+    FOREIGN KEY (ID_USER) REFERENCES USER_(ID_USER),
+    FOREIGN KEY (ID_ADVICE) REFERENCES ADVICE(ID_ADVICE)
+);
+
+CREATE TABLE USER_INTERACTION_EVENT (
+    ID_USER INT,
+    ID_EVENT INT,
+    PRIMARY KEY (ID_USER, ID_EVENT),
+    FOREIGN KEY (ID_USER) REFERENCES USER_(ID_USER),
+    FOREIGN KEY (ID_EVENT) REFERENCES EVENT(ID_EVENT)
+);
+
+CREATE TABLE SHOP_ORDER ( 
+    ID_SHOP_ORDER INTEGER PRIMARY KEY AUTO_INCREMENT,
+    order_date DATE,
+    total_price DECIMAL(8,2),
+    vat DECIMAL(3,1),
+    status INT,
+    transaction_id VARCHAR(255) DEFAULT NULL,
+    ID_CONSUMER INT,
+    ID_CONSUMER_INVOICE INT DEFAULT NULL,
+    FOREIGN KEY(ID_CONSUMER) REFERENCES CONSUMER(ID_CONSUMER),
+    FOREIGN KEY(ID_CONSUMER_INVOICE) REFERENCES CONSUMER_INVOICE(ID_CONSUMER_INVOICE)
+);
+
+CREATE TABLE ORDER_LINE(
+   ID_ORDER_LINE INTEGER PRIMARY KEY AUTO_INCREMENT,
+   ID_SHOP_ORDER INT NOT NULL,
+   ID_PRODUCT INT NOT NULL,
+   quantity INT,
+   price DECIMAL(8,2),
+   FOREIGN KEY(ID_SHOP_ORDER) REFERENCES SHOP_ORDER(ID_SHOP_ORDER),
+   FOREIGN KEY(ID_PRODUCT) REFERENCES PRODUCT(ID_PRODUCT)
+);
+
+CREATE TABLE SERVICE_PROVIDER_DOCUMENT(
+    ID_DOCUMENT INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ID_SERVICE_PROVIDER INT,
+    type VARCHAR(100),
+    docPath VARCHAR(255),
+    uploadDate DATE,
+    status BOOLEAN DEFAULT 0,
+    FOREIGN KEY(ID_SERVICE_PROVIDER) REFERENCES SERVICE_PROVIDER(ID_SERVICE_PROVIDER)
+);
+
+CREATE TABLE PRODUCT_IMAGE(
+   ID_PRODUCT_IMAGE INT PRIMARY KEY AUTO_INCREMENT,
+   ID_PRODUCT INT NOT NULL,
+   image_path VARCHAR(255) NOT NULL,
+   FOREIGN KEY(ID_PRODUCT) REFERENCES PRODUCT(ID_PRODUCT)
+);
+
+CREATE TABLE USER_INTERACTION_SERVICE (
+    ID_USER INT,
+    ID_SERVICE INT,
+    PRIMARY KEY (ID_USER, ID_SERVICE),
+    FOREIGN KEY (ID_USER) REFERENCES USER_(ID_USER),
+    FOREIGN KEY (ID_SERVICE) REFERENCES SERVICE(ID_SERVICE)
+);
+
+CREATE TABLE SERVICE_SLOT (
+   ID_SERVICE_SLOT INT AUTO_INCREMENT PRIMARY KEY,
+   ID_SERVICE_PROVIDER INT NOT NULL,
+   ID_SERVICE INT,
+   start_time DATETIME NOT NULL,
+   end_time DATETIME NOT NULL,
+   is_booked BOOLEAN DEFAULT 0,
+   FOREIGN KEY(ID_SERVICE_PROVIDER) REFERENCES SERVICE_PROVIDER(ID_SERVICE_PROVIDER),
+   FOREIGN KEY(ID_SERVICE) REFERENCES SERVICE(ID_SERVICE)
+);
+
+CREATE TABLE SERVICE_BOOKING (
+   ID_SERVICE_BOOKING INT AUTO_INCREMENT PRIMARY KEY,
+   ID_SERVICE_SLOT INT,
+   ID_CONSUMER INT NOT NULL,
+   booked_at DATETIME,
+   FOREIGN KEY(ID_SERVICE_SLOT) REFERENCES SERVICE_SLOT(ID_SERVICE_SLOT),
+   FOREIGN KEY(ID_CONSUMER) REFERENCES CONSUMER(ID_CONSUMER)
+);
+
+CREATE TABLE REQUIRED_DOCUMENT (
+   ID_REQUIRED_DOCUMENT INT AUTO_INCREMENT PRIMARY KEY,
+   name VARCHAR(100)
+);
+
+CREATE TABLE SERVICE_DOCUMENT (
+   ID_SERVICE INT,
+   ID_REQUIRED_DOCUMENT INT,
+   PRIMARY KEY(ID_SERVICE, ID_REQUIRED_DOCUMENT),
+   FOREIGN KEY(ID_SERVICE) REFERENCES SERVICE(ID_SERVICE),
+   FOREIGN KEY(ID_REQUIRED_DOCUMENT) REFERENCES REQUIRED_DOCUMENT(ID_REQUIRED_DOCUMENT)
+);
+
+-- ============================================================
+-- SILVER HAPPY - Script d'insertion de données de test
+-- Ordre respectant les dépendances FK
+-- NB: USER_ et SERVICE_PROVIDER (ID 1) sont supposés existants
+-- ============================================================
+
+-- ------------------------------------------------------------
+-- SUBSCRIPTION
+-- ------------------------------------------------------------
+INSERT INTO SUBSCRIPTION (ID_SUBSCRIPTION, type, price) VALUES
+(1, 'monthly_standard', 4.00),
+(2, 'annual_standard', 40.00),
+(3, 'monthly_renewal', 3.00),
+(4, 'annual_renewal', 35.00);
+
+-- ------------------------------------------------------------
+-- CAPTCHA
+-- ------------------------------------------------------------
+INSERT INTO CAPTCHA (question, answer) VALUES
+('Combien font 7 + 5 ?', '12'),
+('Combien font 14 - 6 ?', '8'),
+('Combien font 3 x 4 ?', '12'),
+('Combien font 20 / 4 ?', '5'),
+('Combien font 9 + 8 ?', '17'),
+('Quelle est la capitale de la France ?', 'Paris'),
+('Quelle est la capitale de l\'Espagne ?', 'Madrid'),
+('Quelle est la capitale de l\'Italie ?', 'Rome'),
+('Quelle est la capitale de l\'Allemagne ?', 'Berlin'),
+('Quelle est la capitale du Portugal ?', 'Lisbonne');
+
+-- ------------------------------------------------------------
+-- WORK_ADDRESS (adresses où les prestataires exercent)
+-- ------------------------------------------------------------
+INSERT INTO WORK_ADDRESS (city, street, nb_street, postal_code, service_offered, silver_happy_local, nb_boxes, nb_conference_rooms, nb_workshops) VALUES
+('Paris', 'Rue de Rivoli', 12, '75001', 'Soins infirmiers, Kinésithérapie', 1, 5, 2, 3),
+('Lyon', 'Rue de la République', 45, '69002', 'Aide à domicile, Orthophonie', 0, 0, 1, 2),
+('Marseille', 'Boulevard Michelet', 8, '13008', 'Podologie, Ergothérapie', 0, 2, 1, 1),
+('Bordeaux', 'Cours de l\'Intendance', 27, '33000', 'Diététique, Psychologie', 1, 3, 2, 2),
+('Toulouse', 'Rue du Taur', 60, '31000', 'Coiffure à domicile, Aide-ménagère', 0, 0, 0, 1),
+('Nantes', 'Rue Crébillon', 15, '44000', 'Kinésithérapie, Ostéopathie', 0, 1, 1, 1),
+('Strasbourg', 'Rue des Grandes Arcades', 33, '67000', 'Soins infirmiers, Pédicure', 0, 0, 1, 0),
+('Paris', 'Avenue des Champs-Élysées', 101, '75008', 'Ergothérapie, Psychologie', 1, 4, 3, 2);
+
+-- ------------------------------------------------------------
+-- SERVICE
+-- ------------------------------------------------------------
+INSERT INTO SERVICE (type, description, is_at_consumer_home, is_medical_confidential, requires_date, is_online, ID_WORK_ADDRESS) VALUES
+('Soins infirmiers à domicile', 'Prise en charge infirmière au domicile du patient : injections, pansements, suivi médical.', 1, 1, 1, 0, NULL),
+('Kinésithérapie', 'Séances de rééducation fonctionnelle pour maintenir la mobilité et soulager les douleurs.', 0, 0, 1, 0, 1),
+('Aide à domicile', 'Assistance aux actes de la vie quotidienne : repas, hygiène, déplacements intérieurs.', 1, 0, 1, 0, NULL),
+('Orthophonie', 'Rééducation des troubles du langage, de la déglutition et de la mémoire.', 0, 1, 1, 0, 2),
+('Podologie', 'Soins des pieds et du système podal, prévention des plaies chez les diabétiques.', 0, 0, 1, 0, 3),
+('Ergothérapie', 'Adaptation de l\'environnement et des activités pour maintenir l\'autonomie.', 1, 0, 1, 0, NULL),
+('Diététique et nutrition', 'Bilan nutritionnel et programme alimentaire adapté aux seniors.', 0, 0, 1, 0, 4),
+('Psychologie et soutien', 'Accompagnement psychologique pour lutter contre l\'isolement et la dépression.', 0, 1, 1, 0, 4),
+('Coiffure à domicile', 'Coupe, mise en plis et soins capillaires au domicile du client.', 1, 0, 1, 0, NULL),
+('Aide-ménagère', 'Entretien du logement, lessive, repassage et courses.', 1, 0, 1, 0, NULL),
+('Ostéopathie', 'Traitement manuel des douleurs musculo-squelettiques et des troubles fonctionnels.', 0, 0, 1, 0, 6),
+('Pédicure médicale', 'Soins pédicures médicaux remboursables pour les personnes diabétiques.', 0, 1, 1, 0, 7),
+('Téléconsultation médicale', 'Consultation médicale à distance par vidéo avec un professionnel de santé.', 0, 1, 1, 1, NULL),
+('Portage de repas', 'Livraison de repas équilibrés préparés par des nutritionnistes, directement au domicile.', 1, 0, 1, 0, NULL),
+('Transport accompagné', 'Accompagnement lors de déplacements médicaux ou personnels avec un véhicule adapté.', 1, 0, 1, 0, NULL);
+
+-- ------------------------------------------------------------
+-- REQUIRED_DOCUMENT
+-- ------------------------------------------------------------
+INSERT INTO REQUIRED_DOCUMENT (name) VALUES
+('Pièce d\'identité'),
+('Diplôme professionnel'),
+('Assurance responsabilité civile professionnelle'),
+('Extrait Kbis ou attestation URSSAF'),
+('Casier judiciaire vierge'),
+('Carte professionnelle'),
+('Certificat d\'inscription à l\'ordre professionnel');
+
+-- ------------------------------------------------------------
+-- SERVICE_DOCUMENT (logique : les services médicaux/paramédicaux
+-- exigent plus de documents que les services de confort)
+-- ------------------------------------------------------------
+-- Soins infirmiers (ID 1) : tous les documents
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(1, 1), (1, 2), (1, 3), (1, 5), (1, 6), (1, 7);
+
+-- Kinésithérapie (ID 2)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(2, 1), (2, 2), (2, 3), (2, 6), (2, 7);
+
+-- Aide à domicile (ID 3)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(3, 1), (3, 3), (3, 4), (3, 5);
+
+-- Orthophonie (ID 4)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(4, 1), (4, 2), (4, 3), (4, 6), (4, 7);
+
+-- Podologie (ID 5)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(5, 1), (5, 2), (5, 3), (5, 6);
+
+-- Ergothérapie (ID 6)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(6, 1), (6, 2), (6, 3), (6, 7);
+
+-- Diététique et nutrition (ID 7)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(7, 1), (7, 2), (7, 3), (7, 4);
+
+-- Psychologie (ID 8)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(8, 1), (8, 2), (8, 3), (8, 7);
+
+-- Coiffure à domicile (ID 9)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(9, 1), (9, 3), (9, 4);
+
+-- Aide-ménagère (ID 10)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(10, 1), (10, 3), (10, 5);
+
+-- Ostéopathie (ID 11)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(11, 1), (11, 2), (11, 3), (11, 6);
+
+-- Pédicure médicale (ID 12)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(12, 1), (12, 2), (12, 3), (12, 6);
+
+-- Téléconsultation médicale (ID 13)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(13, 1), (13, 2), (13, 3), (13, 6), (13, 7);
+
+-- Portage de repas (ID 14)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(14, 1), (14, 3), (14, 4);
+
+-- Transport accompagné (ID 15)
+INSERT INTO SERVICE_DOCUMENT (ID_SERVICE, ID_REQUIRED_DOCUMENT) VALUES
+(15, 1), (15, 3), (15, 4), (15, 5);
+
+-- ------------------------------------------------------------
+-- EVENT (organisés par la plateforme, liés à des work_address)
+-- ------------------------------------------------------------
+INSERT INTO EVENT (type, name, date_start, date_end, description, price, capacity, nb_inscription, ID_WORK_ADDRESS) VALUES
+('Atelier', 'Atelier mémoire et cognitif', '2026-06-10 10:00:00', '2026-06-10 12:00:00', 'Exercices ludiques pour stimuler la mémoire et prévenir le déclin cognitif, animé par une neuropsychologue.', 5.00, 15, 8, 1),
+('Conférence', 'Conférence nutrition du senior', '2026-06-17 14:00:00', '2026-06-17 16:00:00', 'Comment bien s\'alimenter après 65 ans ? Une diététicienne répond à toutes vos questions.', 0.00, 30, 21, 4),
+('Atelier', 'Yoga doux et équilibre', '2026-06-24 09:30:00', '2026-06-24 11:00:00', 'Séance de yoga adaptée aux seniors pour améliorer l\'équilibre et réduire les douleurs articulaires.', 8.00, 12, 5, 1),
+('Atelier', 'Initiation aux nouvelles technologies', '2026-07-01 14:00:00', '2026-07-01 17:00:00', 'Apprenez à utiliser un smartphone et les applications utiles du quotidien, accompagnés de bénévoles.', 0.00, 10, 10, 4),
+('Conférence', 'Prévention des chutes à domicile', '2026-07-08 10:00:00', '2026-07-08 11:30:00', 'Conseils pratiques d\'un ergothérapeute pour sécuriser son logement et éviter les chutes.', 0.00, 40, 15, 8),
+('Sortie', 'Sortie culturelle au musée d\'Orsay', '2026-07-15 09:00:00', '2026-07-15 17:00:00', 'Visite guidée du musée d\'Orsay, déjeuner inclus. Transport en bus adapté depuis Paris 1er.', 25.00, 20, 12, 1),
+('Atelier', 'Atelier cuisine équilibrée', '2026-07-22 10:00:00', '2026-07-22 13:00:00', 'Apprenez à cuisiner des repas savoureux et adaptés aux besoins nutritionnels des seniors.', 12.00, 8, 3, 4),
+('Conférence', 'Bien dormir après 60 ans', '2026-08-05 15:00:00', '2026-08-05 16:30:00', 'Un médecin spécialiste du sommeil vous explique comment retrouver un sommeil réparateur.', 0.00, 35, 18, 8);
+
+-- ------------------------------------------------------------
+-- PRODUCT (produits pour personnes âgées)
+-- ------------------------------------------------------------
+INSERT INTO PRODUCT (name, description, type, price, stock, date_added) VALUES
+('Déambulateur léger aluminium', 'Déambulateur pliable en aluminium avec freins, idéal pour l\'intérieur et l\'extérieur. Hauteur réglable.', 'Mobilité', 89.99, 25, '2025-09-01'),
+('Canne ergonomique antidérapante', 'Canne de marche en bois verni avec poignée anatomique en mousse et embout antidérapant.', 'Mobilité', 24.99, 60, '2025-09-01'),
+('Coussin anti-escarres à mémoire de forme', 'Coussin en mousse viscoélastique pour prévenir les escarres, housse lavable en machine.', 'Confort', 45.00, 40, '2025-09-15'),
+('Fauteuil roulant manuel', 'Fauteuil roulant léger, repose-pieds amovibles, accoudoirs rembourrés. Largeur assise 43 cm.', 'Mobilité', 349.00, 8, '2025-09-15'),
+('Pilulier hebdomadaire avec alarme', 'Pilulier 7 jours avec alarme sonore et lumineuse programmable. Compartiments matin/midi/soir/nuit.', 'Santé', 32.50, 80, '2025-10-01'),
+('Tensiomètre bras automatique', 'Tensiomètre électronique pour bras avec grand écran LCD, détection des arythmies, mémoire 60 mesures.', 'Santé', 59.90, 35, '2025-10-01'),
+('Thermomètre infrarouge frontal', 'Thermomètre sans contact, résultat en 1 seconde, mémoire des 30 dernières mesures.', 'Santé', 28.00, 50, '2025-10-15'),
+('Siège de douche réglable', 'Siège de douche en aluminium avec dossier et accoudoirs, pieds ventouses antidérapants.', 'Salle de bain', 75.00, 20, '2025-10-15'),
+('Barre d\'appui murale pour WC', 'Barre de maintien en acier inoxydable, fixation murale robuste, charge max 150 kg.', 'Salle de bain', 38.00, 30, '2025-11-01'),
+('Téléphone senior grosses touches', 'Téléphone fixe avec grosses touches rétroéclairées, sonnerie amplifiée, touche SOS directe.', 'Communication', 49.99, 45, '2025-11-01'),
+('Montre connectée alerte chute', 'Montre GPS avec détection automatique des chutes et alerte SOS vers les proches.', 'Sécurité', 129.00, 18, '2025-11-15'),
+('Loupe éclairante LED', 'Loupe de lecture avec éclairage LED intégré, grossissement x3, poignée ergonomique.', 'Accessoire', 19.90, 70, '2025-11-15'),
+('Coussin chauffant cervical', 'Coussin thermique pour cervicales et épaules, 3 niveaux de chaleur, arrêt automatique 90 min.', 'Confort', 42.00, 28, '2025-12-01'),
+('Lève-personne de transfert', 'Aide-transfert portable pour passer du lit au fauteuil en toute sécurité, charge max 120 kg.', 'Mobilité', 199.00, 10, '2025-12-01'),
+('Kit de prévention chutes domicile', 'Kit complet : tapis antidérapants x3, bande leds de sol, autocollants d\'alerte pour les marches.', 'Sécurité', 34.90, 55, '2025-12-15');
+
+-- ------------------------------------------------------------
+-- PRODUCT_IMAGE
+-- ------------------------------------------------------------
+INSERT INTO PRODUCT_IMAGE (ID_PRODUCT, image_path) VALUES
+(1, '../data/products/deambulateur.jpg'),
+(2, '../data/products/canne.jpg'),
+(3, '../data/products/coussin_escarres.jpg'),
+(4, '../data/products/fauteuil_roulant.jpg'),
+(5, '../data/products/pilulier.jpg'),
+(6, '../data/products/tensiometre.jpg'),
+(7, '../data/products/thermometre.jpg'),
+(8, '../data/products/siege_douche.jpg'),
+(9, '../data/products/barre_wc.jpg'),
+(10, '../data/products/telephone_senior.jpg'),
+(11, '../data/products/montre_chute.jpg'),
+(12, '../data/products/loupe.jpg'),
+(13, '../data/products/coussin_cervical.jpg'),
+(14, '../data/products/leve_personne.jpg'),
+(15, '../data/products/kit_chutes.jpg');
+
+-- ------------------------------------------------------------
+-- ADVERTISEMENT (liées au prestataire ID_SERVICE_PROVIDER = 1)
+-- type : 1 = simple (49€), 2 = double (99€), 3 = ultra (119€)
+-- ------------------------------------------------------------
+INSERT INTO ADVERTISEMENT (ID_SERVICE_PROVIDER, type, stripe_subscription_id, title, date, description) VALUES
+(1, 3, NULL, 'Soins infirmiers à domicile - Disponible 7j/7', '2026-03-01', 'Infirmier diplômé d\'État, intervention rapide à votre domicile. Pansements, injections, suivi post-opératoire.');
+
+-- ------------------------------------------------------------
+-- ADVICE (conseils rédigés par le prestataire ID_SERVICE_PROVIDER = 1)
+-- ------------------------------------------------------------
+INSERT INTO ADVICE (title, theme, description, date_publication, ID_SERVICE_PROVIDER) VALUES
+('Comment prévenir les chutes chez les seniors ?', 'Sécurité',
+'Les chutes sont la première cause d\'hospitalisation chez les personnes de plus de 65 ans. Voici quelques conseils essentiels pour les prévenir.\n\nAménagez votre domicile : retirez les tapis glissants, installez des barres d\'appui dans la salle de bain et les toilettes, et assurez-vous que chaque pièce est bien éclairée, y compris la nuit.\n\nPortez des chaussures adaptées : évitez les chaussettes seules ou les pantoufles sans maintien. Privilégiez des chaussures fermées avec une semelle antidérapante.\n\nMaintenez votre activité physique : la marche quotidienne, le yoga doux ou la gym douce améliorent l\'équilibre et renforcent les muscles. Consultez votre kinésithérapeute pour un programme personnalisé.\n\nFaites contrôler votre vue et votre ouïe régulièrement, car ces deux sens jouent un rôle important dans l\'équilibre.\n\nRevoyez vos médicaments avec votre médecin : certains traitements provoquent des vertiges ou une baisse de la tension artérielle pouvant favoriser les chutes.',
+'2026-01-15', 1),
+
+('Bien s\'alimenter après 65 ans : les clés d\'une nutrition adaptée', 'Nutrition',
+'L\'alimentation est un pilier fondamental du bien-vieillir. Les besoins nutritionnels évoluent avec l\'âge et il est important d\'adapter son alimentation pour rester en bonne santé.\n\nMisez sur les protéines : après 65 ans, le corps perd progressivement de la masse musculaire. Consommez des protéines à chaque repas : viandes, poissons, œufs, légumineuses, produits laitiers.\n\nHydratez-vous suffisamment : la sensation de soif diminue avec l\'âge. Buvez au moins 1,5 litre d\'eau par jour, même sans soif. Les soupes, les bouillons et les infusions comptent dans cette hydratation.\n\nFractionnez les repas : si l\'appétit diminue, ne supprimez pas de repas. Préférez 4 à 5 petits repas dans la journée plutôt que 3 gros repas.\n\nN\'ayez pas peur des graisses : les bonnes graisses (huile d\'olive, poissons gras, noix, avocat) sont essentielles pour le cerveau et les articulations.\n\nConsultez un diététicien si vous observez une perte de poids involontaire, c\'est souvent le premier signe de dénutrition chez les seniors.',
+'2026-01-28', 1),
+
+('Maintenir sa mobilité : pourquoi la kinésithérapie est essentielle', 'Mobilité',
+'La kinésithérapie ne se limite pas à la rééducation après un accident ou une opération. C\'est aussi un outil formidable de prévention et de maintien de l\'autonomie pour les seniors.\n\nLutter contre la sédentarité : rester trop longtemps assis ou allongé entraîne une fonte musculaire rapide et des raideurs articulaires. Un kinésithérapeute peut vous proposer des exercices adaptés à votre condition physique.\n\nSoulager les douleurs chroniques : arthrose, lombalgies, douleurs cervicales... La kinésithérapie permet de réduire significativement ces douleurs grâce à des techniques manuelles et des exercices thérapeutiques.\n\nAméliorer l\'équilibre et la posture : des exercices spécifiques permettent de réduire le risque de chutes et de maintenir une posture correcte, facteur de bien-être et de confiance en soi.\n\nLe bilan de prévention : n\'attendez pas d\'avoir mal pour consulter. Un bilan kinésithérapique annuel permet d\'identifier les fragilités et d\'agir avant qu\'elles ne deviennent des handicaps.',
+'2026-02-10', 1),
+
+('Lutter contre l\'isolement : comment garder du lien social ?', 'Bien-être',
+'L\'isolement social est l\'un des grands problèmes de santé publique chez les seniors. Il est associé à une dégradation de la santé physique et mentale, comparable à celle provoquée par le tabagisme.\n\nMaintenir des activités régulières : clubs de lecture, ateliers créatifs, associations de quartier, cours de gym douce... Ces activités sont autant d\'occasions de rencontrer des gens et de maintenir une stimulation intellectuelle.\n\nUtiliser les nouvelles technologies : apprendre à utiliser un smartphone ou une tablette permet de rester en contact avec sa famille via les appels vidéo, et d\'accéder à des communautés en ligne.\n\nFaire appel à des professionnels : les auxiliaires de vie et les aides à domicile jouent un rôle social important au-delà de leur mission d\'assistance. Leur présence régulière rompt l\'isolement.\n\nSignaler les situations d\'isolement : si vous connaissez un senior isolé, n\'hésitez pas à le signaler aux services sociaux de votre mairie. Des dispositifs de visite et d\'appel existent dans de nombreuses communes.',
+'2026-02-25', 1),
+
+('Comprendre et prévenir les escarres', 'Santé',
+'Les escarres, aussi appelées plaies de pression, sont des lésions cutanées causées par une pression prolongée sur la peau. Elles touchent principalement les personnes à mobilité réduite et peuvent avoir de graves conséquences.\n\nQui est concerné ? Les personnes alitées ou en fauteuil roulant, les patients post-opératoires, et toute personne dont la mobilité est réduite sur une longue période.\n\nLes zones à risque : les talons, le sacrum (bas du dos), les hanches, les omoplates et la nuque sont les zones les plus exposées car les plus soumises à la pression.\n\nComment les prévenir ? Changez de position toutes les 2 heures si vous êtes alité. Utilisez des coussins et matelas anti-escarres adaptés. Veillez à une bonne hydratation et nutrition. Inspectez régulièrement la peau des zones à risque.\n\nQue faire si une escarre apparaît ? Consultez immédiatement un infirmier ou un médecin. Une escarre non traitée peut rapidement s\'aggraver et nécessiter une hospitalisation.',
+'2026-03-12', 1),
+
+('La mémoire et le vieillissement : normal ou pathologique ?', 'Santé',
+'Oublier où l\'on a posé ses clés, chercher ses mots... Ces petits oublis sont-ils normaux ou faut-il s\'inquiéter ? Voici comment faire la différence entre vieillissement normal et troubles pathologiques.\n\nLe vieillissement normal de la mémoire : avec l\'âge, la vitesse de traitement de l\'information ralentit. Il est normal de mettre plus de temps à retrouver un prénom ou d\'avoir besoin de relire un texte. Ces oublis bénins n\'empêchent pas les activités quotidiennes.\n\nLes signaux d\'alarme : oublier des événements récents importants, se perdre dans des endroits familiers, avoir des difficultés à gérer son budget ou ses médicaments, confondre les dates et les personnes. Ces symptômes justifient une consultation médicale.\n\nComment stimuler sa mémoire ? Restez intellectuellement actif : lisez, jouez aux mots croisés, apprenez de nouvelles choses. Dormez suffisamment car le sommeil est essentiel à la consolidation des souvenirs. Maintenez une vie sociale active.\n\nN\'hésitez pas à consulter : un bilan neuropsychologique permet d\'évaluer précisément les fonctions cognitives et de mettre en place un accompagnement adapté si nécessaire.',
+'2026-03-28', 1),
+
+('Bien préparer la visite de son médecin', 'Santé',
+'Une consultation médicale bien préparée est une consultation efficace. Voici quelques conseils pour optimiser votre rendez-vous et ne rien oublier d\'important.\n\nPréparez une liste de vos symptômes : notez-les dans les jours précédant la consultation. Précisez depuis quand ils sont apparus, leur fréquence, leur intensité et ce qui les déclenche ou les soulage.\n\nApportez tous vos documents médicaux : ordonnances en cours, résultats d\'analyses récents, compte-rendus d\'hospitalisations ou de spécialistes. Une liste complète de vos médicaments avec les dosages est indispensable.\n\nNotez vos questions à l\'avance : n\'hésitez pas à poser toutes vos questions, même celles qui vous semblent anodines. Le médecin est là pour vous répondre.\n\nVenez accompagné si nécessaire : un proche peut vous aider à retenir les informations données par le médecin et à noter les recommandations.\n\nAprès la consultation : assurez-vous d\'avoir bien compris les prescriptions et les recommandations. En cas de doute, n\'hésitez pas à rappeler le cabinet.',
+'2026-04-15', 1);
