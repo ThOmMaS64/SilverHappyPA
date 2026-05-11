@@ -45,22 +45,24 @@ func UpdateUsersData(database *sql.DB) http.HandlerFunc {
 
 		}
 
-		updateStatement2, updateError2 := database.Prepare("UPDATE CONSUMER SET birth_date = ? WHERE ID_USER = ?")
+		isConsumer := status == "-1" || status == "1" || status == "2" || status == "5" || status == "6"
 
-		if updateError2 != nil{
+		if isConsumer {
 
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error#pageusers", 303)
-			return 
+			updateStatement2, updateError2 := database.Prepare("UPDATE CONSUMER SET birth_date = ? WHERE ID_USER = ?")
 
-		}
-		defer updateStatement2.Close()
+			if updateError2 != nil {
+				http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error#pageusers", 303)
+				return
+			}
+			defer updateStatement2.Close()
 
-		_, updateStatementExecError2 := updateStatement2.Exec(birth_date, id)
+			_, updateStatementExecError2 := updateStatement2.Exec(birth_date, id)
 
-		if updateStatementExecError2 != nil{
-
-			http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error#pageusers", 303)
-			return 
+			if updateStatementExecError2 != nil {
+				http.Redirect(w, r, "http://localhost/ProjetAnnuel/backoffice/index.php?error=update_error#pageusers", 303)
+				return
+			}
 
 		}
 

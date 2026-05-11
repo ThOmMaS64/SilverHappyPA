@@ -696,8 +696,16 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                             <td><input class="form-control" form="<?= $idForm ?>" name="name" class="mediumtext" type="text" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></td>
                                             <td><input class="form-control" form="<?= $idForm ?>" name="surname" class="mediumtext" type="text" value="<?= htmlspecialchars($user['surname'] ?? '') ?>"></td>
                                             <td><input class="form-control" form="<?= $idForm ?>" name="email" class="mediumtext" type="text" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></td>
-                                            <td><input class="form-control" form="<?= $idForm ?>" name="birth_date" class="mediumtext" type="date" value="<?php if($user['birth_date'] == '1900-01-01'){echo "non renseigné";}else{echo  htmlspecialchars($user['birth_date']);} ?>"></td>
-                                                
+
+                                            <td>
+                                                <?php if($user['status'] != -2 && $user['status'] != 3 && $user['status'] != 4): ?>
+                                                    <input class="form-control" form="<?= $idForm ?>" name="birth_date" type="date" value="<?php if($user['birth_date'] == '1900-01-01'){echo '';}else{echo htmlspecialchars($user['birth_date']);} ?>">
+                                                <?php else: ?>
+                                                    <span>—</span>
+                                                    <input type="hidden" form="<?= $idForm ?>" name="birth_date" value="">
+                                                <?php endif; ?>
+                                            </td>
+
                                             <td><input class="form-control" form="<?= $idForm ?>" name="city" class="mediumtext" type="text" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></td>
                                             <td><input class="form-control" form="<?= $idForm ?>" name="street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['street'] ?? '') ?>"></td>
                                             <td><input class="form-control" form="<?= $idForm ?>" name="nb_street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['nb_street'] ?? '') ?>"></td>
@@ -804,7 +812,16 @@ $errorUsersMessage = $errorUsers[$errorUsersKey] ?? null;
                                         <td><input class="form-control" form="<?= $idForm ?>" name="name" class="mediumtext" type="text" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></td>
                                         <td><input class="form-control" form="<?= $idForm ?>" name="surname" class="mediumtext" type="text" value="<?= htmlspecialchars($user['surname'] ?? '') ?>"></td>
                                         <td><input class="form-control" form="<?= $idForm ?>" name="email" class="mediumtext" type="text" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></td>
-                                        <td><input class="form-control" form="<?= $idForm ?>" name="birth_date" class="mediumtext" type="date" value="<?php if($user['birth_date'] == '1900-01-01'){echo "non renseigné";}else{echo  htmlspecialchars($user['birth_date']);} ?>"></td>                                                                                            
+
+                                        <td>
+                                            <?php if($user['status'] != -2 && $user['status'] != 3 && $user['status'] != 4): ?>
+                                                <input class="form-control" form="<?= $idForm ?>" name="birth_date" type="date" value="<?php if($user['birth_date'] == '1900-01-01'){echo '';}else{echo htmlspecialchars($user['birth_date']);} ?>">
+                                            <?php else: ?>
+                                                <span>—</span>
+                                                <input type="hidden" form="<?= $idForm ?>" name="birth_date" value="">
+                                            <?php endif; ?>
+                                        </td>
+
                                         <td><input class="form-control" form="<?= $idForm ?>" name="city" class="mediumtext" type="text" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></td>
                                         <td><input class="form-control" form="<?= $idForm ?>" name="street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['street'] ?? '') ?>"></td>
                                         <td><input class="form-control" form="<?= $idForm ?>" name="nb_street" class="mediumtext" type="text" value="<?= htmlspecialchars($user['nb_street'] ?? '') ?>"></td>
