@@ -13,17 +13,17 @@
 
     if(isset($_GET['type']) && $_GET['type'] == "consumer"){
 
-        $response = file_get_contents("http://localhost:8081/getVisitedPageData?type=consumer&visitedId=".$_GET['visitedId']);
+    $params = http_build_query(['type' => 'consumer', 'visitedId' => $_GET['visitedId']], '', '&');
+    $response = file_get_contents("http://localhost:8081/getVisitedPageData?" . $params);
+    $visitedPageData = json_decode($response, true);
 
-        $visitedPageData = json_decode($response, true);
+}else{
 
-    }else{
+    $params = http_build_query(['visitedId' => $_GET['visitedId']], '', '&');
+    $response = file_get_contents("http://localhost:8081/getVisitedPageData?" . $params);
+    $visitedPageData = json_decode($response, true);
 
-        $response = file_get_contents("http://localhost:8081/getVisitedPageData?visitedId=".$_GET['visitedId']);
-
-        $visitedPageData = json_decode($response, true);
-
-    }
+}
 
 ?>
 
@@ -41,7 +41,7 @@
 
                                         <?php if(!empty($visitedPageData['profile_picture'])){ ?>
 
-                                            <img src="imagesData/profils/<?php echo htmlspecialchars($visitedPageData['profile_picture']); ?>" alt="Photo de profil" class="profilePagePicture">
+                                            <img src="data/profils/<?php echo htmlspecialchars($visitedPageData['profile_picture']); ?>" alt="Photo de profil" class="profilePagePicture">
 
                                         <?php }else{ ?>
 

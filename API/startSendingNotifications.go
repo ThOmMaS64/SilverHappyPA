@@ -10,7 +10,7 @@ import (
 )
 
 const oneSignalAppID  = "6654cc79-5bf4-4442-8145-3bba1d8cea32"
-const oneSignalAPIKey = "os_v2_app_mzkmy6k36rcefakfho5b3dhkgixznftond6ekgnbdyrcklrgttqtrz7xkwnj7lhta3urn3zy47bqghc2ievlyqpv7jelzpcudelvtky"
+const oneSignalAPIKey = "os_v2_app_mzkmy6k36rcefakfho5b3dhkglfsv2nmxj4um4fhvtw22ivasjizj37l36uuadnp2i2wspz4zfvl4rzmg7gzx7ro2oklxmx5lbhpvcq"
 
 func startSendingNotifications(database *sql.DB) {
 
@@ -54,6 +54,7 @@ func checkAndSendNotifications(database *sql.DB) {
 
         }
 
+        fmt.Printf("→ Notification à envoyer : idUser=%d, service=%s, heure=%s\n", idUser, serviceType, startTime)
         sendPushNotification(idUser, serviceType, startTime)
 
     }
@@ -61,6 +62,8 @@ func checkAndSendNotifications(database *sql.DB) {
 }
 
 func sendPushNotification(idUser int, serviceType string, startTime string) {
+
+    fmt.Printf("  [OneSignal] Envoi à idUser=%d...\n", idUser)
 
     payload := map[string]any{
         "app_id": oneSignalAppID,
@@ -75,15 +78,26 @@ func sendPushNotification(idUser int, serviceType string, startTime string) {
 
     body, _ := json.Marshal(payload)
 
-    req, _ := http.NewRequest("POST", "https://api.onesignal.com/notifications", bytes.NewBuffer(body))
+    req, err := http.NewRequest("POST", "https://api.onesignal.com/notifications", bytes.NewBuffer(body))
+    if err != nil {
+        fmt.Println("  [OneSignal] ERREUR création requête :", err)
+        return
+    }
     req.Header.Set("Content-Type", "application/json")
     req.Header.Set("Authorization", "Key "+oneSignalAPIKey)
 
     client := &http.Client{}
     resp, err := client.Do(req)
     if err != nil {
+        fmt.Println("  [OneSignal] ERREUR envoi requête :", err)
         return
     }
     defer resp.Body.Close()
+
+    fmt.Println("  [OneSignal] Statut réponse :", resp.Status)
+
+    var result map[string]any
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Println("  [OneSignal] Réponse body :", result)
 
 }

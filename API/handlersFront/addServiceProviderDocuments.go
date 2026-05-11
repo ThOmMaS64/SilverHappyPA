@@ -227,6 +227,26 @@ func AddServiceProviderDocuments(database *sql.DB) http.HandlerFunc {
 			}
 		}
 
+		allValidated := true
+
+		for _, docName := range requiredDocs {
+			var count int
+			database.QueryRow("SELECT COUNT(*) FROM SERVICE_PROVIDER_DOCUMENT WHERE ID_SERVICE_PROVIDER = ? AND type = ? AND status = 1", idServiceProvider, docName).Scan(&count)
+
+			if count == 0 {
+				allValidated = false
+				break
+			}
+		}
+
+		if allValidated {
+
+			database.Exec("UPDATE OFFER SET status = 1 WHERE ID_SERVICE_PROVIDER = ? AND ID_SERVICE = ?", idServiceProvider, idService)
+			http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?notif=new_service", 303)
+			return
+			
+		}
+
 		http.Redirect(w, r, "http://localhost/ProjetAnnuel/dashboard.php?notif=documents_sent", 303)
 
 	}

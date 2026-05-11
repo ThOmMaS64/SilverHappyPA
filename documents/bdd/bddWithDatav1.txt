@@ -87,7 +87,7 @@ CREATE TABLE ADVERTISEMENT(
    type INT DEFAULT 0,
    stripe_subscription_id VARCHAR(255) DEFAULT NULL,
    title VARCHAR(100),
-   date DATE,
+   date_paiement DATETIME,
    description VARCHAR(255),
    PRIMARY KEY(ID_ADVERTISEMENT),
    FOREIGN KEY(ID_SERVICE_PROVIDER) REFERENCES SERVICE_PROVIDER(ID_SERVICE_PROVIDER)
@@ -452,6 +452,35 @@ CREATE TABLE SERVICE_DOCUMENT (
 -- ============================================================
 
 -- ------------------------------------------------------------
+-- COMPTE PRESTATAIRE REQUIS (ID_USER = 1, ID_SERVICE_PROVIDER = 1) [cite: 2]
+-- ------------------------------------------------------------
+
+-- 1. Création de l'utilisateur 
+INSERT INTO USER_ (ID_USER, username, password, email, name, surname, city, street, nb_street, postal_code, status, date_inscription) 
+VALUES (
+    1, 
+    'SilverHappy', 
+    '$2a$12$PeQZWybNCXhr5mCy.W9elOg9gAZqSVeN23XMtwvIaXYytB029TC.G', 
+    'silverhappyoff@gmail.com', 
+    'Silver', 
+    'Happy', 
+    'Paris', 
+    'rue du Faubourg Saint Antoine', 
+    244, 
+    '75011', 
+    4, 
+    CURRENT_DATE
+);
+
+-- 2. Création du profil prestataire lié [cite: 7]
+INSERT INTO SERVICE_PROVIDER (ID_SERVICE_PROVIDER, profession, ID_USER) 
+VALUES (
+    1, 
+    'Compte officiel de Silver Happy', 
+    1
+);
+
+-- ------------------------------------------------------------
 -- SUBSCRIPTION
 -- ------------------------------------------------------------
 INSERT INTO SUBSCRIPTION (ID_SUBSCRIPTION, type, price) VALUES
@@ -641,8 +670,8 @@ INSERT INTO PRODUCT_IMAGE (ID_PRODUCT, image_path) VALUES
 -- ADVERTISEMENT (liées au prestataire ID_SERVICE_PROVIDER = 1)
 -- type : 1 = simple (49€), 2 = double (99€), 3 = ultra (119€)
 -- ------------------------------------------------------------
-INSERT INTO ADVERTISEMENT (ID_SERVICE_PROVIDER, type, stripe_subscription_id, title, date, description) VALUES
-(1, 3, NULL, 'Soins infirmiers à domicile - Disponible 7j/7', '2026-03-01', 'Infirmier diplômé d\'État, intervention rapide à votre domicile. Pansements, injections, suivi post-opératoire.');
+INSERT INTO ADVERTISEMENT (ID_SERVICE_PROVIDER, type, stripe_subscription_id, title, date_paiement, description) VALUES
+(1, 3, NULL, 'Soins infirmiers à domicile - Disponible 7j/7', '2026-03-01 10:00:00', 'Infirmier diplômé d\'État, intervention rapide à votre domicile. Pansements, injections, suivi post-opératoire.');
 
 -- ------------------------------------------------------------
 -- ADVICE (conseils rédigés par le prestataire ID_SERVICE_PROVIDER = 1)

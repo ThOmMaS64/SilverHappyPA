@@ -98,6 +98,8 @@
                         <div id="zoneMessage" class="zoneMessage mb-3 mt-2 me-4">
                             <?php
 
+                                $visitedType = ($_SESSION['status'] == 4) ? 'consumer' : 'provider';
+
                                 foreach ($messagesList as $message) {
                                     if($message['id_user'] == $_SESSION['id']){
                                         echo "<div class='myMessage mb-2'>";
@@ -106,7 +108,7 @@
                                         echo "</div>";
                                     }else{
                                         echo "<div class='othersMessage mb-2'>";
-                                        echo "<a href='profileVisit.php?visitedId=" . $message['id_user'] . "'><small style='opacity:0.8;display:block;'>" . htmlspecialchars($message['name']) . " " . htmlspecialchars($message['surname']) . "</small></a>" . htmlspecialchars($message['content']);
+                                        echo "<a href='profileVisit.php?type=" . $visitedType . "&visitedId=" . $message['id_user'] . "'><small style='opacity:0.8;display:block;'>" . htmlspecialchars($message['name']) . " " . htmlspecialchars($message['surname']) . "</small></a>" . htmlspecialchars($message['content']);
                                         echo "<br><small style='opacity:0.8;display:block;' class='mt-1'>" . $message['date'] . "</small>";
                                         echo "</div>";
                                     }

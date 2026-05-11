@@ -36,8 +36,8 @@ func GetVisitedPageData(database *sql.DB) http.HandlerFunc {
 
 			var userTab UserData
 
-			rowUser := database.QueryRow("SELECT USER_.ID_USER, USER_.username, USER_.email, USER_.name, USER_.surname, USER_.description, USER_.keyWord1, USER_.keyWord2, USER_.keyWord3, USER_.date_inscription, USER_.last_connection, IFNULL(USER_.profilePicture, '') FROM USER_ JOIN CONSUMER ON USER_.ID_USER = CONSUMER.ID_USER WHERE CONSUMER.ID_CONSUMER = ?", visitedId)
-		
+			rowUser := database.QueryRow("SELECT USER_.ID_USER, USER_.username, USER_.email, USER_.name, USER_.surname, USER_.description, USER_.keyWord1, USER_.keyWord2, USER_.keyWord3, USER_.date_inscription, USER_.last_connection, IFNULL(USER_.profilePicture, '') FROM USER_ JOIN CONSUMER ON USER_.ID_USER = CONSUMER.ID_USER WHERE USER_.ID_USER = ?", visitedId)
+
 			errUser := rowUser.Scan(&userTab.IdUser, &userTab.Username, &userTab.Email, &userTab.Name, &userTab.Surname, &userTab.Description, &userTab.KeyWord1, &userTab.KeyWord2, &userTab.KeyWord3, &userTab.Date_inscription, &userTab.Last_connection, &userTab.ProfilePicture)
 
 			if errUser != nil {
@@ -53,7 +53,7 @@ func GetVisitedPageData(database *sql.DB) http.HandlerFunc {
 
 			var userTab UserData
 
-			rowUser := database.QueryRow("SELECT USER_.ID_USER, USER_.username, USER_.email, USER_.name, USER_.surname, USER_.description, USER_.keyWord1, USER_.keyWord2, USER_.keyWord3, USER_.date_inscription, USER_.last_connection, IFNULL(USER_.profilePicture, ''), SERVICE_PROVIDER.profession FROM USER_ JOIN SERVICE_PROVIDER on USER_.ID_USER = SERVICE_PROVIDER.ID_USER WHERE SERVICE_PROVIDER.ID_SERVICE_PROVIDER = ?", visitedId)
+			rowUser := database.QueryRow("SELECT USER_.ID_USER, USER_.username, USER_.email, USER_.name, USER_.surname, USER_.description, USER_.keyWord1, USER_.keyWord2, USER_.keyWord3, USER_.date_inscription, USER_.last_connection, IFNULL(USER_.profilePicture, ''), SERVICE_PROVIDER.profession FROM USER_ JOIN SERVICE_PROVIDER on USER_.ID_USER = SERVICE_PROVIDER.ID_USER WHERE USER_.ID_USER = ?", visitedId)
 		
 			errUser := rowUser.Scan(&userTab.IdUser, &userTab.Username, &userTab.Email, &userTab.Name, &userTab.Surname, &userTab.Description, &userTab.KeyWord1, &userTab.KeyWord2, &userTab.KeyWord3, &userTab.Date_inscription, &userTab.Last_connection, &userTab.ProfilePicture, &userTab.Profession)
 

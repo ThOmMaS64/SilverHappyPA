@@ -60,18 +60,18 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		var keyWord1 string
 		var keyWord2 string
 		var keyWord3 string
-		var dateInscription string
-		var lastConnection string
+		var dateInscription sql.NullString
+		var lastConnection sql.NullString
 		var darkMode string
 		var levelFont string
 		var fontChange string
 		var cursorType string
 		var language string
-		var profilePicture string
-		var city string
-		var street string
-		var streetNumber string
-		var postalCode string
+		var profilePicture sql.NullString
+		var city sql.NullString
+		var street sql.NullString
+		var streetNumber sql.NullString
+		var postalCode sql.NullString
 		var birth_date string
 		var banned string
 		var showZoom string
@@ -132,23 +132,23 @@ func GetDataPutInSession(database *sql.DB) http.HandlerFunc {
 		response.Name = name
 		response.Surname = surname
 		response.Username = username
-		response.City = city
-		response.Street = street
-		response.StreetNumber = streetNumber
-		response.PostalCode = postalCode
+		response.City = city.String
+		response.Street = street.String
+		response.StreetNumber = streetNumber.String
+		response.PostalCode = postalCode.String
 		response.Email = email
 		response.Description = description
 		response.KeyWord1 = keyWord1
 		response.KeyWord2 = keyWord2
 		response.KeyWord3 = keyWord3
-		response.DateInscription = dateInscription
-		response.LastConnection = lastConnection
+		response.DateInscription = dateInscription.String
+		response.LastConnection = lastConnection.String
 		response.DarkMode = darkMode
 		response.LevelFont = levelFont
 		response.FontChange = fontChange
 		response.CursorType = cursorType
 		response.Language = language
-		response.ProfilePicture = profilePicture
+		response.ProfilePicture = profilePicture.String
 		response.Banned = banned
 		response.ShowZoom = showZoom
 		response.ShowAudio = showAudio
